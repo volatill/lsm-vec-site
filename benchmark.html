@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSM-Vec — Benchmark</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    /* Benchmark color variables */
+    :root {
+      --milvus: #f472b6;
+      --qdrant: #818cf8;
+      --weaviate: #fb923c;
+      --lsmvec: #06d6a0;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .header h1 {
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      animation: fadeIn 0.6s ease 0.1s both;
+    }
+
+    .header h1 span {
+      background: linear-gradient(135deg, var(--accent), #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 540px;
+      margin: 0 auto;
+      animation: fadeIn 0.6s ease 0.2s both;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      animation: fadeIn 0.6s ease 0.3s both;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .legend-item.ours { color: var(--text); }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .legend-item.ours .legend-dot {
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* Server tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 40px;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: 12px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeIn 0.6s ease 0.35s both;
+    }
+
+    .tab {
+      padding: 10px 28px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab.active {
+      background: var(--surface2);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .tab:hover:not(.active) { color: var(--text); }
+
+    /* Chart grid */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .chart-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .chart-card:hover::before { opacity: 0.5; }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .chart-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-bottom: 20px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 280px;
+    }
+
+    /* Insight cards */
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .insight-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: 0.5;
+    }
+
+    .insight-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .insight-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .insight-detail {
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+
+    /* Chart card stagger animations */
+    .chart-card { animation: fadeIn 0.5s ease both; }
+    .chart-card:nth-child(1) { animation-delay: 0.1s; }
+    .chart-card:nth-child(2) { animation-delay: 0.15s; }
+    .chart-card:nth-child(3) { animation-delay: 0.2s; }
+    .chart-card:nth-child(4) { animation-delay: 0.25s; }
+    .chart-card:nth-child(5) { animation-delay: 0.3s; }
+    .chart-card:nth-child(6) { animation-delay: 0.35s; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo"><span>LSM-Vec</span></a>
+    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="docs.html">Docs</a>
+      <a href="benchmark.html" class="active">Benchmark</a>
+      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+    </div>
+  </nav>
+
+<div class="container">
+  <div class="header">
+    <div class="badge">Performance Benchmark</div>
+    <h1>Vector Database Comparison — <span>LSM-Vec</span></h1>
+    <p>Build time, query throughput & memory footprint across SIFT-100K and SIFT-1M datasets</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--milvus);"></div>Milvus HNSW
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--qdrant);"></div>Qdrant Local
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--weaviate);"></div>Weaviate
+    </div>
+    <div class="legend-item ours">
+      <div class="legend-dot" style="background: var(--lsmvec);"></div>LSM-Vec (ours)
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchServer('s1')">S1 Server</button>
+    <button class="tab" onclick="switchServer('triangle')">Triangle Server</button>
+  </div>
+
+  <div class="chart-grid" id="chartGrid"></div>
+
+  <div class="insights" id="insights"></div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">LSM-Vec &mdash; NTU Siqiang Group</footer>
+</div>
+
+<script>
+const COLORS = {
+  milvushnsw: { bg: 'rgba(244, 114, 182, 0.75)', border: '#f472b6' },
+  qdrantlocal: { bg: 'rgba(129, 140, 248, 0.75)', border: '#818cf8' },
+  weaviate: { bg: 'rgba(251, 146, 60, 0.75)', border: '#fb923c' },
+  lsmvec: { bg: 'rgba(6, 214, 160, 0.85)', border: '#06d6a0' },
+};
+
+const LABELS = {
+  milvushnsw: 'Milvus HNSW',
+  qdrantlocal: 'Qdrant Local',
+  weaviate: 'Weaviate',
+  lsmvec: 'LSM-Vec',
+};
+
+const DATA = {
+  s1: {
+    sift100k: {
+      milvushnsw: { build: 22.815, qps: 1501.10, mem: 1401.44 },
+      qdrantlocal: { build: 57.42, qps: 560.35, mem: 2685.53 },
+      weaviate: { build: 14.57, qps: 722.12, mem: 753.56 },
+      lsmvec: { build: 43.92, qps: 993.97, mem: 317.75 },
+    },
+    sift1m: {
+      milvushnsw: { build: 128.79, qps: 396.74, mem: 4145.48 },
+      qdrantlocal: { build: 279.28, qps: 470.38, mem: 1675.63 },
+      weaviate: { build: 193.65, qps: 683.06, mem: 2722.47 },
+      lsmvec: { build: 962.80, qps: 482.85, mem: 325.97 },
+    }
+  },
+  triangle: {
+    sift100k: {
+      milvushnsw: { build: 41.62, qps: 266.75, mem: 391.76 },
+      qdrantlocal: { build: 117.04, qps: 169.28, mem: 2379.20 },
+      weaviate: { build: 74.65, qps: 101.80, mem: 205.43 },
+      lsmvec: { build: 84.32, qps: 517.72, mem: 419.32 },
+    },
+    sift1m: {
+      milvushnsw: { build: 203.78, qps: 224.87, mem: 4211.93 },
+      qdrantlocal: { build: 1049.79, qps: 118.31, mem: 1309.54 },
+      weaviate: { build: 758.28, qps: 95.50, mem: 2551.85 },
+      lsmvec: { build: 1674.20, qps: 259.77, mem: 593.29 },
+    }
+  }
+};
+
+const methods = ['milvushnsw', 'qdrantlocal', 'weaviate', 'lsmvec'];
+let charts = [];
+let currentServer = 's1';
+
+function getChartOptions(title, unit, isLowerBetter) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a2235',
+        titleColor: '#e2e8f0',
+        bodyColor: '#94a3b8',
+        borderColor: '#334155',
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+        titleFont: { family: 'DM Sans', size: 13, weight: 600 },
+        bodyFont: { family: 'JetBrains Mono', size: 12 },
+        callbacks: {
+          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} ${unit}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(30,41,59,0.5)', drawBorder: false },
+        ticks: {
+          color: '#64748b',
+          font: { family: 'DM Sans', size: 12, weight: 500 }
+        }
+      },
+      y: {
+        grid: { color: 'rgba(30,41,59,0.5)', drawBorder: false },
+        ticks: {
+          color: '#64748b',
+          font: { family: 'JetBrains Mono', size: 11 },
+          callback: (v) => v.toLocaleString()
+        },
+        beginAtZero: true
+      }
+    }
+  };
+}
+
+function buildDatasets(server, metric) {
+  const datasets = ['sift100k', 'sift1m'];
+  return methods.map(m => ({
+    label: LABELS[m],
+    data: datasets.map(d => DATA[server][d][m][metric]),
+    backgroundColor: COLORS[m].bg,
+    borderColor: COLORS[m].border,
+    borderWidth: m === 'lsmvec' ? 2.5 : 1.5,
+    borderRadius: 6,
+    borderSkipped: false,
+  }));
+}
+
+function destroyCharts() {
+  charts.forEach(c => c.destroy());
+  charts = [];
+}
+
+function createChart(canvasId, server, metric, unit) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['SIFT-100K', 'SIFT-1M'],
+      datasets: buildDatasets(server, metric)
+    },
+    options: getChartOptions('', unit)
+  });
+  charts.push(chart);
+  return chart;
+}
+
+function renderCharts(server) {
+  destroyCharts();
+  const grid = document.getElementById('chartGrid');
+  grid.innerHTML = '';
+
+  const metrics = [
+    { key: 'build', title: 'Build Time', unit: 's', subtitle: 'Lower is better', icon: '⏱' },
+    { key: 'qps', title: 'Query Throughput', unit: 'QPS', subtitle: 'Higher is better', icon: '⚡' },
+    { key: 'mem', title: 'Peak Memory', unit: 'MB', subtitle: 'Lower is better', icon: '💾' },
+  ];
+
+  metrics.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+    card.innerHTML = `
+      <div class="chart-title">${m.icon}&nbsp; ${m.title}</div>
+      <div class="chart-subtitle">${m.subtitle} · ${m.unit}</div>
+      <div class="chart-wrapper"><canvas id="chart-${m.key}"></canvas></div>
+    `;
+    grid.appendChild(card);
+    setTimeout(() => createChart(`chart-${m.key}`, server, m.key, m.unit), 10);
+  });
+
+  renderInsights(server);
+}
+
+function renderInsights(server) {
+  const container = document.getElementById('insights');
+  const d = DATA[server];
+
+  // Memory saving on sift1m vs worst
+  const memWorst1m = Math.max(...methods.filter(m => m !== 'lsmvec').map(m => d.sift1m[m].mem));
+  const memSaving = ((1 - d.sift1m.lsmvec.mem / memWorst1m) * 100).toFixed(0);
+
+  // QPS advantage on triangle sift100k
+  const qpsLsm100k = d.sift100k.lsmvec.qps;
+  const qpsBest100k = Math.max(...methods.filter(m => m !== 'lsmvec').map(m => d.sift100k[m].qps));
+  const qpsRatio = (qpsLsm100k / qpsBest100k).toFixed(1);
+  const qpsAdvStr = qpsLsm100k > qpsBest100k ? `${qpsRatio}×` : `${(qpsLsm100k / qpsBest100k * 100).toFixed(0)}%`;
+
+  // Memory on sift1m
+  const memVal = d.sift1m.lsmvec.mem.toFixed(0);
+
+  // QPS on sift1m
+  const qps1m = d.sift1m.lsmvec.qps.toFixed(0);
+
+  container.innerHTML = `
+    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.4s both;">
+      <div class="insight-value">↓${memSaving}%</div>
+      <div class="insight-label">Memory Reduction</div>
+      <div class="insight-detail">vs. worst baseline on SIFT-1M</div>
+    </div>
+    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.45s both;">
+      <div class="insight-value">${memVal}<span style="font-size:16px;opacity:0.6"> MB</span></div>
+      <div class="insight-label">Peak Memory · SIFT-1M</div>
+      <div class="insight-detail">LSM-Vec footprint</div>
+    </div>
+    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.5s both;">
+      <div class="insight-value">${qps1m}<span style="font-size:16px;opacity:0.6"> QPS</span></div>
+      <div class="insight-label">Throughput · SIFT-1M</div>
+      <div class="insight-detail">LSM-Vec queries/sec</div>
+    </div>
+    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.55s both;">
+      <div class="insight-value">${qpsAdvStr}</div>
+      <div class="insight-label">QPS vs Best Baseline</div>
+      <div class="insight-detail">SIFT-100K comparison</div>
+    </div>
+  `;
+}
+
+function switchServer(server) {
+  currentServer = server;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCharts(server);
+}
+
+renderCharts('s1');
+</script>
+</body>
+</html>
