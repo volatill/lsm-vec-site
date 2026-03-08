@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LSM-Vec — Persistent Vector Database</title>
+  <title>LSM-Vec — Memory-friendly Vector Database</title>
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -32,7 +32,7 @@
       font-size: 18px;
       color: var(--text-muted);
       line-height: 1.7;
-      max-width: 640px;
+      max-width: 660px;
       margin: 0 auto 36px;
     }
 
@@ -148,10 +148,10 @@
 
   <!-- ===== Hero ===== -->
   <section class="hero fade-in">
-    <div class="badge">Persistent Vector Database</div>
+    <div class="badge">Memory-friendly Vector Database</div>
     <h1 class="hero-title">LSM-Vec</h1>
     <p class="hero-subtitle">
-      A persistent vector database for approximate nearest-neighbor search, combining HNSW graph index with graph-oriented LSM-tree storage.
+      A disk-oriented vector database for approximate nearest-neighbor search, managing HNSW graph index on-disk with graph-oriented LSM-tree storage.
     </p>
     <div class="hero-cta">
       <a href="docs.html" class="btn btn-primary">Get Started</a>
@@ -213,10 +213,10 @@
     <div class="features-grid">
       <div class="feature-item">
         <h4>HNSW Graph Index</h4>
-        <p>Fully configurable hyperparameters: M, Mmax, Ml, efConstruction</p>
+        <p>Disk-oriented design with LSM-tree Based Data Structure</p>
       </div>
       <div class="feature-item">
-        <h4>Dual Storage Backends</h4>
+        <h4>Dual Vector Storage</h4>
         <p>BasicVectorStorage (flat file) and PagedVectorStorage (4KB page-managed with FIFO cache)</p>
       </div>
       <div class="feature-item">
