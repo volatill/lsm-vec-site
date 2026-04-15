@@ -13,6 +13,8 @@
       --milvus: #f472b6;
       --qdrant: #818cf8;
       --weaviate: #fb923c;
+      --elastic: #fbbf24;
+      --pgvector: #38bdf8;
       --lsmvec: #06d6a0;
     }
 
@@ -226,6 +228,50 @@
       margin-top: 4px;
     }
 
+    /* Server specs */
+    .server-specs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+      animation: fadeIn 0.6s ease 0.38s both;
+    }
+
+    .spec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .spec-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+    }
+
+    .spec-row:last-child { border-bottom: none; }
+
+    .spec-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .spec-value {
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
     /* Chart card stagger animations */
     .chart-card { animation: fadeIn 0.5s ease both; }
     .chart-card:nth-child(1) { animation-delay: 0.1s; }
@@ -271,6 +317,12 @@
     <div class="legend-item">
       <div class="legend-dot" style="background: var(--weaviate);"></div>Weaviate
     </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--elastic);"></div>Elasticsearch
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--pgvector);"></div>PgVector
+    </div>
     <div class="legend-item ours">
       <div class="legend-dot" style="background: var(--lsmvec);"></div>LSM-Vec (ours)
     </div>
@@ -279,6 +331,23 @@
   <div class="tabs">
     <button class="tab active" onclick="switchServer('s1')">S1 Server</button>
     <button class="tab" onclick="switchServer('triangle')">Triangle Server</button>
+  </div>
+
+  <div class="server-specs">
+    <div class="spec-card">
+      <h3>S1 Server</h3>
+      <div class="spec-row"><span class="spec-label">CPU</span><span class="spec-value">Intel Core i9-13900K (24C/32T)</span></div>
+      <div class="spec-row"><span class="spec-label">Max Freq</span><span class="spec-value">5.8 GHz</span></div>
+      <div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">125 GB</span></div>
+      <div class="spec-row"><span class="spec-label">OS</span><span class="spec-value">Ubuntu 22.04 · Linux 6.8</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Triangle Server</h3>
+      <div class="spec-row"><span class="spec-label">CPU</span><span class="spec-value">2× Xeon Silver 4314 (32C/64T)</span></div>
+      <div class="spec-row"><span class="spec-label">Max Freq</span><span class="spec-value">3.4 GHz</span></div>
+      <div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">503 GB</span></div>
+      <div class="spec-row"><span class="spec-label">OS</span><span class="spec-value">Ubuntu 22.04 · Linux 5.19</span></div>
+    </div>
   </div>
 
   <div class="chart-grid" id="chartGrid"></div>
@@ -294,6 +363,8 @@ const COLORS = {
   milvushnsw: { bg: 'rgba(244, 114, 182, 0.75)', border: '#f472b6' },
   qdrantlocal: { bg: 'rgba(129, 140, 248, 0.75)', border: '#818cf8' },
   weaviate: { bg: 'rgba(251, 146, 60, 0.75)', border: '#fb923c' },
+  elasticsearch: { bg: 'rgba(251, 191, 36, 0.75)', border: '#fbbf24' },
+  pgvector: { bg: 'rgba(56, 189, 248, 0.75)', border: '#38bdf8' },
   lsmvec: { bg: 'rgba(6, 214, 160, 0.85)', border: '#06d6a0' },
 };
 
@@ -301,22 +372,28 @@ const LABELS = {
   milvushnsw: 'Milvus HNSW',
   qdrantlocal: 'Qdrant Local',
   weaviate: 'Weaviate',
+  elasticsearch: 'Elasticsearch',
+  pgvector: 'PgVector',
   lsmvec: 'LSM-Vec',
 };
 
 const DATA = {
   s1: {
     sift100k: {
-      milvushnsw: { build: 22.815, qps: 1501.10, mem: 1401.44 },
+      milvushnsw: { build: 22.82, qps: 1501.10, mem: 1401.44 },
       qdrantlocal: { build: 57.42, qps: 560.35, mem: 2685.53 },
       weaviate: { build: 14.57, qps: 722.12, mem: 753.56 },
-      lsmvec: { build: 43.92, qps: 993.97, mem: 317.75 },
+      elasticsearch: { build: 93.13, qps: 911.71, mem: 718.65 },
+      pgvector: { build: 59.75, qps: 1453.24, mem: 2122.42 },
+      lsmvec: { build: 14.43, qps: 993.97, mem: 427.75 },
     },
     sift1m: {
       milvushnsw: { build: 128.79, qps: 396.74, mem: 4145.48 },
       qdrantlocal: { build: 279.28, qps: 470.38, mem: 1675.63 },
       weaviate: { build: 193.65, qps: 683.06, mem: 2722.47 },
-      lsmvec: { build: 962.80, qps: 482.85, mem: 325.97 },
+      elasticsearch: { build: 833.02, qps: 782.70, mem: 1045.76 },
+      pgvector: { build: 3234.95, qps: 303.72, mem: 1857.76 },
+      lsmvec: { build: 424.14, qps: 583.96, mem: 593.29 },
     }
   },
   triangle: {
@@ -324,22 +401,40 @@ const DATA = {
       milvushnsw: { build: 41.62, qps: 266.75, mem: 391.76 },
       qdrantlocal: { build: 117.04, qps: 169.28, mem: 2379.20 },
       weaviate: { build: 74.65, qps: 101.80, mem: 205.43 },
-      lsmvec: { build: 84.32, qps: 517.72, mem: 419.32 },
+      elasticsearch: { build: 122.29, qps: 595.56, mem: 722.59 },
+      pgvector: { build: 109.86, qps: 808.78, mem: 1850.78 },
+      lsmvec: { build: 30.37, qps: 1243.36, mem: 419.32 },
     },
     sift1m: {
       milvushnsw: { build: 203.78, qps: 224.87, mem: 4211.93 },
       qdrantlocal: { build: 1049.79, qps: 118.31, mem: 1309.54 },
       weaviate: { build: 758.28, qps: 95.50, mem: 2551.85 },
-      lsmvec: { build: 1674.20, qps: 259.77, mem: 593.29 },
+      elasticsearch: { build: 1362.00, qps: 504.82, mem: 797.11 },
+      pgvector: { build: 6116.56, qps: 155.07, mem: 1924.77 },
+      lsmvec: { build: 736.97, qps: 871.22, mem: 593.29 },
     }
   }
 };
 
-const methods = ['milvushnsw', 'qdrantlocal', 'weaviate', 'lsmvec'];
+const methods = ['milvushnsw', 'qdrantlocal', 'weaviate', 'elasticsearch', 'pgvector', 'lsmvec'];
 let charts = [];
 let currentServer = 's1';
 
-function getChartOptions(title, unit, isLowerBetter) {
+function getChartOptions(title, unit, useLog) {
+  const yScale = {
+    grid: { color: 'rgba(30,41,59,0.5)', drawBorder: false },
+    ticks: {
+      color: '#64748b',
+      font: { family: 'JetBrains Mono', size: 11 },
+      callback: (v) => v.toLocaleString()
+    },
+  };
+  if (useLog) {
+    yScale.type = 'logarithmic';
+    yScale.ticks.callback = (v) => Number.isInteger(Math.log10(v)) || [1,2,5].includes(v / Math.pow(10, Math.floor(Math.log10(v)))) ? v.toLocaleString() : '';
+  } else {
+    yScale.beginAtZero = true;
+  }
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -368,15 +463,7 @@ function getChartOptions(title, unit, isLowerBetter) {
           font: { family: 'DM Sans', size: 12, weight: 500 }
         }
       },
-      y: {
-        grid: { color: 'rgba(30,41,59,0.5)', drawBorder: false },
-        ticks: {
-          color: '#64748b',
-          font: { family: 'JetBrains Mono', size: 11 },
-          callback: (v) => v.toLocaleString()
-        },
-        beginAtZero: true
-      }
+      y: yScale
     }
   };
 }
@@ -399,7 +486,7 @@ function destroyCharts() {
   charts = [];
 }
 
-function createChart(canvasId, server, metric, unit) {
+function createChart(canvasId, server, metric, unit, useLog) {
   const ctx = document.getElementById(canvasId).getContext('2d');
   const chart = new Chart(ctx, {
     type: 'bar',
@@ -407,7 +494,7 @@ function createChart(canvasId, server, metric, unit) {
       labels: ['SIFT-100K', 'SIFT-1M'],
       datasets: buildDatasets(server, metric)
     },
-    options: getChartOptions('', unit)
+    options: getChartOptions('', unit, useLog)
   });
   charts.push(chart);
   return chart;
@@ -419,7 +506,7 @@ function renderCharts(server) {
   grid.innerHTML = '';
 
   const metrics = [
-    { key: 'build', title: 'Build Time', unit: 's', subtitle: 'Lower is better', icon: '⏱' },
+    { key: 'build', title: 'Build Time', unit: 's', subtitle: 'Lower is better · log scale', icon: '⏱', log: true },
     { key: 'qps', title: 'Query Throughput', unit: 'QPS', subtitle: 'Higher is better', icon: '⚡' },
     { key: 'mem', title: 'Peak Memory', unit: 'MB', subtitle: 'Lower is better', icon: '💾' },
   ];
@@ -433,7 +520,7 @@ function renderCharts(server) {
       <div class="chart-wrapper"><canvas id="chart-${m.key}"></canvas></div>
     `;
     grid.appendChild(card);
-    setTimeout(() => createChart(`chart-${m.key}`, server, m.key, m.unit), 10);
+    setTimeout(() => createChart(`chart-${m.key}`, server, m.key, m.unit, m.log), 10);
   });
 
   renderInsights(server);

@@ -1,0 +1,31 @@
+S1 server:
+method	dataset	build time	qps	peak memory
+milvushnsw	sift100k	22.8150	1501.1015	1401.44
+milvushnsw	sift1m	128.7883	396.7408	4145.48
+qdrantlocal	sift100k	57.4205	560.3512	2685.53
+qdrantlocal	sift1m	279.2844	470.3770	1675.63
+weaviate	sift100k	14.5699	722.1161	753.56
+weaviate	sift1m	193.6540	683.0561	2722.47
+elasticsearch	sift100k	93.1258	911.7138	718.65
+elasticsearch	sift1m	833.0214	782.7001	1045.76
+pgvector	sift100k	59.7467	1453.2412	2122.42
+pgvector	sift1m	3234.9539	303.7153	1857.76
+lsmvec	sift100k	14.4250	 993.97	427.75
+lsmvec	sift1m	424.1391		583.96	593.29
+
+
+
+Triangle server:
+method	dataset	build time	qps	peak memory
+milvushnsw	sift100k	41.6248	266.7485	391.76
+milvushnsw	sift1m	203.7801	224.8716	4211.93
+qdrantlocal	sift100k	117.0373	169.2797	2379.20
+qdrantlocal	sift1m	1049.7886	118.3111	1309.54
+weaviate	sift100k	74.6485	101.7975	205.43
+weaviate	sift1m	758.2790	95.5019	2551.85
+elasticsearch	sift100k	122.2937	595.5566	722.59
+elasticsearch	sift1m	1361.9995	504.8213	797.11
+pgvector   	sift100k	109.8553	808.7791	1850.78
+pgvector   	sift1m	6116.5609	155.0662	1924.77
+lsmvec	sift100k	30.3699	1243.3570	419.32
+lsmvec	sift1m	736.9733	871.2219	593.29
