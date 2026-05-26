@@ -17,11 +17,11 @@
       padding: 24px 0; z-index: 50;
     }
 
-    .sidebar-section { padding: 0 20px; margin-bottom: 16px; }
+    .sidebar-section { padding: 0 20px; margin-bottom: 20px; }
 
     .sidebar-title {
       font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
+      letter-spacing: 1.5px; color: var(--accent); margin-bottom: 8px;
       font-family: 'JetBrains Mono', monospace; padding: 0 20px;
     }
 
@@ -36,8 +36,6 @@
       background: var(--accent-glow);
     }
 
-    .sidebar-sublink { padding-left: 36px; font-size: 13px; }
-
     .docs-content {
       margin-left: 260px; padding: 48px 48px 80px;
       max-width: 900px; width: 100%;
@@ -50,8 +48,7 @@
     .docs-content h2:first-child { border-top: none; margin-top: 0; }
 
     .docs-content h3 {
-      font-size: 20px; font-weight: 600; margin: 32px 0 12px;
-      color: var(--text);
+      font-size: 20px; font-weight: 600; margin: 32px 0 12px; color: var(--text);
     }
 
     .docs-content h4 {
@@ -62,15 +59,22 @@
     .docs-content p { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
     .docs-content ul, .docs-content ol { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; padding-left: 24px; }
     .docs-content li { margin-bottom: 4px; }
+    .docs-content a { color: var(--accent); }
+
+    .group-intro {
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      border-radius: 12px; padding: 16px 20px; margin: 0 0 8px;
+    }
+    .group-intro p { margin: 0; color: var(--text); font-size: 14px; }
+
+    .callout {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 14px 18px; margin: 16px 0;
+    }
+    .callout p { margin: 0; font-size: 14px; }
 
     .sidebar-toggle { display: none; }
-
-    /* Architecture diagram */
-    .arch-diagram {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 32px; margin: 24px 0;
-      text-align: center;
-    }
 
     @media (max-width: 768px) {
       .sidebar {
@@ -100,6 +104,7 @@
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="docs.html" class="active">Docs</a>
+      <a href="pilot.html">Pilot</a>
       <a href="benchmark.html">Benchmark</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -108,55 +113,47 @@
       <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
       </a>
+      <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
     </div>
   </nav>
 
-  <!-- ===== Mobile Sidebar Toggle ===== -->
   <button class="sidebar-toggle" id="sidebar-toggle">Menu</button>
 
-  <!-- ===== Docs Layout ===== -->
   <div class="docs-layout">
 
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar" id="sidebar">
 
       <div class="sidebar-section">
-        <div class="sidebar-title">Getting Started</div>
-        <a href="#quickstart-cpp" class="sidebar-link active">Quick Start (C++)</a>
-        <a href="#quickstart-python" class="sidebar-link">Quick Start (Python)</a>
+        <div class="sidebar-title">Asteroid Cloud</div>
+        <a href="#cloud-overview" class="sidebar-link active">Overview</a>
+        <a href="#cloud-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
+        <a href="#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
+        <a href="#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
+        <a href="#cloud-search" class="sidebar-link">Search</a>
+        <a href="#cloud-filter" class="sidebar-link">Filter by metadata</a>
+        <a href="#cloud-bulk" class="sidebar-link">Bulk import</a>
+        <a href="#cloud-rag" class="sidebar-link">Build a RAG app</a>
+        <a href="#cloud-limits" class="sidebar-link">Limits &amp; tradeoffs</a>
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-title">C++ API</div>
-        <a href="#cpp-open-close" class="sidebar-link sidebar-sublink">Open / Close</a>
-        <a href="#cpp-insert" class="sidebar-link sidebar-sublink">Insert</a>
-        <a href="#cpp-search" class="sidebar-link sidebar-sublink">Search</a>
-        <a href="#cpp-crud" class="sidebar-link sidebar-sublink">Get / Update / Delete</a>
-        <a href="#cpp-config" class="sidebar-link sidebar-sublink">Configuration</a>
-        <a href="#cpp-types" class="sidebar-link sidebar-sublink">Types</a>
+        <div class="sidebar-title">Asteroid Database (LSM-Vec)</div>
+        <a href="#db-overview" class="sidebar-link">Overview</a>
+        <a href="#db-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="#db-insert" class="sidebar-link">Insert / update / delete</a>
+        <a href="#db-search" class="sidebar-link">Search</a>
+        <a href="#db-bulk" class="sidebar-link">Bulk build</a>
+        <a href="#db-config" class="sidebar-link">Configuration &amp; defaults</a>
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-title">Python API</div>
-        <a href="#py-install" class="sidebar-link sidebar-sublink">Installation</a>
-        <a href="#py-open-close" class="sidebar-link sidebar-sublink">Open / Close</a>
-        <a href="#py-insert" class="sidebar-link sidebar-sublink">Insert</a>
-        <a href="#py-search" class="sidebar-link sidebar-sublink">Search</a>
-        <a href="#py-crud" class="sidebar-link sidebar-sublink">Get / Update / Delete</a>
-        <a href="#py-config" class="sidebar-link sidebar-sublink">Configuration</a>
-        <a href="#py-errors" class="sidebar-link sidebar-sublink">Error Handling</a>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title">Examples</div>
-        <a href="#ex-cpp" class="sidebar-link">C++ Embedding</a>
-        <a href="#ex-python" class="sidebar-link">Python Quick Start</a>
-        <a href="#ex-numpy" class="sidebar-link">NumPy Example</a>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title">Architecture</div>
-        <a href="#architecture" class="sidebar-link">Implementation Details</a>
+        <div class="sidebar-title">Reference &amp; Deployment</div>
+        <a href="#ref-http" class="sidebar-link">HTTP API reference</a>
+        <a href="#ref-client" class="sidebar-link">Python client reference</a>
+        <a href="#ref-build" class="sidebar-link">Build from source</a>
+        <a href="#ref-server" class="sidebar-link">Run the server</a>
       </div>
 
     </aside>
@@ -164,612 +161,527 @@
     <!-- ===== Main Content ===== -->
     <main class="docs-content">
 
-      <!-- ==================== GETTING STARTED ==================== -->
+      <!-- ==================== ASTEROID CLOUD ==================== -->
 
-      <h2 id="quickstart-cpp">Quick Start (C++)</h2>
-
-      <h3>Prerequisites</h3>
-
-      <h4>Compiler &amp; Tools</h4>
+      <h2 id="cloud-overview">Asteroid Cloud — Overview</h2>
+      <div class="group-intro">
+        <p><strong>Asteroid Cloud</strong> is the managed service: a dedicated,
+        isolated vector database you reach over HTTPS with an API key. You bring
+        embeddings; Asteroid stores them, runs k-NN search, and applies metadata
+        filters. No clusters to size, no infrastructure to run.</p>
+      </div>
+      <p>You interact with Asteroid Cloud two ways, shown side by side on every
+      page below:</p>
       <ul>
-        <li>C++17 compiler (GCC 8+ or Clang 10+)</li>
-        <li>CMake &gt;= 3.10</li>
-        <li>GNU Make</li>
-        <li>Boost (headers only)</li>
+        <li><strong>Python client</strong> — <code>pip install lsmvec-client</code>
+        (Asteroid's client package is published as <code>lsmvec-client</code>).</li>
+        <li><strong>HTTP API</strong> — a plain REST API you can call with
+        <code>curl</code> or any language.</li>
+      </ul>
+      <p>Your endpoint, API key, and vector dimension are provided when your
+      pilot is set up. Don't have them yet?
+      <a href="index.html#pilot">Request a pilot</a>.</p>
+
+      <h2 id="cloud-quickstart">Quickstart</h2>
+      <p>Install the client, connect, insert a few vectors, and search — five
+      minutes end to end. The vector dimension <code>D</code> is fixed for your
+      instance (set when it's provisioned).</p>
+      <p>Install the Python client (or skip it and use <code>curl</code> / any
+      HTTP client):</p>
+      <pre><code>pip install lsmvec-client</code></pre>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
+
+client = Client(api_key="sk-live-...",
+                base_url="https://api.lsmvec.com")
+assert client.health()
+
+# insert a few D-dimensional vectors (bring your own embeddings)
+client.insert(1, [0.10, 0.20, ...], metadata={"category": "docs"})
+client.insert(2, [0.11, 0.19, ...], metadata={"category": "blog"})
+
+# search
+hits = client.search([0.10, 0.20, ...], k=10)
+for h in hits:
+    print(h.id, h.distance)</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code># insert
+curl -sX POST https://api.lsmvec.com/v1/vectors \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"id": 1, "vector": [0.10, 0.20, ...], "metadata": {"category": "docs"}}'
+
+# search
+curl -sX POST https://api.lsmvec.com/v1/search \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"vector": [0.10, 0.20, ...], "k": 10}'</code></pre></div>
+      </div>
+      <div class="callout"><p><strong>No "create a collection" step.</strong>
+      Your instance <em>is</em> your index. If you're coming from Pinecone or
+      Qdrant: skip the collection setup — just insert and search.</p></div>
+
+      <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
+      <p><code>insert</code> adds a vector by id with optional JSON metadata.
+      <code>upsert</code> replaces the vector for an id (insert-or-replace). IDs
+      are 64-bit unsigned integers.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})
+client.upsert(1, new_vector)   # replace the vector for id 1</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code># insert (POST)
+curl -sX POST https://api.lsmvec.com/v1/vectors \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"id": 1, "vector": [...], "metadata": {"title": "intro", "year": 2026}}'
+
+# upsert (PUT) — replace the vector for id 1
+curl -sX PUT https://api.lsmvec.com/v1/vectors/1 \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"vector": [...]}'</code></pre></div>
+      </div>
+
+      <h2 id="cloud-fetch">Fetch &amp; delete</h2>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>rec = client.get(1)       # {"id": 1, "vector": [...]}
+client.delete(1)</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."
+curl -sX DELETE https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."</code></pre></div>
+      </div>
+      <div class="callout"><p>Stored vectors are 8-bit scalar-quantized (SQ8), so
+      <code>get</code> returns the dequantized vector — it can differ from the
+      input by up to ~<code>range/255</code> per element.</p></div>
+
+      <h2 id="cloud-payloads">Metadata &amp; payloads</h2>
+      <p>Every vector can carry a JSON payload (categories, tags, prices,
+      timestamps). Read it, replace it, or merge-patch it (RFC 7396 — keys in the
+      patch overwrite; a <code>null</code> deletes a key) independently of the
+      vector.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>client.get_payload(1)                       # -> {...}
+client.set_payload(1, {"category": "docs"}) # replace
+client.merge_payload(1, {"views": 42})      # merge-patch</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..."
+curl -sX PUT   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" -d '{"category": "docs"}'
+curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" -d '{"views": 42}'</code></pre></div>
+      </div>
+
+      <h2 id="cloud-search">Search</h2>
+      <p>k-nearest-neighbor search returns up to <code>k</code> ids ordered by
+      ascending distance. <code>ef_search</code> trades latency for recall
+      (higher = better recall, slower).</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(query_vector, k=10, ef_search=128)
+for h in hits:
+    print(h.id, h.distance)</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"vector": [...], "k": 10, "ef_search": 128}'</code></pre></div>
+      </div>
+
+      <h2 id="cloud-filter">Filter by metadata</h2>
+      <p>Combine vector similarity with a metadata predicate in one query
+      (e.g. <em>"similar items in category <code>docs</code> from 2026"</em>).
+      Supported operators:</p>
+      <ul>
+        <li>Comparison: <code>$eq</code> <code>$ne</code> <code>$gt</code>
+        <code>$gte</code> <code>$lt</code> <code>$lte</code></li>
+        <li>Membership: <code>$in</code> <code>$nin</code>
+        <code>$contains_any</code> <code>$contains_all</code></li>
+        <li>Existence: <code>$exists</code> (boolean)</li>
+        <li>Logical: <code>$and</code> <code>$or</code></li>
+      </ul>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(
+    query_vector, k=10,
+    filter={"$and": [
+        {"category": {"$eq": "docs"}},
+        {"year": {"$gte": 2026}},
+    ]},
+)</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"vector": [...], "k": 10,
+       "filter": {"$and": [{"category": {"$eq": "docs"}},
+                           {"year": {"$gte": 2026}}]}}'</code></pre></div>
+      </div>
+
+      <h2 id="cloud-bulk">Bulk import (initial load)</h2>
+      <p>The fastest way to populate a <strong>new, empty</strong> instance:
+      build the whole index in one pass instead of inserting vector by vector.
+      Initial-load only — the instance must be empty.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+          <button class="tab-btn" data-lang="curl">cURL</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>import numpy as np
+vectors = np.random.rand(100_000, 128).astype(np.float32)
+report = client.bulk_build(vectors, threads=4)
+print(report)   # {'n': ..., 'elapsed_ms': ..., 'vectors_per_sec': ...}</code></pre></div>
+        <div class="tab-panel" data-lang="curl" hidden><pre><code># raw float32 body; N and dim in headers
+curl -sX POST https://api.lsmvec.com/v1/build/bulk \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "X-LSMVec-N: 100000" -H "X-LSMVec-Dim: 128" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @vectors.f32</code></pre></div>
+      </div>
+      <p>Bulk build gives a faster initial load than per-vector inserts. For
+      incremental updates on an already-populated instance, use
+      <code>insert</code> / <code>upsert</code> instead.</p>
+
+      <h2 id="cloud-rag">Build a RAG app</h2>
+      <p>A typical retrieval-augmented-generation flow. <strong>You</strong> own
+      the file → chunk → embedding step (bring your own model — the industry
+      norm); Asteroid stores the vectors + metadata and serves filtered k-NN.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="python">Python</button>
+        </div>
+        <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
+# bring your own embedding model, e.g. fastembed (bge-small-en-v1.5, 384-dim)
+from fastembed import TextEmbedding
+
+embed = TextEmbedding("BAAI/bge-small-en-v1.5")
+client = Client(api_key="sk-live-...", base_url="https://api.lsmvec.com")
+
+# 1. chunk your documents locally (your code), then embed + insert
+for i, chunk in enumerate(chunks):
+    vec = list(embed.embed([chunk.text]))[0]
+    client.insert(i, vec, metadata={"text": chunk.text, "source": chunk.source})
+
+# 2. at query time: embed the question, retrieve with an optional filter
+qvec = list(embed.embed([question]))[0]
+hits = client.search(qvec, k=5, filter={"source": {"$eq": "handbook"}})
+
+# 3. fetch the chunk text from payloads and feed it to your LLM
+context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
+# answer = your_llm(question, context)</code></pre></div>
+      </div>
+      <div class="callout"><p><strong>Who does what:</strong> you handle file →
+      chunk → embedding (client-side, your model). Asteroid stores vectors +
+      metadata and does k-NN + metadata filtering. We don't embed text
+      server-side.</p></div>
+
+      <h2 id="cloud-limits">Limits &amp; tradeoffs</h2>
+      <p>Asteroid is disk-oriented: most of the index lives on disk in a
+      graph-oriented LSM-tree, with a page cache and batched reads on the hot
+      path. That keeps memory small and flat as data grows (why hosting is cheap
+      — see <a href="benchmark.html">benchmarks</a>), at the cost of read-path
+      I/O versus a pure in-RAM engine. For most search and RAG workloads the
+      difference is small and the cost savings are large.</p>
+      <p>Current characteristics to know:</p>
+      <ul>
+        <li>Vector ids are 64-bit unsigned integers (no string/UUID ids).</li>
+        <li>Distance metrics: <strong>L2</strong> and <strong>cosine</strong>.</li>
+        <li>One instance = one index (no collections/namespaces). Dimension is
+        fixed per instance.</li>
+        <li>Vectors are stored SQ8-quantized; <code>get</code> is lossy (see
+        Fetch &amp; delete).</li>
+        <li>Bring-your-own embeddings (no server-side embedding).</li>
       </ul>
 
-      <h4>System Libraries</h4>
+      <!-- ==================== ASTEROID DATABASE (LSM-Vec) ==================== -->
 
-      <p><strong>Ubuntu / Debian</strong></p>
-      <pre><code>sudo apt-get update
-sudo apt-get install -y \
-  build-essential cmake libboost-dev \
-  libzstd-dev libsnappy-dev liblz4-dev libbz2-dev zlib1g-dev</code></pre>
+      <h2 id="db-overview">Asteroid Database (LSM-Vec) — Overview</h2>
+      <div class="group-intro">
+        <p><strong>Asteroid Database</strong> is the open-source engine —
+        <strong>LSM-Vec</strong> — that powers Asteroid Cloud. You can embed it
+        directly (C++ library or Python bindings) or self-host it. This section
+        documents the engine's interfaces; code blocks switch between
+        <strong>C++</strong> and <strong>Python (pybind)</strong>.</p>
+      </div>
+      <p>LSM-Vec combines an HNSW graph index with <strong>Aster</strong> (a
+      RocksDB fork providing graph-oriented LSM-tree storage). Layer-0 graph
+      edges are persisted on disk; upper layers stay in memory. To run it as an
+      HTTP service with the same API as Asteroid Cloud, see
+      <a href="#ref-server">Run the server</a>.</p>
 
-      <p><strong>macOS (Homebrew)</strong></p>
-      <pre><code>brew install cmake boost zstd snappy lz4 bzip2</code></pre>
-
-      <h3>Step 1 -- Build Aster</h3>
-      <p>Aster is included as a Git submodule. Initialize it and build the static library:</p>
-      <pre><code>git submodule update --init --recursive
-make aster</code></pre>
-      <p>This produces <code>lib/aster/librocksdb.a</code>. The build typically takes a few minutes and uses all available cores automatically.</p>
-
-      <h3>Step 2 -- Build the LSM-Vec Libraries</h3>
-      <pre><code>make lib</code></pre>
-      <p>Outputs:</p>
-      <table>
-        <thead>
-          <tr><th>File</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>build/lib/liblsmvec.a</code></td><td>Static library</td></tr>
-          <tr><td><code>build/lib/liblsmvec.so</code> (Linux) / <code>liblsmvec.dylib</code> (macOS)</td><td>Shared library</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Step 3 -- Build the Test Binary</h3>
-      <pre><code>make bin</code></pre>
-      <p>The executable <code>lsm_vec</code> is placed in <code>build/bin/</code>. It reads a vector dataset, builds the HNSW index, runs k-NN queries, and compares results against a ground truth file.</p>
-
-      <h3>One-Shot Build</h3>
-      <pre><code>make          # equivalent to: make lib bin</code></pre>
-
-      <h3>Cleaning</h3>
-      <pre><code>make clean    # removes the build/ directory</code></pre>
-
-      <!-- ==================== QUICK START PYTHON ==================== -->
-
-      <h2 id="quickstart-python">Quick Start (Python)</h2>
-
-      <p><strong>Prerequisite:</strong> Aster must be built first (see Step 1 above). And please install <code>ninja-build</code> first.</p>
-
-      <pre><code>git submodule update --init --recursive   # if not done already
-make aster                                 # builds lib/aster/librocksdb.a
-python -m pip install .                    # builds and installs the lsm_vec module</code></pre>
-
-      <p><code>python -m pip install .</code> handles the entire compilation internally via scikit-build-core. You do <strong>not</strong> need to run <code>make lib</code> beforehand.</p>
-
-      <p>To verify:</p>
-      <pre><code>python -c "import lsm_vec; print('OK')"</code></pre>
-
-      <!-- ==================== C++ API ==================== -->
-
-      <h2 id="cpp-open-close">C++ API: Open / Close</h2>
-
-      <p>All types live in the <code>lsm_vec</code> namespace. Every mutating or querying method returns a <code>Status</code> object (aliased from RocksDB). Call <code>.ok()</code> to check for success and <code>.ToString()</code> for an error message.</p>
-
-      <pre><code>#include "lsm_vec_db.h"
+      <h2 id="db-quickstart">Quickstart</h2>
+      <p>Build the libraries (see <a href="#ref-build">Build from source</a>),
+      then open a database, insert, and search.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="cpp">C++</button>
+          <button class="tab-btn" data-lang="python">Python</button>
+        </div>
+        <div class="tab-panel" data-lang="cpp"><pre><code>#include "lsm_vec_db.h"
 using namespace lsm_vec;
 
-// Configure
 LSMVecDBOptions opts;
-opts.dim = 128;                              // required
-opts.vector_file_path = "./db/vectors.bin";  // required
-opts.reinit = true;                          // true = start fresh
+opts.dim = 128;
+opts.vector_file_path = "./db/vectors.bin";
+opts.reinit = true;                       // start fresh
 
-// Open
 std::unique_ptr&lt;LSMVecDB&gt; db;
 Status s = LSMVecDB::Open("./db", opts, &amp;db);
-if (!s.ok()) { /* handle error */ }
 
-// ... use the database ...
+std::vector&lt;float&gt; v(128, 0.1f);
+db-&gt;Insert(1, v);
 
-// Close
-db-&gt;Close();</code></pre>
-
-      <h4>LSMVecDB::Open</h4>
-      <pre><code>static Status Open(const std::string&amp; path,
-                   const LSMVecDBOptions&amp; opts,
-                   std::unique_ptr&lt;LSMVecDB&gt;* db);</code></pre>
-      <p>Creates or opens a database at the given directory.</p>
-      <table>
-        <thead>
-          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>path</code></td><td><code>const std::string&amp;</code></td><td>Directory for database files. Created automatically if it does not exist.</td></tr>
-          <tr><td><code>opts</code></td><td><code>const LSMVecDBOptions&amp;</code></td><td>Configuration. <code>opts.dim</code> must be &gt; 0.</td></tr>
-          <tr><td><code>db</code></td><td><code>std::unique_ptr&lt;LSMVecDB&gt;*</code></td><td>On success, <code>*db</code> holds the opened database handle.</td></tr>
-        </tbody>
-      </table>
-
-      <h4>LSMVecDB::Close</h4>
-      <pre><code>Status Close();</code></pre>
-      <p>Flushes pending writes and releases all resources. The handle is unusable after this call.</p>
-
-      <!-- ==================== C++ INSERT ==================== -->
-
-      <h2 id="cpp-insert">C++ API: Insert</h2>
-
-      <pre><code>std::vector&lt;float&gt; vec(128, 0.5f);
-db-&gt;Insert(42, Span&lt;float&gt;(vec));</code></pre>
-
-      <h4>LSMVecDB::Insert</h4>
-      <pre><code>Status Insert(node_id_t id, Span&lt;float&gt; vec);</code></pre>
-      <table>
-        <thead>
-          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>id</code></td><td><code>node_id_t</code> (<code>uint64_t</code>)</td><td>Unique identifier for this vector.</td></tr>
-          <tr><td><code>vec</code></td><td><code>Span&lt;float&gt;</code></td><td>Vector data. Length must equal <code>opts.dim</code>. A <code>std::vector&lt;float&gt;</code> converts implicitly.</td></tr>
-        </tbody>
-      </table>
-      <p>Inserts a new vector and builds its HNSW graph connections. Returns <code>InvalidArgument</code> if the dimension mismatches.</p>
-
-      <!-- ==================== C++ SEARCH ==================== -->
-
-      <h2 id="cpp-search">C++ API: Search</h2>
-
-      <pre><code>std::vector&lt;float&gt; query(128, 0.1f);
-
-SearchOptions search_opts;
-search_opts.k = 10;           // number of neighbors
-search_opts.ef_search = 128;  // candidate pool size (higher = better recall)
-
+SearchOptions so; so.k = 10; so.ef_search = 128;
 std::vector&lt;SearchResult&gt; results;
-db-&gt;SearchKnn(Span&lt;float&gt;(query), search_opts, &amp;results);
+db-&gt;SearchKnn(v, so, &amp;results);
 
-for (const auto&amp; r : results) {
-    std::cout &lt;&lt; "id=" &lt;&lt; r.id &lt;&lt; " dist=" &lt;&lt; r.distance &lt;&lt; "\n";
-}</code></pre>
-
-      <h4>LSMVecDB::SearchKnn</h4>
-      <pre><code>Status SearchKnn(Span&lt;float&gt; query,
-                 const SearchOptions&amp; options,
-                 std::vector&lt;SearchResult&gt;* out);</code></pre>
-      <table>
-        <thead>
-          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>query</code></td><td><code>Span&lt;float&gt;</code></td><td>Query vector. Length must equal <code>opts.dim</code>.</td></tr>
-          <tr><td><code>options</code></td><td><code>const SearchOptions&amp;</code></td><td>Search parameters (see below).</td></tr>
-          <tr><td><code>out</code></td><td><code>std::vector&lt;SearchResult&gt;*</code></td><td>Results sorted by ascending distance, up to <code>k</code> entries.</td></tr>
-        </tbody>
-      </table>
-
-      <h4>SearchOptions</h4>
-      <table>
-        <thead>
-          <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>k</code></td><td><code>int</code></td><td><code>1</code></td><td>Number of nearest neighbors to return.</td></tr>
-          <tr><td><code>ef_search</code></td><td><code>int</code></td><td><code>64</code></td><td>Candidate pool size during search. Must be &gt;= <code>k</code>. Higher values improve recall at the cost of latency.</td></tr>
-        </tbody>
-      </table>
-
-      <h4>SearchResult</h4>
-      <table>
-        <thead>
-          <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>id</code></td><td><code>node_id_t</code></td><td>Identifier of the matched vector.</td></tr>
-          <tr><td><code>distance</code></td><td><code>float</code></td><td>Distance from the query vector.</td></tr>
-        </tbody>
-      </table>
-
-      <!-- ==================== C++ CRUD ==================== -->
-
-      <h2 id="cpp-crud">C++ API: Get / Update / Delete</h2>
-
-      <h4>LSMVecDB::Get</h4>
-      <pre><code>Status Get(node_id_t id, std::vector&lt;float&gt;* vec);</code></pre>
-      <p>Retrieves the vector for a given ID. <code>vec</code> is resized to <code>opts.dim</code> on success. Returns <code>NotFound</code> if the ID does not exist.</p>
-
-      <h4>LSMVecDB::Update</h4>
-      <pre><code>Status Update(node_id_t id, Span&lt;float&gt; vec);</code></pre>
-      <p>Replaces the vector data for an existing ID and rebuilds its graph connections. Returns <code>NotFound</code> if the ID does not exist.</p>
-
-      <h4>LSMVecDB::Delete</h4>
-      <pre><code>Status Delete(node_id_t id);</code></pre>
-      <p>Marks a vector as deleted. Deleted vectors are excluded from future search results.</p>
-
-      <h4>LSMVecDB::printStatistics</h4>
-      <pre><code>void printStatistics() const;</code></pre>
-      <p>Prints I/O and timing statistics to stdout. Only meaningful when <code>opts.enable_stats = true</code>.</p>
-
-      <!-- ==================== C++ CONFIG ==================== -->
-
-      <h2 id="cpp-config">C++ API: Configuration</h2>
-
-      <h3>LSMVecDBOptions</h3>
-      <p>Pass this struct to <code>LSMVecDB::Open()</code>.</p>
-      <pre><code>LSMVecDBOptions opts;
-opts.dim = 128;
-opts.metric = DistanceMetric::kL2;
-// ... set other fields as needed ...</code></pre>
-
-      <table>
-        <thead>
-          <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>dim</code></td><td><code>int</code></td><td><code>0</code></td><td><strong>Required.</strong> Dimensionality of vectors.</td></tr>
-          <tr><td><code>metric</code></td><td><code>DistanceMetric</code></td><td><code>kL2</code></td><td>Distance metric (<code>kL2</code> or <code>kCosine</code>).</td></tr>
-          <tr><td><code>m</code></td><td><code>int</code></td><td><code>8</code></td><td>HNSW: bi-directional links created per node at layer 0.</td></tr>
-          <tr><td><code>m_max</code></td><td><code>int</code></td><td><code>16</code></td><td>HNSW: max neighbors per node at upper layers.</td></tr>
-          <tr><td><code>ef_construction</code></td><td><code>float</code></td><td><code>32.0</code></td><td>HNSW: candidate pool size during index construction.</td></tr>
-          <tr><td><code>vec_file_capacity</code></td><td><code>size_t</code></td><td><code>100000</code></td><td>Initial vector file capacity. Auto-expands with PagedVectorStorage.</td></tr>
-          <tr><td><code>paged_max_cached_pages</code></td><td><code>size_t</code></td><td><code>4096</code></td><td>Number of 4 KB pages in the user-space page cache.</td></tr>
-          <tr><td><code>vector_storage_type</code></td><td><code>int</code></td><td><code>1</code></td><td><code>0</code> = BasicVectorStorage (flat file), <code>1</code> = PagedVectorStorage (paged + cached).</td></tr>
-          <tr><td><code>db_target_size</code></td><td><code>uint64_t</code></td><td>~100 GiB</td><td>Target file size hint for Aster (RocksDB).</td></tr>
-          <tr><td><code>random_seed</code></td><td><code>int</code></td><td><code>12345</code></td><td>RNG seed for HNSW level generation.</td></tr>
-          <tr><td><code>enable_stats</code></td><td><code>bool</code></td><td><code>false</code></td><td>Collect I/O and timing statistics.</td></tr>
-          <tr><td><code>enable_batch_read</code></td><td><code>bool</code></td><td><code>true</code></td><td>Group vector reads by page during search.</td></tr>
-          <tr><td><code>reinit</code></td><td><code>bool</code></td><td><code>false</code></td><td><code>true</code> = wipe existing data; <code>false</code> = reopen.</td></tr>
-          <tr><td><code>vector_file_path</code></td><td><code>string</code></td><td><code>""</code></td><td>Path for vector storage file.</td></tr>
-          <tr><td><code>log_file_path</code></td><td><code>string</code></td><td><code>""</code></td><td>Path for log file (empty = no file logging).</td></tr>
-        </tbody>
-      </table>
-
-      <p><strong>Tuning tips:</strong></p>
-      <ul>
-        <li>Higher <code>m</code> and <code>ef_construction</code> &rarr; better recall, slower indexing.</li>
-        <li>Higher <code>ef_search</code> &rarr; better recall, slower queries.</li>
-        <li>Higher <code>paged_max_cached_pages</code> &rarr; more RAM, fewer disk reads.</li>
-      </ul>
-
-      <!-- ==================== C++ TYPES ==================== -->
-
-      <h2 id="cpp-types">C++ API: Types</h2>
-
-      <h4>DistanceMetric</h4>
-      <pre><code>enum class DistanceMetric {
-    kL2,      // Euclidean distance
-    kCosine,  // 1 - cosine_similarity
-};</code></pre>
-
-      <h4>node_id_t</h4>
-      <pre><code>using node_id_t = std::uint64_t;</code></pre>
-      <p>Unique 64-bit vector identifier.</p>
-
-      <h4>Span&lt;T&gt;</h4>
-      <p>A lightweight, non-owning view over contiguous memory (similar to C++20 <code>std::span</code>). You rarely need to construct one explicitly because <code>std::vector&lt;float&gt;</code> converts to <code>Span&lt;float&gt;</code> implicitly.</p>
-      <pre><code>std::vector&lt;float&gt; vec(128);
-db-&gt;Insert(0, vec);  // implicit Span&lt;float&gt;(vec)</code></pre>
-
-      <!-- ==================== PYTHON API ==================== -->
-
-      <h2 id="py-install">Python API: Installation</h2>
-
-      <pre><code>git submodule update --init --recursive
-make aster
-python -m pip install .</code></pre>
-      <p>Verify:</p>
-      <pre><code>python -c "import lsm_vec; print('OK')"</code></pre>
-
-      <!-- ==================== PYTHON OPEN/CLOSE ==================== -->
-
-      <h2 id="py-open-close">Python API: Open / Close</h2>
-
-      <pre><code>import os
-import lsm_vec
+db-&gt;Close();</code></pre></div>
+        <div class="tab-panel" data-lang="python" hidden><pre><code>import lsm_vec   # the engine module (pybind); distinct from lsmvec-client
 
 opts = lsm_vec.LSMVecDBOptions()
 opts.dim = 128
 opts.vector_file_path = "./db/vectors.bin"
 opts.reinit = True
 
-os.makedirs("./db", exist_ok=True)
 db = lsm_vec.LSMVecDB.open("./db", opts)
-
-# ... use the database ...
-
-db.close()</code></pre>
-
-      <h4>LSMVecDB.open</h4>
-      <pre><code>db = lsm_vec.LSMVecDB.open(path: str, opts: LSMVecDBOptions) -&gt; LSMVecDB</code></pre>
-      <p>Opens or creates a database. Raises <code>ValueError</code> on invalid arguments, <code>RuntimeError</code> on I/O errors.</p>
-
-      <h4>db.close</h4>
-      <pre><code>db.close() -&gt; None</code></pre>
-
-      <!-- ==================== PYTHON INSERT ==================== -->
-
-      <h2 id="py-insert">Python API: Insert</h2>
-
-      <p>Accepts both Python lists and NumPy arrays.</p>
-      <pre><code>db.insert(0, [0.1] * 128)
-
-import numpy as np
-db.insert(1, np.random.rand(128).astype(np.float32))</code></pre>
-
-      <h4>db.insert</h4>
-      <pre><code>db.insert(id: int, vector: list[float] | numpy.ndarray) -&gt; None</code></pre>
-      <table>
-        <thead>
-          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>id</code></td><td><code>int</code></td><td>Unique vector identifier.</td></tr>
-          <tr><td><code>vector</code></td><td><code>list[float]</code> or <code>numpy.ndarray</code> (float32, 1-D)</td><td>Must have length <code>opts.dim</code>.</td></tr>
-        </tbody>
-      </table>
-      <p>Raises <code>ValueError</code> on dimension mismatch.</p>
-
-      <!-- ==================== PYTHON SEARCH ==================== -->
-
-      <h2 id="py-search">Python API: Search</h2>
-
-      <pre><code># With SearchOptions
-search_opts = lsm_vec.SearchOptions()
-search_opts.k = 10
-search_opts.ef_search = 128
-results = db.search_knn([0.1] * 128, search_opts)
-
-# Or with k and ef_search directly
-results = db.search_knn(query_array, k=10, ef_search=128)
-
-for r in results:
-    print(f"id={r.id}  distance={r.distance:.4f}")</code></pre>
-
-      <h4>db.search_knn</h4>
-      <pre><code># Option A: with SearchOptions
-db.search_knn(query, opts: SearchOptions) -&gt; list[SearchResult]
-
-# Option B: with explicit parameters
-db.search_knn(query, k: int, ef_search: int) -&gt; list[SearchResult]</code></pre>
-      <p><code>query</code> can be a <code>list[float]</code> or a 1-D <code>numpy.ndarray</code> of float32.</p>
-
-      <h4>SearchOptions</h4>
-      <table>
-        <thead>
-          <tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>k</code></td><td><code>int</code></td><td><code>1</code></td><td>Number of nearest neighbors.</td></tr>
-          <tr><td><code>ef_search</code></td><td><code>int</code></td><td><code>64</code></td><td>Candidate pool size. Must be &gt;= <code>k</code>.</td></tr>
-        </tbody>
-      </table>
-
-      <h4>SearchResult</h4>
-      <table>
-        <thead>
-          <tr><th>Property</th><th>Type</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>id</code></td><td><code>int</code></td><td>Vector identifier (read-only).</td></tr>
-          <tr><td><code>distance</code></td><td><code>float</code></td><td>Distance from query (read-only).</td></tr>
-        </tbody>
-      </table>
-
-      <!-- ==================== PYTHON CRUD ==================== -->
-
-      <h2 id="py-crud">Python API: Get / Update / Delete</h2>
-
-      <h4>db.get</h4>
-      <pre><code>vec = db.get(id: int) -&gt; numpy.ndarray  # float32, 1-D</code></pre>
-      <p>Raises <code>KeyError</code> if the ID does not exist.</p>
-
-      <h4>db.update</h4>
-      <pre><code>db.update(id: int, vector: list[float] | numpy.ndarray) -&gt; None</code></pre>
-      <p>Raises <code>KeyError</code> if the ID does not exist.</p>
-
-      <h4>db.delete</h4>
-      <pre><code>db.delete(id: int) -&gt; None</code></pre>
-
-      <!-- ==================== PYTHON CONFIG ==================== -->
-
-      <h2 id="py-config">Python API: Configuration</h2>
-
-      <h3>LSMVecDBOptions</h3>
-      <p>All properties are read-write.</p>
-      <pre><code>opts = lsm_vec.LSMVecDBOptions()
-opts.dim = 128
-opts.metric = lsm_vec.DistanceMetric.Cosine</code></pre>
-
-      <table>
-        <thead>
-          <tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>dim</code></td><td><code>int</code></td><td><code>0</code></td><td><strong>Required.</strong> Vector dimensionality.</td></tr>
-          <tr><td><code>metric</code></td><td><code>DistanceMetric</code></td><td><code>L2</code></td><td><code>L2</code> or <code>Cosine</code>.</td></tr>
-          <tr><td><code>m</code></td><td><code>int</code></td><td><code>8</code></td><td>HNSW connections per node.</td></tr>
-          <tr><td><code>m_max</code></td><td><code>int</code></td><td><code>16</code></td><td>Max neighbors at upper layers.</td></tr>
-          <tr><td><code>ef_construction</code></td><td><code>float</code></td><td><code>32.0</code></td><td>Construction-time candidate pool.</td></tr>
-          <tr><td><code>vec_file_capacity</code></td><td><code>int</code></td><td><code>100000</code></td><td>Initial vector file capacity.</td></tr>
-          <tr><td><code>paged_max_cached_pages</code></td><td><code>int</code></td><td><code>4096</code></td><td>Page cache size (4 KB pages).</td></tr>
-          <tr><td><code>vector_storage_type</code></td><td><code>int</code></td><td><code>1</code></td><td><code>0</code> = basic, <code>1</code> = paged.</td></tr>
-          <tr><td><code>db_target_size</code></td><td><code>int</code></td><td>~100 GiB</td><td>Aster target file size.</td></tr>
-          <tr><td><code>random_seed</code></td><td><code>int</code></td><td><code>12345</code></td><td>RNG seed.</td></tr>
-          <tr><td><code>enable_stats</code></td><td><code>bool</code></td><td><code>False</code></td><td>Collect statistics.</td></tr>
-          <tr><td><code>enable_batch_read</code></td><td><code>bool</code></td><td><code>True</code></td><td>Batch vector reads by page.</td></tr>
-          <tr><td><code>reinit</code></td><td><code>bool</code></td><td><code>False</code></td><td>Wipe existing data on open.</td></tr>
-          <tr><td><code>vector_file_path</code></td><td><code>str</code></td><td><code>""</code></td><td>Vector storage file path.</td></tr>
-          <tr><td><code>log_file_path</code></td><td><code>str</code></td><td><code>""</code></td><td>Log file path.</td></tr>
-        </tbody>
-      </table>
-
-      <h4>DistanceMetric</h4>
-      <pre><code>lsm_vec.DistanceMetric.L2      # Euclidean distance
-lsm_vec.DistanceMetric.Cosine  # 1 - cosine similarity</code></pre>
-
-      <!-- ==================== PYTHON ERRORS ==================== -->
-
-      <h2 id="py-errors">Python API: Error Handling</h2>
-
-      <table>
-        <thead>
-          <tr><th>C++ Status</th><th>Python Exception</th><th>When</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>InvalidArgument</code></td><td><code>ValueError</code></td><td>Dimension mismatch, bad parameters.</td></tr>
-          <tr><td><code>NotFound</code></td><td><code>KeyError</code></td><td>Vector ID not found.</td></tr>
-          <tr><td>Other errors</td><td><code>RuntimeError</code></td><td>I/O failures, database errors.</td></tr>
-        </tbody>
-      </table>
-
-      <!-- ==================== EXAMPLES ==================== -->
-
-      <h2 id="ex-cpp">Example: C++ Embedding</h2>
-
-      <p>Include headers from <code>include/</code> and link against <code>liblsmvec.a</code> (static) or <code>liblsmvec.so</code> / <code>liblsmvec.dylib</code> (shared). Transitive link dependencies: <code>rocksdb</code> (Aster), <code>zstd</code>, <code>snappy</code>, <code>lz4</code>, <code>bz2</code>, <code>z</code>, <code>pthread</code>, <code>dl</code>. On macOS, <code>jemalloc</code> is also required.</p>
-
-      <pre><code>#include "lsm_vec_db.h"
-
-lsm_vec::LSMVecDBOptions opts;
-opts.dim = 128;
-opts.vector_file_path = "./db/vectors.bin";
-
-std::unique_ptr&lt;lsm_vec::LSMVecDB&gt; db;
-auto s = lsm_vec::LSMVecDB::Open("./db", opts, &amp;db);
-
-// Insert
-std::vector&lt;float&gt; vec(128, 0.1f);
-db-&gt;Insert(0, vec);
-
-// Search (uses k and ef_search from opts)
-std::vector&lt;lsm_vec::SearchResult&gt; results;
-db-&gt;SearchKnn(vec, &amp;results);
-
-// Close
-db-&gt;Close();</code></pre>
-
-      <!-- ==================== PYTHON EXAMPLE ==================== -->
-
-      <h2 id="ex-python">Example: Python Quick Start</h2>
-
-      <pre><code>import lsm_vec
-import os
-
-opts = lsm_vec.LSMVecDBOptions()
-opts.dim = 128
-db_dir = "./run/db/"
-opts.vector_file_path = os.path.join(db_dir, "vectors.bin")
-opts.reinit = True
-
-db = lsm_vec.LSMVecDB.open(db_dir, opts)
-
 db.insert(1, [0.1] * 128)
 
-# Search (uses k and ef_search from opts)
-results = db.search_knn([0.1] * 128)
-print(results[0].id, results[0].distance)</code></pre>
-
-      <!-- ==================== NUMPY EXAMPLE ==================== -->
-
-      <h2 id="ex-numpy">Example: NumPy</h2>
-
-      <pre><code>import numpy as np
-import lsm_vec
-
-opts = lsm_vec.LSMVecDBOptions()
-opts.dim = 128
-opts.k = 5
-opts.ef_search = 100
-opts.vector_file_path = "./run/db/vectors.bin"
-opts.reinit = True
-
-os.makedirs("./run/db/", exist_ok=True)
-db = lsm_vec.LSMVecDB.open("./run/db/", opts)
-
-vec = np.random.rand(128).astype(np.float32)
-db.insert(42, vec)
-
-query = np.random.rand(128).astype(np.float32)
-results = db.search_knn(query)
+results = db.search_knn([0.1] * 128, k=10, ef_search=128)
 for r in results:
-    print(f"id={r.id}  distance={r.distance:.4f}")
+    print(r.id, r.distance)
 
-db.close()</code></pre>
-
-      <!-- ==================== ARCHITECTURE ==================== -->
-
-      <h2 id="architecture">Implementation Details</h2>
-
-      <p>LSMVecDB is the public API layer, handling database lifecycle (Open/Close), input validation, metadata serialization, and deleted-ID tracking. It delegates all indexing operations to LSMVec.</p>
-
-      <p>LSMVec implements the HNSW algorithm. Layer-0 graph edges are persisted in Aster's RocksGraph (an LSM-tree backed graph store), while upper-layer edges are kept in an in-memory map for fast hierarchical navigation.</p>
-
-      <p>Raw vector data is managed by IVectorStorage, which offers two backends: BasicVectorStorage (a contiguous flat file addressed by ID offset) and PagedVectorStorage (4 KB page-managed layout with a user-space FIFO page cache that co-locates vectors sharing the same HNSW entry point for better spatial locality).</p>
-
-      <div class="arch-diagram">
-        <svg width="420" height="320" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- LSMVecDB box -->
-          <rect x="110" y="16" width="200" height="48" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
-          <text x="210" y="46" text-anchor="middle" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">LSMVecDB</text>
-          <text x="210" y="58" text-anchor="middle" fill="var(--text-muted)" font-family="DM Sans, sans-serif" font-size="10">(Public API)</text>
-
-          <!-- Arrow down -->
-          <line x1="210" y1="64" x2="210" y2="104" stroke="var(--text-muted)" stroke-width="1.5"/>
-          <polygon points="204,100 210,112 216,100" fill="var(--text-muted)"/>
-
-          <!-- LSMVec box -->
-          <rect x="110" y="112" width="200" height="48" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
-          <text x="210" y="142" text-anchor="middle" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">LSMVec</text>
-          <text x="210" y="154" text-anchor="middle" fill="var(--text-muted)" font-family="DM Sans, sans-serif" font-size="10">(HNSW Index)</text>
-
-          <!-- Arrow down-left -->
-          <line x1="170" y1="160" x2="110" y2="208" stroke="var(--text-muted)" stroke-width="1.5"/>
-          <polygon points="104,204 110,216 116,204" fill="var(--text-muted)"/>
-
-          <!-- Arrow down-right -->
-          <line x1="250" y1="160" x2="310" y2="208" stroke="var(--text-muted)" stroke-width="1.5"/>
-          <polygon points="304,204 310,216 316,204" fill="var(--text-muted)"/>
-
-          <!-- RocksGraph box -->
-          <rect x="20" y="216" width="180" height="48" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
-          <text x="110" y="244" text-anchor="middle" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600">RocksGraph</text>
-          <text x="110" y="258" text-anchor="middle" fill="var(--text-muted)" font-family="DM Sans, sans-serif" font-size="10">(Aster)</text>
-
-          <!-- IVectorStorage box -->
-          <rect x="220" y="216" width="180" height="48" rx="8" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
-          <text x="310" y="244" text-anchor="middle" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600">IVectorStorage</text>
-          <text x="310" y="258" text-anchor="middle" fill="var(--text-muted)" font-family="DM Sans, sans-serif" font-size="10">(Basic / Paged)</text>
-        </svg>
+db.close()</code></pre></div>
       </div>
+      <div class="callout"><p>The engine Python module is
+      <code>import lsm_vec</code> (pybind bindings) — <em>not</em> the same as the
+      Cloud client <code>lsmvec-client</code> (<code>import lsmvec_client</code>).</p></div>
+
+      <h2 id="db-insert">Insert / update / delete</h2>
+      <p><code>Insert</code> takes an id and a vector, with an optional JSON
+      metadata string. <code>Update</code> replaces a vector; <code>Delete</code>
+      tombstones it. Payloads have their own getters/setters.</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="cpp">C++</button>
+          <button class="tab-btn" data-lang="python">Python</button>
+        </div>
+        <div class="tab-panel" data-lang="cpp"><pre><code>db-&gt;Insert(1, vec);
+db-&gt;Insert(2, vec, R"({"category":"docs"})");   // with metadata
+db-&gt;SetPayload(1, R"({"category":"docs"})");
+db-&gt;Update(1, new_vec);
+db-&gt;Delete(2);</code></pre></div>
+        <div class="tab-panel" data-lang="python" hidden><pre><code>db.insert(1, vec)
+db.set_payload(1, {"category": "docs"})
+db.get_payload(1)
+db.update(1, new_vec)
+db.delete(2)</code></pre></div>
+      </div>
+
+      <h2 id="db-search">Search</h2>
+      <p><code>SearchKnn</code> returns results ordered by ascending distance.
+      An overload accepts a metadata filter (same predicate syntax as
+      <a href="#cloud-filter">Filter by metadata</a>).</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="cpp">C++</button>
+          <button class="tab-btn" data-lang="python">Python</button>
+        </div>
+        <div class="tab-panel" data-lang="cpp"><pre><code>SearchOptions so; so.k = 10; so.ef_search = 128;
+std::vector&lt;SearchResult&gt; results;
+
+// plain k-NN
+db-&gt;SearchKnn(query, so, &amp;results);
+
+// with a metadata filter
+db-&gt;SearchKnn(query, so, R"({"category":{"$eq":"docs"}})", &amp;results);</code></pre></div>
+        <div class="tab-panel" data-lang="python" hidden><pre><code>results = db.search_knn(query, k=10, ef_search=128)
+
+# filtered search
+results = db.search(query, k=10,
+                    filter={"category": {"$eq": "docs"}})</code></pre></div>
+      </div>
+
+      <h2 id="db-bulk">Bulk build</h2>
+      <p>Build the whole index in memory from <code>n</code> contiguous vectors,
+      then write to disk in one pass. Initial-load only — the database must be
+      empty (ids are assigned <code>0..n-1</code> in order).</p>
+      <div class="code-tabs" data-tabs>
+        <div class="tab-btns">
+          <button class="tab-btn active" data-lang="cpp">C++</button>
+          <button class="tab-btn" data-lang="python">Python</button>
+        </div>
+        <div class="tab-panel" data-lang="cpp"><pre><code>// flat: n * dim contiguous float32 values
+BulkBuildOptions bopts;        // threads and build params
+db-&gt;BulkBuild(Span&lt;const float&gt;(flat.data(), flat.size()), n, bopts);</code></pre></div>
+        <div class="tab-panel" data-lang="python" hidden><pre><code># The engine's Python bindings (import lsm_vec) do not expose bulk build.
+# Use per-vector db.insert(...), or use Asteroid Cloud / the HTTP server's
+# POST /v1/build/bulk endpoint for one-pass initial loads.</code></pre></div>
+      </div>
+
+      <h2 id="db-config">Configuration &amp; defaults</h2>
+      <p>Pass <code>LSMVecDBOptions</code> to <code>Open</code>. The service
+      defaults are <code>m=8</code>, <code>m_max=24</code>,
+      <code>ef_construction=32</code>.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>dim</code></td><td>0</td><td><strong>Required.</strong> Vector dimensionality.</td></tr>
+          <tr><td><code>metric</code></td><td><code>kL2</code></td><td><code>kL2</code> or <code>kCosine</code>.</td></tr>
+          <tr><td><code>m</code></td><td>8</td><td>HNSW links per node at layer 0.</td></tr>
+          <tr><td><code>m_max</code></td><td>24</td><td>Max neighbors at upper layers.</td></tr>
+          <tr><td><code>ef_construction</code></td><td>32</td><td>Candidate pool during construction.</td></tr>
+          <tr><td><code>vector_storage_type</code></td><td>1</td><td>0 = flat file, 1 = paged + cached.</td></tr>
+          <tr><td><code>paged_max_cached_pages</code></td><td>4096</td><td>4 KB pages in the page cache.</td></tr>
+          <tr><td><code>reinit</code></td><td>false</td><td>true = wipe on open; false = reopen.</td></tr>
+          <tr><td><code>vector_file_path</code></td><td>""</td><td>Path for the vector storage file.</td></tr>
+        </tbody>
+      </table>
+      <p>Tuning: higher <code>m</code> / <code>ef_construction</code> → better
+      recall, slower indexing; higher <code>ef_search</code> → better recall,
+      slower queries.</p>
+
+      <!-- ==================== REFERENCE & DEPLOYMENT ==================== -->
+
+      <h2 id="ref-http">HTTP API reference</h2>
+      <p>All routes require <code>Authorization: Bearer &lt;api-key&gt;</code>
+      except <code>/health</code>. Bodies are JSON unless noted.</p>
+      <table>
+        <thead><tr><th>Method &amp; path</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>POST /v1/vectors</code></td><td>Insert a vector (with optional <code>metadata</code>).</td></tr>
+          <tr><td><code>PUT /v1/vectors/:id</code></td><td>Upsert (replace) the vector for an id.</td></tr>
+          <tr><td><code>GET /v1/vectors/:id</code></td><td>Fetch a vector.</td></tr>
+          <tr><td><code>DELETE /v1/vectors/:id</code></td><td>Delete a vector.</td></tr>
+          <tr><td><code>GET /v1/vectors/:id/payload</code></td><td>Get the JSON payload.</td></tr>
+          <tr><td><code>PUT /v1/vectors/:id/payload</code></td><td>Replace the payload.</td></tr>
+          <tr><td><code>PATCH /v1/vectors/:id/payload</code></td><td>Merge-patch the payload (RFC 7396).</td></tr>
+          <tr><td><code>POST /v1/search</code></td><td>k-NN search (<code>vector</code>, <code>k</code>, optional <code>ef_search</code>, <code>filter</code>).</td></tr>
+          <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only.</td></tr>
+          <tr><td><code>GET /v1/stats</code></td><td>Tombstone / bloom / counters.</td></tr>
+          <tr><td><code>GET /health</code></td><td>Unauthenticated liveness check.</td></tr>
+          <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
+        </tbody>
+      </table>
+      <p>Error codes: <code>400</code> invalid argument, <code>401</code>
+      unauthorized, <code>404</code> not found, <code>413</code> payload too
+      large, <code>429</code> rate limited, <code>5xx</code> server error.</p>
+
+      <h2 id="ref-client">Python client reference</h2>
+      <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
+      <code>urllib</code>; <code>numpy</code> optional for <code>bulk_build</code>).</p>
+      <table>
+        <thead><tr><th>Method</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>insert(id, vector, metadata=None)</code></td><td>Insert with optional metadata.</td></tr>
+          <tr><td><code>upsert(id, vector)</code></td><td>Insert-or-replace the vector.</td></tr>
+          <tr><td><code>get(id) -&gt; dict</code></td><td><code>{"id", "vector"}</code>.</td></tr>
+          <tr><td><code>delete(id)</code></td><td></td></tr>
+          <tr><td><code>get_payload(id)</code> / <code>set_payload(id, p)</code> / <code>merge_payload(id, p)</code></td><td>Payload read / replace / merge-patch.</td></tr>
+          <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
+          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load (empty DB only).</td></tr>
+          <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
+        </tbody>
+      </table>
+      <p>Errors map to typed exceptions (all subclass <code>LSMVecError</code>):
+      <code>InvalidArgument</code> (400), <code>Unauthorized</code> (401),
+      <code>NotFound</code> (404), <code>PayloadTooLarge</code> (413),
+      <code>RateLimited</code> (429), <code>ServerError</code> (5xx).</p>
+
+      <h2 id="ref-build">Build from source</h2>
+      <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost
+      (headers), and zstd / snappy / lz4 / bz2 / zlib. On macOS also jemalloc.</p>
+      <pre><code># initialize the Aster submodule, then build
+git submodule update --init --recursive
+make aster        # builds lib/aster/librocksdb.a (required first)
+make              # builds the static + shared libs and the test binary</code></pre>
+      <p>For the Python engine module (requires Aster built + ninja):</p>
+      <pre><code>python -m pip install .        # builds and installs the lsm_vec module
+python -c "import lsm_vec; print('OK')"</code></pre>
+
+      <h2 id="ref-server">Run the server (self-host)</h2>
+      <p>Self-host the same HTTP API as Asteroid Cloud. Run the
+      <code>lsm_vec_http</code> server (or the <code>lsmvec</code> Docker image),
+      then point <code>lsmvec-client</code> at your own host
+      (<code>base_url="http://localhost:8000"</code>) — everything in the
+      <a href="#cloud-overview">Asteroid Cloud</a> section applies unchanged.</p>
+      <pre><code># environment knobs (graph params + threads)
+LSMVEC_M=8 LSMVEC_MMAX=24 LSMVEC_EFC=32 LSMVEC_HTTP_THREADS=1 \
+  ./build/bin/lsm_vec_http   # serves the REST API on :8000</code></pre>
 
     </main>
   </div>
 
-  <!-- ===== Footer ===== -->
-  <footer class="footer container">Asteroid &mdash; NTU Siqiang Group</footer>
+  <footer class="footer container">
+    Asteroid &mdash; NTU Siqiang Group &nbsp;·&nbsp;
+    <a href="index.html" style="color:var(--text-muted)">Home</a> &nbsp;·&nbsp;
+    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a>
+  </footer>
 
-  <!-- ===== Scroll-spy & Sidebar JS ===== -->
+  <!-- ===== Scroll-spy + sidebar + code-tabs ===== -->
   <script>
     // Scroll-spy
-    const sections = document.querySelectorAll('.docs-content h2[id], .docs-content h3[id]');
+    const sections = document.querySelectorAll('.docs-content h2[id]');
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           sidebarLinks.forEach(link => link.classList.remove('active'));
-          const activeLink = document.querySelector(`.sidebar-link[href="#${entry.target.id}"]`);
-          if (activeLink) activeLink.classList.add('active');
+          const a = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+          if (a) a.classList.add('active');
         }
       });
     }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
 
-    sections.forEach(section => observer.observe(section));
-
-    // Smooth scroll
+    // Smooth scroll + close mobile sidebar
     sidebarLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // Close mobile sidebar
+        const t = document.querySelector(link.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
         document.getElementById('sidebar').classList.remove('open');
       });
     });
 
-    // Mobile sidebar toggle
     const sidebarToggle = document.getElementById('sidebar-toggle');
     if (sidebarToggle) {
-      sidebarToggle.addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-      });
+      sidebarToggle.addEventListener('click', () =>
+        document.getElementById('sidebar').classList.toggle('open'));
     }
+
+    // Code-language tabs. Picking a language applies to every block that has it
+    // (remembered in localStorage), so one switch flips the whole page.
+    function applyLang(lang) {
+      document.querySelectorAll('.code-tabs').forEach(box => {
+        const has = box.querySelector('.tab-btn[data-lang="' + lang + '"]');
+        if (!has) return;
+        box.querySelectorAll('.tab-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.lang === lang));
+        box.querySelectorAll('.tab-panel').forEach(p =>
+          p.hidden = (p.dataset.lang !== lang));
+      });
+      try { localStorage.setItem('docslang', lang); } catch (e) {}
+    }
+    document.querySelectorAll('.code-tabs .tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    const saved = (function(){ try { return localStorage.getItem('docslang'); } catch(e){ return null; } })();
+    if (saved) applyLang(saved);
   </script>
 
-<script>
-function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
-</script>
+  <script>
+  function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
+  </script>
 </body>
 </html>

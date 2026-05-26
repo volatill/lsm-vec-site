@@ -312,6 +312,35 @@ pre code {
   color: var(--text);
 }
 
+/* Code tabs (docs: switch Python / cURL / C++ within one example) */
+.code-tabs {
+  margin: 16px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.code-tabs .tab-btns {
+  display: flex;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.code-tabs .tab-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 9px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.code-tabs .tab-btn:hover { color: var(--text); }
+.code-tabs .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.code-tabs .tab-panel { margin: 0; }
+.code-tabs .tab-panel[hidden] { display: none; }
+.code-tabs .tab-panel pre { margin: 0; border: none; border-radius: 0; }
+
 /* --------------------------------------------------------------------------
    10. Tables (API documentation)
    -------------------------------------------------------------------------- */
