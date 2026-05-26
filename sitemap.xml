@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/</loc>
+    <loc>https://lsmvec.com/</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/docs.html</loc>
+    <loc>https://lsmvec.com/docs.html</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/docs-database.html</loc>
+    <loc>https://lsmvec.com/docs-database.html</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/docs-reference.html</loc>
+    <loc>https://lsmvec.com/docs-reference.html</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/pilot.html</loc>
+    <loc>https://lsmvec.com/pilot.html</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://volatill.github.io/lsm-vec-site/benchmark.html</loc>
+    <loc>https://lsmvec.com/benchmark.html</loc>
     <lastmod>2026-05-27</lastmod>
     <priority>0.6</priority>
   </url>

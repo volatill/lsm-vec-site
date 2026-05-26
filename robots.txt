@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://volatill.github.io/lsm-vec-site/sitemap.xml
+Sitemap: https://lsmvec.com/sitemap.xml
