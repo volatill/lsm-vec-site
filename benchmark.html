@@ -236,7 +236,7 @@
     }
 
     /* Server spec popovers — shown on hover/focus of the matching tab */
-    .tab-wrap { position: relative; display: inline-flex; }
+    .tab-wrap { position: relative; display: inline-flex; z-index: 70; }
 
     .spec-popover {
       position: absolute;
@@ -334,27 +334,6 @@
     <p style="margin-top:10px;font-size:14px;">Memory is the cost lever: a smaller footprint means lower infrastructure cost for large vector workloads. <a href="pilot.html" style="color:var(--accent)">Try it in pilot</a>.</p>
   </div>
 
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--milvus);"></div>Milvus HNSW
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--qdrant);"></div>Qdrant Local
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--weaviate);"></div>Weaviate
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--elastic);"></div>Elasticsearch
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--pgvector);"></div>PgVector
-    </div>
-    <div class="legend-item ours">
-      <div class="legend-dot" style="background: var(--lsmvec);"></div>Asteroid (ours)
-    </div>
-  </div>
-
   <div class="tabs">
     <div class="tab-wrap">
       <button class="tab active" onclick="switchServer('s1')">S1 Server</button>
@@ -375,6 +354,27 @@
         <div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">503 GB</span></div>
         <div class="spec-row"><span class="spec-label">OS</span><span class="spec-value">Ubuntu 22.04 · Linux 5.19</span></div>
       </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--milvus);"></div>Milvus HNSW
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--qdrant);"></div>Qdrant Local
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--weaviate);"></div>Weaviate
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--elastic);"></div>Elasticsearch
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--pgvector);"></div>PgVector
+    </div>
+    <div class="legend-item ours">
+      <div class="legend-dot" style="background: var(--lsmvec);"></div>Asteroid (ours)
     </div>
   </div>
 
