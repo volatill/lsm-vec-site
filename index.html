@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LSM-Vec — Memory-friendly Vector Database</title>
+  <title>LSM-Vec — Managed Vector Database</title>
+  <meta name="description" content="A managed, disk-oriented vector database for similarity search. Predictable low memory, flat monthly pricing with no per-query metering, and an API call away.">
+  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* ---- Hero ---- */
     .hero {
       text-align: center;
-      padding: 80px 32px;
-      max-width: 820px;
+      padding: 72px 32px 40px;
+      max-width: 860px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
@@ -32,7 +34,7 @@
       font-size: 18px;
       color: var(--text-muted);
       line-height: 1.7;
-      max-width: 660px;
+      max-width: 680px;
       margin: 0 auto 36px;
     }
 
@@ -41,6 +43,20 @@
       gap: 16px;
       justify-content: center;
       flex-wrap: wrap;
+    }
+
+    /* ---- Trust strip ---- */
+    .trust-strip {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 32px 8px;
+      position: relative;
+      z-index: 1;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
     }
 
     /* ---- Section headings ---- */
@@ -116,11 +132,127 @@
       color: var(--text-muted);
     }
 
-    /* ---- Fade-in animations ---- */
-    .fade-in {
-      animation: fadeIn 0.6s ease both;
+    /* ---- Quickstart band ---- */
+    .quickstart-band {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .quickstart-band .qs-copy h2 { margin-bottom: 12px; }
+    .quickstart-band .qs-copy p {
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+    .quickstart-band pre { margin: 0; }
+    @media (max-width: 820px) {
+      .quickstart-band { grid-template-columns: 1fr; gap: 24px; }
     }
 
+    /* ---- Closing CTA band ---- */
+    .cta-band {
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 56px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+    .cta-band h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+    .cta-band p { color: var(--text-muted); margin-bottom: 28px; font-size: 15px; }
+
+    /* ---- Pilot form ---- */
+    .pilot-section { max-width: 760px; margin: 0 auto; }
+    .pilot-free-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+    .pilot-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 28px;
+    }
+    .form-row { margin-bottom: 18px; }
+    .form-row.two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 600px) { .form-row.two { grid-template-columns: 1fr; } }
+    .form-row label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+    .form-row label .req { color: var(--accent); }
+    .form-row input[type="text"],
+    .form-row input[type="email"],
+    .form-row textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 13px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-row input:focus,
+    .form-row textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-row textarea { resize: vertical; min-height: 96px; }
+    .radio-group { display: flex; gap: 20px; flex-wrap: wrap; }
+    .radio-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+    .radio-group input { accent-color: var(--accent); }
+    /* Honeypot — visually and programmatically hidden from humans */
+    .hp-field {
+      position: absolute !important;
+      left: -9999px !important;
+      width: 1px; height: 1px;
+      overflow: hidden;
+    }
+    .form-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .form-status { font-size: 13px; line-height: 1.5; }
+    .form-status.ok { color: var(--accent); }
+    .form-status.err { color: #f87171; }
+    .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+    .form-fineprint { font-size: 12px; color: var(--text-muted); margin-top: 14px; opacity: 0.8; }
+
+    /* ---- Fade-in animations ---- */
+    .fade-in { animation: fadeIn 0.6s ease both; }
     .fade-in-d1 { animation-delay: 0.1s; }
     .fade-in-d2 { animation-delay: 0.2s; }
     .fade-in-d3 { animation-delay: 0.3s; }
@@ -139,30 +271,43 @@
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
       <a href="docs.html">Docs</a>
+      <a href="pricing.html">Pricing</a>
       <a href="benchmark.html">Benchmark</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
       <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
       </a>
+      <a href="#pilot" class="nav-cta">Request a pilot</a>
     </div>
   </nav>
 
   <!-- ===== Hero ===== -->
   <section class="hero fade-in">
-    <div class="badge">Memory-friendly Vector Database</div>
+    <div class="badge">Managed Vector Database</div>
     <h1 class="hero-title">LSM-Vec</h1>
     <p class="hero-subtitle">
-      A disk-oriented vector database for approximate nearest-neighbor search, managing HNSW graph index on-disk with graph-oriented LSM-tree storage.
+      A managed, disk-oriented vector database for similarity search. Predictable
+      low memory, flat monthly pricing with no per-query metering, and an API call
+      away — no clusters to size, no usage meter to watch.
     </p>
     <div class="hero-cta">
-      <a href="docs.html" class="btn btn-primary">Get Started</a>
-      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener" class="btn btn-secondary">GitHub</a>
+      <a href="#pilot" class="btn btn-primary">Request a pilot</a>
+      <a href="docs.html" class="btn btn-secondary">Read the docs</a>
     </div>
   </section>
 
-  <!-- ===== Key Differences ===== -->
+  <!-- ===== Trust strip ===== -->
+  <div class="trust-strip fade-in fade-in-d1">
+    In private pilot — built on the open-source LSM-Vec engine (NTU Siqiang Group).
+  </div>
+
+  <!-- ===== Why LSM-Vec ===== -->
   <section class="container fade-in fade-in-d2">
     <h2 class="section-heading">Why LSM-Vec?</h2>
-    <p class="section-subheading">Key differences from existing vector databases.</p>
+    <p class="section-subheading">A vector database designed to be cheap to run — and priced that way.</p>
 
     <div class="key-differences-grid">
       <!-- Card 1 -->
@@ -174,8 +319,8 @@
           <rect x="10" y="22" width="8" height="8" rx="1"/>
           <rect x="22" y="22" width="8" height="8" rx="1"/>
         </svg>
-        <h3>Minimal Memory Overhead</h3>
-        <p>Unlike many vector databases that keep large index state in memory, LSM-Vec is fully disk-oriented. Its memory footprint remains small and predictable even at large data scale.</p>
+        <h3>Predictably cheap to run</h3>
+        <p>A disk-oriented design keeps the memory footprint small and flat as your data grows. That makes the service inexpensive to host — and we pass the savings on as flat monthly pricing, with no per-query meter.</p>
       </div>
 
       <!-- Card 2 -->
@@ -188,8 +333,8 @@
           <line x1="13.5" y1="15.5" x2="18.5" y2="24.5"/>
           <line x1="26.5" y1="15.5" x2="21.5" y2="24.5"/>
         </svg>
-        <h3>Graph-Oriented LSM-Tree</h3>
-        <p>LSM-Vec stores the majority of the HNSW index within Aster, a RocksDB fork with a graph data model. This graph-oriented LSM-tree structure enables search and update performance comparable to in-memory vector databases.</p>
+        <h3>Performance close to in-memory</h3>
+        <p>Most of the HNSW index lives in a graph-oriented LSM-tree on disk (Aster), with a page cache and batched reads on the hot path. Search and update stay fast — see the <a href="benchmark.html" style="color:var(--accent)">benchmarks</a>.</p>
       </div>
 
       <!-- Card 3 -->
@@ -199,47 +344,252 @@
           <polyline points="28,10 36,20 28,30"/>
           <line x1="22" y1="8" x2="18" y2="32"/>
         </svg>
-        <h3>Embeddable &amp; Easy to Use</h3>
-        <p>LSM-Vec is offered as a lightweight C++ library with Python bindings. Build with a few commands, then link the library or import the module to get started.</p>
+        <h3>Managed, or run it yourself</h3>
+        <p>Start on the hosted service over HTTPS with an API key. Or self-host the same open-source engine behind the same HTTP API — a clear migration path to self-hosting, with no lock-in.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== Quickstart band ===== -->
+  <section class="container fade-in fade-in-d3">
+    <div class="quickstart-band">
+      <div class="qs-copy">
+        <h2 class="section-heading">From zero to first query in minutes</h2>
+        <p>Install the client, point it at your endpoint, insert your vectors, and search. You bring the embeddings; we handle storage, k-NN, and metadata filtering.</p>
+        <a href="docs.html#quickstart" class="btn btn-secondary">Full quickstart →</a>
+      </div>
+      <pre><code># pip install lsmvec-client
+from lsmvec_client import Client
+
+client = Client(api_key="sk-live-...",
+                base_url="https://api.lsmvec.com")
+
+client.insert(1, [0.10, 0.20, ...],
+              metadata={"category": "docs"})
+
+hits = client.search([0.10, 0.20, ...], k=10)
+for h in hits:
+    print(h.id, h.distance)</code></pre>
     </div>
   </section>
 
   <!-- ===== Features ===== -->
   <section class="container fade-in fade-in-d3">
     <h2 class="section-heading">Features</h2>
-    <p class="section-subheading">Everything you need for high-performance vector search on disk.</p>
+    <p class="section-subheading">Everything you need for production similarity search.</p>
 
     <div class="features-grid">
       <div class="feature-item">
-        <h4>HNSW Graph Index</h4>
-        <p>Disk-oriented design with LSM-tree Based Data Structure</p>
+        <h4>Filtered similarity search</h4>
+        <p>Combine vector k-NN with rich metadata predicates (<code>$eq</code>, <code>$in</code>, ranges, <code>$and</code>/<code>$or</code>, and more) in a single query.</p>
       </div>
       <div class="feature-item">
-        <h4>Dual Vector Storage</h4>
-        <p>BasicVectorStorage (flat file) and PagedVectorStorage (4KB page-managed with FIFO cache)</p>
+        <h4>Per-vector JSON payloads</h4>
+        <p>Attach a JSON document to every vector — set, replace, or merge-patch it independently of the vector.</p>
       </div>
       <div class="feature-item">
-        <h4>Batch Vector Read</h4>
-        <p>Groups neighbor reads by page to reduce I/O during search</p>
+        <h4>Fast bulk build</h4>
+        <p>Load a new index in one pass for a faster initial import than per-vector inserts.</p>
       </div>
       <div class="feature-item">
-        <h4>Persistent Metadata</h4>
-        <p>Close and reopen the database without re-indexing</p>
+        <h4>Delete &amp; upsert</h4>
+        <p>Insert, replace, and delete vectors with consistent search results under continuous writes.</p>
       </div>
       <div class="feature-item">
-        <h4>SIMD Distance Metrics</h4>
-        <p>L2 and Cosine distance with AVX2/SSE2 acceleration</p>
+        <h4>L2 &amp; cosine, SIMD-accelerated</h4>
+        <p>AVX2/SSE2-accelerated distance for Euclidean and cosine similarity.</p>
       </div>
       <div class="feature-item">
-        <h4>Python SDK</h4>
-        <p>Full Python bindings via pybind11 with NumPy support</p>
+        <h4>Python client + HTTP API</h4>
+        <p>A dependency-free Python client, plus a plain REST API you can call from any language.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== Footer ===== -->
-  <footer class="footer container">LSM-Vec &mdash; NTU Siqiang Group</footer>
+  <!-- ===== Closing CTA band ===== -->
+  <section class="container fade-in">
+    <div class="cta-band">
+      <h2>Have a workload in mind?</h2>
+      <p>We're onboarding design-pilot partners — free during the pilot.</p>
+      <a href="#pilot" class="btn btn-primary">Request a pilot</a>
+    </div>
+  </section>
 
+  <!-- ===== Pilot intake form ===== -->
+  <section class="container fade-in" id="pilot">
+    <div class="pilot-section">
+      <span class="pilot-free-tag">Free during the pilot</span>
+      <h2 class="section-heading">Request a pilot</h2>
+      <p class="section-subheading">
+        Tell us a little about you and your workload. We onboard pilots by hand
+        and will be in touch by email.
+      </p>
+
+      <form class="pilot-form" id="pilotForm" novalidate>
+        <div class="form-row">
+          <label>I am a… <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="identity" value="Company" required> Company</label>
+            <label><input type="radio" name="identity" value="Organization"> Organization</label>
+            <label><input type="radio" name="identity" value="Individual"> Individual</label>
+          </div>
+        </div>
+
+        <div class="form-row two">
+          <div>
+            <label for="pf-name">Your name <span class="req">*</span></label>
+            <input type="text" id="pf-name" name="name" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="pf-org">Company / organization</label>
+            <input type="text" id="pf-org" name="org" autocomplete="organization">
+          </div>
+        </div>
+
+        <div class="form-row two">
+          <div>
+            <label for="pf-email">Email <span class="req">*</span></label>
+            <input type="email" id="pf-email" name="email" autocomplete="email" required>
+          </div>
+          <div>
+            <label for="pf-contact">Other contact</label>
+            <input type="text" id="pf-contact" name="other_contact" placeholder="phone / Slack / WeChat (optional)">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="pf-needs">What do you want to build? <span class="req">*</span></label>
+          <textarea id="pf-needs" name="needs" required placeholder="Your use case — e.g. RAG over internal docs, semantic search, recommendations…"></textarea>
+        </div>
+
+        <div class="form-row two">
+          <div>
+            <label for="pf-scale">Rough scale</label>
+            <input type="text" id="pf-scale" name="scale" placeholder="# vectors, dimension, expected QPS (optional)">
+          </div>
+          <div>
+            <label for="pf-current">Currently using</label>
+            <input type="text" id="pf-current" name="current_solution" placeholder="migrating from? (optional)">
+          </div>
+        </div>
+
+        <!-- Honeypot: humans never see or fill this; bots often do. -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="pf-website">Website (leave this empty)</label>
+          <input type="text" id="pf-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <!-- Auto-filled metadata (see script). -->
+        <input type="hidden" name="timestamp" value="">
+        <input type="hidden" name="source_page" value="">
+        <input type="hidden" name="user_agent" value="">
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="pf-submit">Send request</button>
+          <span class="form-status" id="pf-status" role="status" aria-live="polite"></span>
+        </div>
+        <p class="form-fineprint">
+          We'll only use your details to follow up about the pilot.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer container">
+    LSM-Vec &mdash; NTU Siqiang Group &nbsp;·&nbsp;
+    <a href="docs.html" style="color:var(--text-muted)">Docs</a> &nbsp;·&nbsp;
+    <a href="pricing.html" style="color:var(--text-muted)">Pricing</a> &nbsp;·&nbsp;
+    <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener" style="color:var(--text-muted)">GitHub</a>
+  </footer>
+
+<script>
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
+</script>
+
+<script>
+/* ===== Pilot form submission =====
+ * Posts to a Google Apps Script Web App that appends a row to a Sheet and
+ * emails the request. Paste your deployed Web App URL below (see
+ * docs/plans/2026-05-27-pilot-form-apps-script.gs for the script + setup).
+ * Until a real URL is set, the form falls back to a "email us directly" message.
+ */
+const PILOT_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
+
+(function () {
+  const form = document.getElementById('pilotForm');
+  if (!form) return;
+  const btn = document.getElementById('pf-submit');
+  const status = document.getElementById('pf-status');
+
+  function setStatus(msg, kind) {
+    status.textContent = msg;
+    status.className = 'form-status' + (kind ? ' ' + kind : '');
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Honeypot: if filled, silently pretend success (likely a bot).
+    if (form.elements['website'].value.trim() !== '') {
+      setStatus("Thanks — we'll be in touch.", 'ok');
+      form.reset();
+      return;
+    }
+
+    // Client-side validation (native + explicit guard).
+    if (!form.checkValidity()) {
+      setStatus('Please fill in the required fields (name, email, identity, and your use case).', 'err');
+      form.reportValidity();
+      return;
+    }
+
+    // Auto-fill metadata.
+    form.elements['timestamp'].value = new Date().toISOString();
+    form.elements['source_page'].value = location.href;
+    form.elements['user_agent'].value = navigator.userAgent;
+
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    // No endpoint configured yet → honest fallback.
+    if (!PILOT_SCRIPT_URL || PILOT_SCRIPT_URL.indexOf('PASTE_') === 0) {
+      setStatus('Form not connected yet — please email ' + PILOT_EMAIL + ' directly.', 'err');
+      return;
+    }
+
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Sending…';
+    setStatus('', '');
+
+    try {
+      // text/plain avoids a CORS preflight; the Apps Script returns JSON.
+      const resp = await fetch(PILOT_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+      let ok = resp.ok;
+      try {
+        const j = await resp.json();
+        ok = ok && j && j.result === 'success';
+      } catch (_) { /* response not readable — treat resp.ok as best signal */ }
+
+      if (ok) {
+        setStatus("Thanks — we'll be in touch by email.", 'ok');
+        form.reset();
+      } else {
+        setStatus('Something went wrong — please email ' + PILOT_EMAIL + ' directly.', 'err');
+      }
+    } catch (err) {
+      setStatus("Couldn't submit — please email " + PILOT_EMAIL + ' directly.', 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+})();
+</script>
 </body>
 </html>
