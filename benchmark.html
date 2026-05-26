@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LSM-Vec — Benchmark</title>
+  <title>Asteroid — Benchmark</title>
   <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -287,7 +287,7 @@
 
   <!-- ===== Navigation ===== -->
   <nav class="nav">
-    <a href="index.html" class="nav-logo"><span>LSM-Vec</span></a>
+    <a href="index.html" class="nav-logo"><span>Asteroid</span></a>
     <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
     </button>
@@ -308,7 +308,7 @@
 <div class="container">
   <div class="header">
     <div class="badge">Performance Benchmark</div>
-    <h1>Vector Database Comparison — <span>LSM-Vec</span></h1>
+    <h1>Vector Database Comparison — <span>Asteroid</span></h1>
     <p>Build time, query throughput & memory footprint across SIFT-100K and SIFT-1M datasets</p>
   </div>
 
@@ -329,7 +329,7 @@
       <div class="legend-dot" style="background: var(--pgvector);"></div>PgVector
     </div>
     <div class="legend-item ours">
-      <div class="legend-dot" style="background: var(--lsmvec);"></div>LSM-Vec (ours)
+      <div class="legend-dot" style="background: var(--lsmvec);"></div>Asteroid (ours)
     </div>
   </div>
 
@@ -360,7 +360,7 @@
   <div class="insights" id="insights"></div>
 
   <!-- ===== Footer ===== -->
-  <footer class="footer">LSM-Vec &mdash; NTU Siqiang Group</footer>
+  <footer class="footer">Asteroid &mdash; NTU Siqiang Group</footer>
 </div>
 
 <script>
@@ -379,7 +379,7 @@ const LABELS = {
   weaviate: 'Weaviate',
   elasticsearch: 'Elasticsearch',
   pgvector: 'PgVector',
-  lsmvec: 'LSM-Vec',
+  lsmvec: 'Asteroid',
 };
 
 const DATA = {
@@ -574,12 +574,12 @@ function renderInsights(server) {
     <div class="insight-card" style="animation: fadeIn 0.5s ease 0.45s both;">
       <div class="insight-value">${memVal}<span style="font-size:16px;opacity:0.6"> MB</span></div>
       <div class="insight-label">Peak Memory · SIFT-1M</div>
-      <div class="insight-detail">LSM-Vec footprint</div>
+      <div class="insight-detail">Asteroid footprint</div>
     </div>
     <div class="insight-card" style="animation: fadeIn 0.5s ease 0.5s both;">
       <div class="insight-value">${qps1m}<span style="font-size:16px;opacity:0.6"> QPS</span></div>
       <div class="insight-label">Throughput · SIFT-1M</div>
-      <div class="insight-detail">LSM-Vec queries/sec</div>
+      <div class="insight-detail">Asteroid queries/sec</div>
     </div>
     <div class="insight-card" style="animation: fadeIn 0.5s ease 0.55s both;">
       <div class="insight-value">${qpsAdvStr}</div>
