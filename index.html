@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asteroid — Memory-Friendly Vector Database</title>
-  <meta name="description" content="A memory-friendly, disk-oriented vector database for similarity search. Most of the index lives on disk, so memory stays small and flat — keeping infrastructure cost low at scale.">
+  <meta name="description" content="Asteroid is a memory-friendly vector database for AI workloads. Keep large vector indexes mostly on disk and lower AI infrastructure cost.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Asteroid — Memory-Friendly Vector Database">
-  <meta property="og:description" content="A memory-friendly, disk-oriented vector database. Most of the index lives on disk — small, flat memory and low infrastructure cost at scale.">
+  <meta property="og:description" content="A memory-friendly vector database for lower AI infrastructure cost. Built for AI workloads that need vector search.">
   <meta property="og:url" content="https://volatill.github.io/lsm-vec-site/">
   <meta name="twitter:card" content="summary">
   <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -277,12 +277,12 @@
 
   <!-- ===== Hero ===== -->
   <section class="hero fade-in">
-    <div class="badge">Memory-Friendly Vector Database</div>
+    <div class="badge">Lower AI Infrastructure Cost</div>
     <h1 class="hero-title">Asteroid</h1>
     <p class="hero-subtitle">
-      A memory-friendly, disk-oriented vector database for similarity search.
-      Most of the index lives on disk, so memory stays small and flat — keeping
-      your infrastructure cost low even as data grows to millions of vectors.
+      Asteroid is a memory-friendly vector database for AI workloads. It keeps
+      large vector indexes mostly on disk, reducing RAM needs and helping teams
+      lower AI infrastructure cost.
     </p>
   </section>
 
@@ -302,7 +302,7 @@
   <!-- ===== Why Asteroid ===== -->
   <section class="container fade-in fade-in-d2">
     <h2 class="section-heading">Why Asteroid?</h2>
-    <p class="section-subheading">A vector database designed to be cheap to run — and priced that way.</p>
+    <p class="section-subheading">Lower memory usage is the path to lower AI infrastructure cost.</p>
 
     <div class="key-differences-grid">
       <!-- Card 1 -->
@@ -314,8 +314,8 @@
           <rect x="10" y="22" width="8" height="8" rx="1"/>
           <rect x="22" y="22" width="8" height="8" rx="1"/>
         </svg>
-        <h3>Predictably cheap to run</h3>
-        <p>A disk-oriented design keeps the memory footprint small and flat as your data grows. That makes the service inexpensive to host — and we pass the savings on as flat monthly pricing, with no per-query meter.</p>
+        <h3>Minimal memory footprint</h3>
+        <p>Asteroid keeps most index data on disk instead of RAM. As your vector dataset grows, memory stays small and predictable.</p>
       </div>
 
       <!-- Card 2 -->
@@ -328,8 +328,8 @@
           <line x1="13.5" y1="15.5" x2="18.5" y2="24.5"/>
           <line x1="26.5" y1="15.5" x2="21.5" y2="24.5"/>
         </svg>
-        <h3>Performance close to in-memory</h3>
-        <p>Most of the HNSW index lives in a graph-oriented LSM-tree on disk (Aster), with a page cache and batched reads on the hot path. Search and update stay fast — see the <a href="benchmark.html" style="color:var(--accent)">benchmarks</a>.</p>
+        <h3>Lower infrastructure cost</h3>
+        <p>Less RAM means smaller machines, simpler capacity planning, and lower cost for AI workloads that rely on vector search.</p>
       </div>
 
       <!-- Card 3 -->
@@ -339,8 +339,8 @@
           <polyline points="28,10 36,20 28,30"/>
           <line x1="22" y1="8" x2="18" y2="32"/>
         </svg>
-        <h3>Hosted or self-hosted</h3>
-        <p>Start on the hosted service over HTTPS with an API key. Or self-host the same open-source engine behind the same HTTP API — a clear migration path to self-hosting, with no lock-in.</p>
+        <h3>Benchmark-solid performance</h3>
+        <p>In our benchmarks, Asteroid delivers solid build and query performance while using far less memory — comparable with the leading vector databases we tested. See the <a href="benchmark.html" style="color:var(--accent)">benchmarks</a>.</p>
       </div>
     </div>
   </section>
@@ -349,9 +349,9 @@
   <section class="container fade-in fade-in-d3">
     <div class="quickstart-band">
       <div class="qs-copy">
-        <h2 class="section-heading">From zero to first query in minutes</h2>
-        <p>Install the client, point it at your endpoint, insert your vectors, and search. You bring the embeddings; we handle storage, k-NN, and metadata filtering.</p>
-        <a href="docs.html#quickstart" class="btn btn-secondary">Full quickstart →</a>
+        <h2 class="section-heading">First query in minutes</h2>
+        <p>Bring your embeddings. Insert vectors. Search with metadata filters. Asteroid handles storage and k-NN.</p>
+        <a href="docs.html#cloud-quickstart" class="btn btn-secondary">Full quickstart →</a>
       </div>
       <pre><code># pip install lsmvec-client
 from lsmvec_client import Client
@@ -370,33 +370,33 @@ for h in hits:
 
   <!-- ===== Features ===== -->
   <section class="container fade-in fade-in-d3">
-    <h2 class="section-heading">Features</h2>
-    <p class="section-subheading">Everything you need for production similarity search.</p>
+    <h2 class="section-heading">Core vector database features</h2>
+    <p class="section-subheading">The basics you need for AI search workloads.</p>
 
     <div class="features-grid">
       <div class="feature-item">
         <h4>Filtered similarity search</h4>
-        <p>Combine vector k-NN with rich metadata predicates (<code>$eq</code>, <code>$in</code>, ranges, <code>$and</code>/<code>$or</code>, and more) in a single query.</p>
+        <p>Search vectors and filter by metadata in the same query.</p>
       </div>
       <div class="feature-item">
         <h4>Per-vector JSON payloads</h4>
-        <p>Attach a JSON document to every vector — set, replace, or merge-patch it independently of the vector.</p>
+        <p>Store text, source, tags, prices, or any JSON metadata with each vector.</p>
       </div>
       <div class="feature-item">
         <h4>Fast bulk build</h4>
-        <p>Load a new index in one pass for a faster initial import than per-vector inserts.</p>
+        <p>Load a new index in one pass instead of inserting vectors one by one.</p>
       </div>
       <div class="feature-item">
         <h4>Delete &amp; upsert</h4>
-        <p>Insert, replace, and delete vectors with consistent search results under continuous writes.</p>
+        <p>Insert, replace, and delete vectors without rebuilding the index.</p>
       </div>
       <div class="feature-item">
         <h4>L2 &amp; cosine, SIMD-accelerated</h4>
-        <p>AVX2/SSE2-accelerated distance for Euclidean and cosine similarity.</p>
+        <p>Euclidean and cosine similarity, accelerated with SIMD.</p>
       </div>
       <div class="feature-item">
         <h4>Python client + HTTP API</h4>
-        <p>A dependency-free Python client, plus a plain REST API you can call from any language.</p>
+        <p>Use the Python client or call the REST API from any language.</p>
       </div>
     </div>
   </section>
@@ -407,8 +407,7 @@ for h in hits:
       <span class="pilot-free-tag">Free during the pilot</span>
       <h2 class="section-heading">Request a pilot</h2>
       <p class="section-subheading">
-        Tell us a little about you and your workload. We onboard pilots by hand
-        and will be in touch by email.
+        Tell us your use case and rough scale. We'll follow up by email.
       </p>
 
       <form class="pilot-form" id="pilotForm" novalidate>

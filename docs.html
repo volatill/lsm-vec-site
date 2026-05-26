@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asteroid — Documentation</title>
-  <meta name="description" content="Asteroid documentation — managed cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors.">
+  <meta name="description" content="Asteroid documentation — Asteroid Cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors for AI workloads.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Asteroid — Documentation">
-  <meta property="og:description" content="Managed cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors.">
+  <meta property="og:description" content="Asteroid Cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors.">
   <meta property="og:url" content="https://volatill.github.io/lsm-vec-site/docs.html">
   <meta name="twitter:card" content="summary">
   <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -169,18 +169,16 @@
 
       <!-- ==================== ASTEROID CLOUD ==================== -->
 
-      <h2 id="cloud-overview">Asteroid Cloud — Overview</h2>
+      <h2 id="cloud-overview">Asteroid Cloud</h2>
       <div class="group-intro">
-        <p><strong>Asteroid Cloud</strong> is the managed service: a dedicated,
-        isolated vector database you reach over HTTPS with an API key. You bring
-        embeddings; Asteroid stores them, runs k-NN search, and applies metadata
-        filters. No clusters to size, no infrastructure to run.</p>
+        <p><strong>Asteroid Cloud</strong> is a memory-friendly vector database for
+        AI workloads like RAG and semantic search. You bring embeddings; Asteroid
+        stores vectors and metadata, then serves k-NN search with filters.</p>
       </div>
-      <p>You interact with Asteroid Cloud two ways, shown side by side on every
-      page below:</p>
+      <p>In the pilot, you access it over HTTPS with an API key.</p>
+      <p>Use the Python client or call the HTTP API directly:</p>
       <ul>
-        <li><strong>Python client</strong> — <code>pip install lsmvec-client</code>
-        (Asteroid's client package is published as <code>lsmvec-client</code>).</li>
+        <li><strong>Python client</strong> — <code>pip install lsmvec-client</code></li>
         <li><strong>HTTP API</strong> — a plain REST API you can call with
         <code>curl</code> or any language.</li>
       </ul>
@@ -189,9 +187,8 @@
       <a href="index.html#pilot">Request a pilot</a>.</p>
 
       <h2 id="cloud-quickstart">Quickstart</h2>
-      <p>Install the client, connect, insert a few vectors, and search — five
-      minutes end to end. The vector dimension <code>D</code> is fixed for your
-      instance (set when it's provisioned).</p>
+      <p>Install the client, connect, insert vectors, and search. Your vector
+      dimension <code>D</code> is fixed when your pilot instance is provisioned.</p>
       <p>Install the Python client (or skip it and use <code>curl</code> / any
       HTTP client):</p>
       <pre><code>pip install lsmvec-client</code></pre>
@@ -226,9 +223,8 @@ curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Content-Type: application/json" \
   -d '{"vector": [0.10, 0.20, ...], "k": 10}'</code></pre></div>
       </div>
-      <div class="callout"><p><strong>No "create a collection" step.</strong>
-      Your instance <em>is</em> your index. If you're coming from Pinecone or
-      Qdrant: skip the collection setup — just insert and search.</p></div>
+      <div class="callout"><p><strong>No collection setup.</strong>
+      One pilot instance is one index. Insert vectors and search.</p></div>
 
       <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
       <p><code>insert</code> adds a vector by id with optional JSON metadata.
@@ -263,15 +259,13 @@ client.delete(1)</code></pre></div>
         <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."
 curl -sX DELETE https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."</code></pre></div>
       </div>
-      <div class="callout"><p>Stored vectors are 8-bit scalar-quantized (SQ8), so
-      <code>get</code> returns the dequantized vector — it can differ from the
-      input by up to ~<code>range/255</code> per element.</p></div>
+      <div class="callout"><p>Vectors are stored with SQ8 compression. <code>get</code> returns a
+      dequantized vector, so values may differ slightly from the original input.</p></div>
 
       <h2 id="cloud-payloads">Metadata &amp; payloads</h2>
-      <p>Every vector can carry a JSON payload (categories, tags, prices,
-      timestamps). Read it, replace it, or merge-patch it (RFC 7396 — keys in the
-      patch overwrite; a <code>null</code> deletes a key) independently of the
-      vector.</p>
+      <p>Attach JSON metadata to each vector: text, source, tags, prices,
+      timestamps, or any fields your app needs. Read, replace, or merge it
+      without changing the vector.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -288,9 +282,8 @@ curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Be
       </div>
 
       <h2 id="cloud-search">Search</h2>
-      <p>k-nearest-neighbor search returns up to <code>k</code> ids ordered by
-      ascending distance. <code>ef_search</code> trades latency for recall
-      (higher = better recall, slower).</p>
+      <p>Search returns the nearest vector ids by distance. Increase
+      <code>ef_search</code> for higher recall at higher latency.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -305,9 +298,8 @@ for h in hits:
       </div>
 
       <h2 id="cloud-filter">Filter by metadata</h2>
-      <p>Combine vector similarity with a metadata predicate in one query
-      (e.g. <em>"similar items in category <code>docs</code> from 2026"</em>).
-      Supported operators:</p>
+      <p>Combine vector search with metadata filters in one query. Supported
+      operators:</p>
       <ul>
         <li>Comparison: <code>$eq</code> <code>$ne</code> <code>$gt</code>
         <code>$gte</code> <code>$lt</code> <code>$lte</code></li>
@@ -336,9 +328,8 @@ for h in hits:
       </div>
 
       <h2 id="cloud-bulk">Bulk import (initial load)</h2>
-      <p>The fastest way to populate a <strong>new, empty</strong> instance:
-      build the whole index in one pass instead of inserting vector by vector.
-      Initial-load only — the instance must be empty.</p>
+      <p>For a new, empty instance, bulk import builds the index in one pass.
+      Use it for initial loads; use insert or upsert for later updates.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -360,9 +351,8 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
       <code>insert</code> / <code>upsert</code> instead.</p>
 
       <h2 id="cloud-rag">Build a RAG app</h2>
-      <p>A typical retrieval-augmented-generation flow. <strong>You</strong> own
-      the file → chunk → embedding step (bring your own model — the industry
-      norm); Asteroid stores the vectors + metadata and serves filtered k-NN.</p>
+      <p>For RAG, you chunk files and create embeddings with your own model.
+      Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -387,19 +377,15 @@ hits = client.search(qvec, k=5, filter={"source": {"$eq": "handbook"}})
 context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
 # answer = your_llm(question, context)</code></pre></div>
       </div>
-      <div class="callout"><p><strong>Who does what:</strong> you handle file →
-      chunk → embedding (client-side, your model). Asteroid stores vectors +
-      metadata and does k-NN + metadata filtering. We don't embed text
-      server-side.</p></div>
+      <div class="callout"><p><strong>Bring your own embeddings.</strong> Asteroid stores and searches
+      vectors; it does not embed text server-side.</p></div>
 
       <h2 id="cloud-limits">Limits &amp; tradeoffs</h2>
-      <p>Asteroid is disk-oriented: most of the index lives on disk in a
-      graph-oriented LSM-tree, with a page cache and batched reads on the hot
-      path. That keeps memory small and flat as data grows (why hosting is cheap
-      — see <a href="benchmark.html">benchmarks</a>), at the cost of read-path
-      I/O versus a pure in-RAM engine. For most search and RAG workloads the
-      difference is small and the cost savings are large.</p>
-      <p>Current characteristics to know:</p>
+      <p>Asteroid keeps most index state on disk. This lowers memory usage and
+      infrastructure cost, but can add read-path I/O compared with pure in-memory
+      engines. Use it when predictable cost matters more than absolute lowest
+      latency.</p>
+      <p>Current limits:</p>
       <ul>
         <li>Vector ids are 64-bit unsigned integers (no string/UUID ids).</li>
         <li>Distance metrics: <strong>L2</strong> and <strong>cosine</strong>.</li>
