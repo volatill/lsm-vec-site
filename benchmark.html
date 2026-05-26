@@ -294,6 +294,7 @@
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="docs.html">Docs</a>
+      <a href="pilot.html">Pilot</a>
       <a href="benchmark.html" class="active">Benchmark</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -302,6 +303,7 @@
       <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
       </a>
+      <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
     </div>
   </nav>
 
@@ -310,6 +312,7 @@
     <div class="badge">Performance Benchmark</div>
     <h1>Vector Database Comparison — <span>Asteroid</span></h1>
     <p>Build time, query throughput & memory footprint across SIFT-100K and SIFT-1M datasets</p>
+    <p style="margin-top:10px;font-size:14px;">Note the memory column: Asteroid's low, flat footprint is what keeps hosting cheap — the basis for our <a href="pilot.html" style="color:var(--accent)">flat, no-metering pricing</a>.</p>
   </div>
 
   <div class="legend">
@@ -360,10 +363,18 @@
   <div class="insights" id="insights"></div>
 
   <!-- ===== Footer ===== -->
-  <footer class="footer">Asteroid &mdash; NTU Siqiang Group</footer>
+  <footer class="footer">Asteroid &mdash; NTU Siqiang Group &nbsp;·&nbsp;
+    <a href="docs.html" style="color:var(--text-muted)">Docs</a> &nbsp;·&nbsp;
+    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a></footer>
 </div>
 
 <script>
+// ─────────────────────────────────────────────────────────────────────────
+// SOURCE OF TRUTH for the charts is the DATA{} object below. The repo's
+// benchmark_results.dat / server_info.dat are human-readable reference copies
+// only — they are NOT fetched or parsed at runtime. To change numbers, edit
+// DATA{} here (and optionally keep the .dat files in sync by hand).
+// ─────────────────────────────────────────────────────────────────────────
 const COLORS = {
   milvushnsw: { bg: 'rgba(244, 114, 182, 0.75)', border: '#f472b6' },
   qdrantlocal: { bg: 'rgba(129, 140, 248, 0.75)', border: '#818cf8' },
