@@ -147,7 +147,6 @@
         <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
         <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
         <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
-        <a href="docs.html#cloud-limits" class="sidebar-link">Limits &amp; tradeoffs</a>
       </div>
 
       <div class="sidebar-section">
@@ -390,22 +389,6 @@ context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
       </div>
       <div class="callout"><p><strong>Bring your own embeddings.</strong> Asteroid stores and searches
       vectors; it does not embed text server-side.</p></div>
-
-      <h2 id="cloud-limits">Limits &amp; tradeoffs</h2>
-      <p>Asteroid keeps most index state on disk. This lowers memory usage and
-      infrastructure cost, but can add read-path I/O compared with pure in-memory
-      engines. Use it when predictable cost matters more than absolute lowest
-      latency.</p>
-      <p>Current limits:</p>
-      <ul>
-        <li>Vector ids are 64-bit unsigned integers (no string/UUID ids).</li>
-        <li>Distance metrics: <strong>L2</strong> and <strong>cosine</strong>.</li>
-        <li>One instance = one index (no collections/namespaces). Dimension is
-        fixed per instance.</li>
-        <li>Vectors are stored SQ8-quantized; <code>get</code> is lossy (see
-        Fetch &amp; delete).</li>
-        <li>Bring-your-own embeddings (no server-side embedding).</li>
-      </ul>
 
       <p style="margin-top:40px;border-top:1px solid var(--border);padding-top:24px;">
         Next: <a href="docs-database.html">Asteroid Database (LSM-Vec)</a> —
