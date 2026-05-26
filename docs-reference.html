@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reference &amp; Deployment — Asteroid Documentation</title>
+  <meta name="description" content="Asteroid reference — HTTP API routes, the lsmvec-client Python reference, building the engine from source, and self-hosting the HTTP server.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Reference &amp; Deployment — Asteroid Documentation">
+  <meta property="og:description" content="HTTP API routes, Python client reference, build from source, and self-hosting the HTTP server.">
+  <meta property="og:url" content="https://volatill.github.io/lsm-vec-site/docs-reference.html">
+  <meta name="twitter:card" content="summary">
+  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    .docs-layout { display: flex; min-height: calc(100vh - 64px); }
+
+    .sidebar {
+      position: fixed; top: 64px; left: 0; width: 260px;
+      height: calc(100vh - 64px); overflow-y: auto;
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 24px 0; z-index: 50;
+    }
+
+    .sidebar-section { padding: 0 20px; margin-bottom: 20px; }
+
+    .sidebar-title {
+      display: block; text-decoration: none;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
+      font-family: 'JetBrains Mono', monospace; padding: 0 20px;
+      transition: color 0.2s;
+    }
+    .sidebar-title:hover { color: var(--text); }
+    .sidebar-title.active-group { color: var(--accent); }
+
+    .sidebar-link {
+      display: block; padding: 6px 20px; font-size: 14px;
+      color: var(--text-muted); text-decoration: none;
+      transition: all 0.2s; border-left: 2px solid transparent;
+    }
+    .sidebar-link:hover { color: var(--text); }
+    .sidebar-link.active {
+      color: var(--accent); border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .docs-content {
+      margin-left: 260px; padding: 48px 48px 80px;
+      max-width: 900px; width: 100%;
+    }
+
+    .docs-content h2 {
+      font-size: 28px; font-weight: 700; margin: 48px 0 16px;
+      padding-top: 16px; border-top: 1px solid var(--border);
+      scroll-margin-top: 80px;
+    }
+    .docs-content h2:first-child { border-top: none; margin-top: 0; }
+
+    .docs-content h3 {
+      font-size: 20px; font-weight: 600; margin: 32px 0 12px; color: var(--text);
+    }
+
+    .docs-content h4 {
+      font-size: 16px; font-weight: 600; margin: 24px 0 8px;
+      color: var(--text); font-family: 'JetBrains Mono', monospace;
+    }
+
+    .docs-content p { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+    .docs-content ul, .docs-content ol { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; padding-left: 24px; }
+    .docs-content li { margin-bottom: 4px; }
+    .docs-content a { color: var(--accent); }
+
+    .group-intro {
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      border-radius: 12px; padding: 16px 20px; margin: 0 0 8px;
+    }
+    .group-intro p { margin: 0; color: var(--text); font-size: 14px; }
+
+    .callout {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 14px 18px; margin: 16px 0;
+    }
+    .callout p { margin: 0; font-size: 14px; }
+
+    .sidebar-toggle { display: none; }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative; top: 0; width: 100%; height: auto;
+        max-height: 0; overflow: hidden; transition: max-height 0.3s;
+        border-right: none; border-bottom: 1px solid var(--border);
+      }
+      .sidebar.open { max-height: 80vh; overflow-y: auto; }
+      .docs-content { margin-left: 0; padding: 24px 16px; }
+      .sidebar-toggle {
+        display: block; width: 100%; padding: 12px 20px;
+        background: var(--surface); border: none; border-bottom: 1px solid var(--border);
+        color: var(--text); font-family: 'DM Sans', sans-serif;
+        font-size: 14px; cursor: pointer; text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo"><span>Asteroid</span></a>
+    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="docs.html" class="active">Docs</a>
+      <a href="pilot.html">Pilot</a>
+      <a href="benchmark.html">Benchmark</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
+    </div>
+  </nav>
+
+  <button class="sidebar-toggle" id="sidebar-toggle">Menu</button>
+
+  <div class="docs-layout">
+
+    <!-- ===== Sidebar (shared across docs pages) ===== -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-section">
+        <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
+        <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
+        <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
+        <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
+        <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
+        <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
+        <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
+        <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+        <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
+        <a href="docs.html#cloud-limits" class="sidebar-link">Limits &amp; tradeoffs</a>
+      </div>
+
+      <div class="sidebar-section">
+        <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
+        <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
+        <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
+        <a href="docs-database.html#db-search" class="sidebar-link">Search</a>
+        <a href="docs-database.html#db-bulk" class="sidebar-link">Bulk build</a>
+        <a href="docs-database.html#db-config" class="sidebar-link">Configuration &amp; defaults</a>
+      </div>
+
+      <div class="sidebar-section">
+        <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
+        <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
+        <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+        <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
+        <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
+      </div>
+
+    </aside>
+
+    <!-- ===== Main Content — Reference & Deployment ===== -->
+    <main class="docs-content">
+
+      <h2 id="ref-http">HTTP API reference</h2>
+      <p>All routes require <code>Authorization: Bearer &lt;api-key&gt;</code>
+      except <code>/health</code>. Bodies are JSON unless noted.</p>
+      <table>
+        <thead><tr><th>Method &amp; path</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>POST /v1/vectors</code></td><td>Insert a vector (with optional <code>metadata</code>).</td></tr>
+          <tr><td><code>PUT /v1/vectors/:id</code></td><td>Upsert (replace) the vector for an id.</td></tr>
+          <tr><td><code>GET /v1/vectors/:id</code></td><td>Fetch a vector.</td></tr>
+          <tr><td><code>DELETE /v1/vectors/:id</code></td><td>Delete a vector.</td></tr>
+          <tr><td><code>GET /v1/vectors/:id/payload</code></td><td>Get the JSON payload.</td></tr>
+          <tr><td><code>PUT /v1/vectors/:id/payload</code></td><td>Replace the payload.</td></tr>
+          <tr><td><code>PATCH /v1/vectors/:id/payload</code></td><td>Merge-patch the payload (RFC 7396).</td></tr>
+          <tr><td><code>POST /v1/search</code></td><td>k-NN search (<code>vector</code>, <code>k</code>, optional <code>ef_search</code>, <code>filter</code>).</td></tr>
+          <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only.</td></tr>
+          <tr><td><code>GET /v1/stats</code></td><td>Tombstone / bloom / counters.</td></tr>
+          <tr><td><code>GET /health</code></td><td>Unauthenticated liveness check.</td></tr>
+          <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
+        </tbody>
+      </table>
+      <p>Error codes: <code>400</code> invalid argument, <code>401</code>
+      unauthorized, <code>404</code> not found, <code>413</code> payload too
+      large, <code>429</code> rate limited, <code>5xx</code> server error.</p>
+
+      <h2 id="ref-client">Python client reference</h2>
+      <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
+      <code>urllib</code>; <code>numpy</code> optional for <code>bulk_build</code>).</p>
+      <table>
+        <thead><tr><th>Method</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>insert(id, vector, metadata=None)</code></td><td>Insert with optional metadata.</td></tr>
+          <tr><td><code>upsert(id, vector)</code></td><td>Insert-or-replace the vector.</td></tr>
+          <tr><td><code>get(id) -&gt; dict</code></td><td><code>{"id", "vector"}</code>.</td></tr>
+          <tr><td><code>delete(id)</code></td><td></td></tr>
+          <tr><td><code>get_payload(id)</code> / <code>set_payload(id, p)</code> / <code>merge_payload(id, p)</code></td><td>Payload read / replace / merge-patch.</td></tr>
+          <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
+          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load (empty DB only).</td></tr>
+          <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
+        </tbody>
+      </table>
+      <p>Errors map to typed exceptions (all subclass <code>LSMVecError</code>):
+      <code>InvalidArgument</code> (400), <code>Unauthorized</code> (401),
+      <code>NotFound</code> (404), <code>PayloadTooLarge</code> (413),
+      <code>RateLimited</code> (429), <code>ServerError</code> (5xx).</p>
+
+      <h2 id="ref-build">Build from source</h2>
+      <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost
+      (headers), and zstd / snappy / lz4 / bz2 / zlib. On macOS also jemalloc.</p>
+      <pre><code># initialize the Aster submodule, then build
+git submodule update --init --recursive
+make aster        # builds lib/aster/librocksdb.a (required first)
+make              # builds the static + shared libs and the test binary</code></pre>
+      <p>For the Python engine module (requires Aster built + ninja):</p>
+      <pre><code>python -m pip install .        # builds and installs the lsm_vec module
+python -c "import lsm_vec; print('OK')"</code></pre>
+
+      <h2 id="ref-server">Run the server (self-host)</h2>
+      <p>Self-host the same HTTP API as Asteroid Cloud. Run the
+      <code>lsm_vec_http</code> server (or the <code>lsmvec</code> Docker image),
+      then point <code>lsmvec-client</code> at your own host
+      (<code>base_url="http://localhost:8000"</code>) — everything in the
+      <a href="docs.html#cloud-overview">Asteroid Cloud</a> section applies unchanged.</p>
+      <pre><code># environment knobs (graph params + threads)
+LSMVEC_M=8 LSMVEC_MMAX=24 LSMVEC_EFC=32 LSMVEC_HTTP_THREADS=1 \
+  ./build/bin/lsm_vec_http   # serves the REST API on :8000</code></pre>
+
+      <p style="margin-top:40px;border-top:1px solid var(--border);padding-top:24px;">
+        Back to <a href="docs.html">Asteroid Cloud</a> ·
+        <a href="docs-database.html">Asteroid Database (LSM-Vec)</a>.
+      </p>
+
+    </main>
+  </div>
+
+  <footer class="footer container">
+    Asteroid &mdash; NTU Siqiang Group &nbsp;·&nbsp;
+    <a href="index.html" style="color:var(--text-muted)">Home</a> &nbsp;·&nbsp;
+    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a>
+  </footer>
+
+  <!-- ===== Sidebar + scroll-spy + code-tabs ===== -->
+  <script>
+    (function () {
+      var here = (location.pathname.split('/').pop() || 'docs.html');
+      document.querySelectorAll('.sidebar-title').forEach(function (t) {
+        var f = (t.getAttribute('href') || '').split('#')[0];
+        if (f === here) t.classList.add('active-group');
+      });
+    })();
+
+    var sections = document.querySelectorAll('.docs-content h2[id]');
+    var sidebarLinks = document.querySelectorAll('.sidebar-link');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          sidebarLinks.forEach(function (link) { link.classList.remove('active'); });
+          var a = document.querySelector('.sidebar-link[href$="#' + entry.target.id + '"]');
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+    sections.forEach(function (s) { observer.observe(s); });
+
+    sidebarLinks.forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.remove('open');
+      });
+    });
+
+    var sidebarToggle = document.getElementById('sidebar-toggle');
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('open');
+      });
+    }
+
+    function applyLang(lang) {
+      document.querySelectorAll('.code-tabs').forEach(function (box) {
+        if (!box.querySelector('.tab-btn[data-lang="' + lang + '"]')) return;
+        box.querySelectorAll('.tab-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        box.querySelectorAll('.tab-panel').forEach(function (p) {
+          p.hidden = (p.dataset.lang !== lang);
+        });
+      });
+      try { localStorage.setItem('docslang', lang); } catch (e) {}
+    }
+    document.querySelectorAll('.code-tabs .tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
+    });
+    var saved = (function () { try { return localStorage.getItem('docslang'); } catch (e) { return null; } })();
+    if (saved) applyLang(saved);
+  </script>
+
+  <script>
+  function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
+  </script>
+</body>
+</html>

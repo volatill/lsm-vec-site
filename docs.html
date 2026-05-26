@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asteroid — Documentation</title>
-  <meta name="description" content="Asteroid documentation — Asteroid Cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors for AI workloads.">
+  <title>Asteroid Cloud — Documentation</title>
+  <meta name="description" content="Asteroid Cloud docs — use the managed memory-friendly vector database via the Python client or HTTP API: insert, search, filter, payloads, bulk import, and RAG.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Asteroid — Documentation">
-  <meta property="og:description" content="Asteroid Cloud usage (Python client + HTTP API) and the self-hosted LSM-Vec engine: insert, search, filter, and bulk-build vectors.">
+  <meta property="og:title" content="Asteroid Cloud — Documentation">
+  <meta property="og:description" content="Use Asteroid Cloud via the Python client or HTTP API: insert, search, filter, payloads, bulk import, and RAG.">
   <meta property="og:url" content="https://volatill.github.io/lsm-vec-site/docs.html">
   <meta name="twitter:card" content="summary">
   <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    html { scroll-behavior: smooth; }
     .docs-layout { display: flex; min-height: calc(100vh - 64px); }
 
     .sidebar {
@@ -26,10 +27,14 @@
     .sidebar-section { padding: 0 20px; margin-bottom: 20px; }
 
     .sidebar-title {
+      display: block; text-decoration: none;
       font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--accent); margin-bottom: 8px;
+      letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
       font-family: 'JetBrains Mono', monospace; padding: 0 20px;
+      transition: color 0.2s;
     }
+    .sidebar-title:hover { color: var(--text); }
+    .sidebar-title.active-group { color: var(--accent); }
 
     .sidebar-link {
       display: block; padding: 6px 20px; font-size: 14px;
@@ -50,6 +55,7 @@
     .docs-content h2 {
       font-size: 28px; font-weight: 700; margin: 48px 0 16px;
       padding-top: 16px; border-top: 1px solid var(--border);
+      scroll-margin-top: 80px;
     }
     .docs-content h2:first-child { border-top: none; margin-top: 0; }
 
@@ -127,47 +133,45 @@
 
   <div class="docs-layout">
 
-    <!-- ===== Sidebar ===== -->
+    <!-- ===== Sidebar (shared across docs pages) ===== -->
     <aside class="sidebar" id="sidebar">
 
       <div class="sidebar-section">
-        <div class="sidebar-title">Asteroid Cloud</div>
-        <a href="#cloud-overview" class="sidebar-link active">Overview</a>
-        <a href="#cloud-quickstart" class="sidebar-link">Quickstart</a>
-        <a href="#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
-        <a href="#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
-        <a href="#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
-        <a href="#cloud-search" class="sidebar-link">Search</a>
-        <a href="#cloud-filter" class="sidebar-link">Filter by metadata</a>
-        <a href="#cloud-bulk" class="sidebar-link">Bulk import</a>
-        <a href="#cloud-rag" class="sidebar-link">Build a RAG app</a>
-        <a href="#cloud-limits" class="sidebar-link">Limits &amp; tradeoffs</a>
+        <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
+        <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
+        <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
+        <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
+        <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
+        <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
+        <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
+        <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+        <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
+        <a href="docs.html#cloud-limits" class="sidebar-link">Limits &amp; tradeoffs</a>
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-title">Asteroid Database (LSM-Vec)</div>
-        <a href="#db-overview" class="sidebar-link">Overview</a>
-        <a href="#db-quickstart" class="sidebar-link">Quickstart</a>
-        <a href="#db-insert" class="sidebar-link">Insert / update / delete</a>
-        <a href="#db-search" class="sidebar-link">Search</a>
-        <a href="#db-bulk" class="sidebar-link">Bulk build</a>
-        <a href="#db-config" class="sidebar-link">Configuration &amp; defaults</a>
+        <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
+        <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
+        <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
+        <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
+        <a href="docs-database.html#db-search" class="sidebar-link">Search</a>
+        <a href="docs-database.html#db-bulk" class="sidebar-link">Bulk build</a>
+        <a href="docs-database.html#db-config" class="sidebar-link">Configuration &amp; defaults</a>
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-title">Reference &amp; Deployment</div>
-        <a href="#ref-http" class="sidebar-link">HTTP API reference</a>
-        <a href="#ref-client" class="sidebar-link">Python client reference</a>
-        <a href="#ref-build" class="sidebar-link">Build from source</a>
-        <a href="#ref-server" class="sidebar-link">Run the server</a>
+        <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
+        <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
+        <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+        <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
+        <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
       </div>
 
     </aside>
 
-    <!-- ===== Main Content ===== -->
+    <!-- ===== Main Content — Asteroid Cloud ===== -->
     <main class="docs-content">
-
-      <!-- ==================== ASTEROID CLOUD ==================== -->
 
       <h2 id="cloud-overview">Asteroid Cloud</h2>
       <div class="group-intro">
@@ -396,220 +400,10 @@ context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
         <li>Bring-your-own embeddings (no server-side embedding).</li>
       </ul>
 
-      <!-- ==================== ASTEROID DATABASE (LSM-Vec) ==================== -->
-
-      <h2 id="db-overview">Asteroid Database (LSM-Vec) — Overview</h2>
-      <div class="group-intro">
-        <p><strong>Asteroid Database</strong> is the open-source engine —
-        <strong>LSM-Vec</strong> — that powers Asteroid Cloud. You can embed it
-        directly (C++ library or Python bindings) or self-host it. This section
-        documents the engine's interfaces; code blocks switch between
-        <strong>C++</strong> and <strong>Python (pybind)</strong>.</p>
-      </div>
-      <p>LSM-Vec combines an HNSW graph index with <strong>Aster</strong> (a
-      RocksDB fork providing graph-oriented LSM-tree storage). Layer-0 graph
-      edges are persisted on disk; upper layers stay in memory. To run it as an
-      HTTP service with the same API as Asteroid Cloud, see
-      <a href="#ref-server">Run the server</a>.</p>
-
-      <h2 id="db-quickstart">Quickstart</h2>
-      <p>Build the libraries (see <a href="#ref-build">Build from source</a>),
-      then open a database, insert, and search.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="cpp">C++</button>
-          <button class="tab-btn" data-lang="python">Python</button>
-        </div>
-        <div class="tab-panel" data-lang="cpp"><pre><code>#include "lsm_vec_db.h"
-using namespace lsm_vec;
-
-LSMVecDBOptions opts;
-opts.dim = 128;
-opts.vector_file_path = "./db/vectors.bin";
-opts.reinit = true;                       // start fresh
-
-std::unique_ptr&lt;LSMVecDB&gt; db;
-Status s = LSMVecDB::Open("./db", opts, &amp;db);
-
-std::vector&lt;float&gt; v(128, 0.1f);
-db-&gt;Insert(1, v);
-
-SearchOptions so; so.k = 10; so.ef_search = 128;
-std::vector&lt;SearchResult&gt; results;
-db-&gt;SearchKnn(v, so, &amp;results);
-
-db-&gt;Close();</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code>import lsm_vec   # the engine module (pybind); distinct from lsmvec-client
-
-opts = lsm_vec.LSMVecDBOptions()
-opts.dim = 128
-opts.vector_file_path = "./db/vectors.bin"
-opts.reinit = True
-
-db = lsm_vec.LSMVecDB.open("./db", opts)
-db.insert(1, [0.1] * 128)
-
-results = db.search_knn([0.1] * 128, k=10, ef_search=128)
-for r in results:
-    print(r.id, r.distance)
-
-db.close()</code></pre></div>
-      </div>
-      <div class="callout"><p>The engine Python module is
-      <code>import lsm_vec</code> (pybind bindings) — <em>not</em> the same as the
-      Cloud client <code>lsmvec-client</code> (<code>import lsmvec_client</code>).</p></div>
-
-      <h2 id="db-insert">Insert / update / delete</h2>
-      <p><code>Insert</code> takes an id and a vector, with an optional JSON
-      metadata string. <code>Update</code> replaces a vector; <code>Delete</code>
-      tombstones it. Payloads have their own getters/setters.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="cpp">C++</button>
-          <button class="tab-btn" data-lang="python">Python</button>
-        </div>
-        <div class="tab-panel" data-lang="cpp"><pre><code>db-&gt;Insert(1, vec);
-db-&gt;Insert(2, vec, R"({"category":"docs"})");   // with metadata
-db-&gt;SetPayload(1, R"({"category":"docs"})");
-db-&gt;Update(1, new_vec);
-db-&gt;Delete(2);</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code>db.insert(1, vec)
-db.set_payload(1, {"category": "docs"})
-db.get_payload(1)
-db.update(1, new_vec)
-db.delete(2)</code></pre></div>
-      </div>
-
-      <h2 id="db-search">Search</h2>
-      <p><code>SearchKnn</code> returns results ordered by ascending distance.
-      An overload accepts a metadata filter (same predicate syntax as
-      <a href="#cloud-filter">Filter by metadata</a>).</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="cpp">C++</button>
-          <button class="tab-btn" data-lang="python">Python</button>
-        </div>
-        <div class="tab-panel" data-lang="cpp"><pre><code>SearchOptions so; so.k = 10; so.ef_search = 128;
-std::vector&lt;SearchResult&gt; results;
-
-// plain k-NN
-db-&gt;SearchKnn(query, so, &amp;results);
-
-// with a metadata filter
-db-&gt;SearchKnn(query, so, R"({"category":{"$eq":"docs"}})", &amp;results);</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code>results = db.search_knn(query, k=10, ef_search=128)
-
-# filtered search
-results = db.search(query, k=10,
-                    filter={"category": {"$eq": "docs"}})</code></pre></div>
-      </div>
-
-      <h2 id="db-bulk">Bulk build</h2>
-      <p>Build the whole index in memory from <code>n</code> contiguous vectors,
-      then write to disk in one pass. Initial-load only — the database must be
-      empty (ids are assigned <code>0..n-1</code> in order).</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="cpp">C++</button>
-          <button class="tab-btn" data-lang="python">Python</button>
-        </div>
-        <div class="tab-panel" data-lang="cpp"><pre><code>// flat: n * dim contiguous float32 values
-BulkBuildOptions bopts;        // threads and build params
-db-&gt;BulkBuild(Span&lt;const float&gt;(flat.data(), flat.size()), n, bopts);</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code># The engine's Python bindings (import lsm_vec) do not expose bulk build.
-# Use per-vector db.insert(...), or use Asteroid Cloud / the HTTP server's
-# POST /v1/build/bulk endpoint for one-pass initial loads.</code></pre></div>
-      </div>
-
-      <h2 id="db-config">Configuration &amp; defaults</h2>
-      <p>Pass <code>LSMVecDBOptions</code> to <code>Open</code>. The service
-      defaults are <code>m=8</code>, <code>m_max=24</code>,
-      <code>ef_construction=32</code>.</p>
-      <table>
-        <thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><code>dim</code></td><td>0</td><td><strong>Required.</strong> Vector dimensionality.</td></tr>
-          <tr><td><code>metric</code></td><td><code>kL2</code></td><td><code>kL2</code> or <code>kCosine</code>.</td></tr>
-          <tr><td><code>m</code></td><td>8</td><td>HNSW links per node at layer 0.</td></tr>
-          <tr><td><code>m_max</code></td><td>24</td><td>Max neighbors at upper layers.</td></tr>
-          <tr><td><code>ef_construction</code></td><td>32</td><td>Candidate pool during construction.</td></tr>
-          <tr><td><code>vector_storage_type</code></td><td>1</td><td>0 = flat file, 1 = paged + cached.</td></tr>
-          <tr><td><code>paged_max_cached_pages</code></td><td>4096</td><td>4 KB pages in the page cache.</td></tr>
-          <tr><td><code>reinit</code></td><td>false</td><td>true = wipe on open; false = reopen.</td></tr>
-          <tr><td><code>vector_file_path</code></td><td>""</td><td>Path for the vector storage file.</td></tr>
-        </tbody>
-      </table>
-      <p>Tuning: higher <code>m</code> / <code>ef_construction</code> → better
-      recall, slower indexing; higher <code>ef_search</code> → better recall,
-      slower queries.</p>
-
-      <!-- ==================== REFERENCE & DEPLOYMENT ==================== -->
-
-      <h2 id="ref-http">HTTP API reference</h2>
-      <p>All routes require <code>Authorization: Bearer &lt;api-key&gt;</code>
-      except <code>/health</code>. Bodies are JSON unless noted.</p>
-      <table>
-        <thead><tr><th>Method &amp; path</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><code>POST /v1/vectors</code></td><td>Insert a vector (with optional <code>metadata</code>).</td></tr>
-          <tr><td><code>PUT /v1/vectors/:id</code></td><td>Upsert (replace) the vector for an id.</td></tr>
-          <tr><td><code>GET /v1/vectors/:id</code></td><td>Fetch a vector.</td></tr>
-          <tr><td><code>DELETE /v1/vectors/:id</code></td><td>Delete a vector.</td></tr>
-          <tr><td><code>GET /v1/vectors/:id/payload</code></td><td>Get the JSON payload.</td></tr>
-          <tr><td><code>PUT /v1/vectors/:id/payload</code></td><td>Replace the payload.</td></tr>
-          <tr><td><code>PATCH /v1/vectors/:id/payload</code></td><td>Merge-patch the payload (RFC 7396).</td></tr>
-          <tr><td><code>POST /v1/search</code></td><td>k-NN search (<code>vector</code>, <code>k</code>, optional <code>ef_search</code>, <code>filter</code>).</td></tr>
-          <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only.</td></tr>
-          <tr><td><code>GET /v1/stats</code></td><td>Tombstone / bloom / counters.</td></tr>
-          <tr><td><code>GET /health</code></td><td>Unauthenticated liveness check.</td></tr>
-          <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
-        </tbody>
-      </table>
-      <p>Error codes: <code>400</code> invalid argument, <code>401</code>
-      unauthorized, <code>404</code> not found, <code>413</code> payload too
-      large, <code>429</code> rate limited, <code>5xx</code> server error.</p>
-
-      <h2 id="ref-client">Python client reference</h2>
-      <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
-      <code>urllib</code>; <code>numpy</code> optional for <code>bulk_build</code>).</p>
-      <table>
-        <thead><tr><th>Method</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td><code>insert(id, vector, metadata=None)</code></td><td>Insert with optional metadata.</td></tr>
-          <tr><td><code>upsert(id, vector)</code></td><td>Insert-or-replace the vector.</td></tr>
-          <tr><td><code>get(id) -&gt; dict</code></td><td><code>{"id", "vector"}</code>.</td></tr>
-          <tr><td><code>delete(id)</code></td><td></td></tr>
-          <tr><td><code>get_payload(id)</code> / <code>set_payload(id, p)</code> / <code>merge_payload(id, p)</code></td><td>Payload read / replace / merge-patch.</td></tr>
-          <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
-          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load (empty DB only).</td></tr>
-          <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
-        </tbody>
-      </table>
-      <p>Errors map to typed exceptions (all subclass <code>LSMVecError</code>):
-      <code>InvalidArgument</code> (400), <code>Unauthorized</code> (401),
-      <code>NotFound</code> (404), <code>PayloadTooLarge</code> (413),
-      <code>RateLimited</code> (429), <code>ServerError</code> (5xx).</p>
-
-      <h2 id="ref-build">Build from source</h2>
-      <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost
-      (headers), and zstd / snappy / lz4 / bz2 / zlib. On macOS also jemalloc.</p>
-      <pre><code># initialize the Aster submodule, then build
-git submodule update --init --recursive
-make aster        # builds lib/aster/librocksdb.a (required first)
-make              # builds the static + shared libs and the test binary</code></pre>
-      <p>For the Python engine module (requires Aster built + ninja):</p>
-      <pre><code>python -m pip install .        # builds and installs the lsm_vec module
-python -c "import lsm_vec; print('OK')"</code></pre>
-
-      <h2 id="ref-server">Run the server (self-host)</h2>
-      <p>Self-host the same HTTP API as Asteroid Cloud. Run the
-      <code>lsm_vec_http</code> server (or the <code>lsmvec</code> Docker image),
-      then point <code>lsmvec-client</code> at your own host
-      (<code>base_url="http://localhost:8000"</code>) — everything in the
-      <a href="#cloud-overview">Asteroid Cloud</a> section applies unchanged.</p>
-      <pre><code># environment knobs (graph params + threads)
-LSMVEC_M=8 LSMVEC_MMAX=24 LSMVEC_EFC=32 LSMVEC_HTTP_THREADS=1 \
-  ./build/bin/lsm_vec_http   # serves the REST API on :8000</code></pre>
+      <p style="margin-top:40px;border-top:1px solid var(--border);padding-top:24px;">
+        Next: <a href="docs-database.html">Asteroid Database (LSM-Vec)</a> —
+        embed or self-host the engine · <a href="docs-reference.html">Reference &amp; Deployment</a>.
+      </p>
 
     </main>
   </div>
@@ -620,55 +414,62 @@ LSMVEC_M=8 LSMVEC_MMAX=24 LSMVEC_EFC=32 LSMVEC_HTTP_THREADS=1 \
     <a href="pilot.html" style="color:var(--text-muted)">Pilot</a>
   </footer>
 
-  <!-- ===== Scroll-spy + sidebar + code-tabs ===== -->
+  <!-- ===== Sidebar + scroll-spy + code-tabs ===== -->
   <script>
-    // Scroll-spy
-    const sections = document.querySelectorAll('.docs-content h2[id]');
-    const sidebarLinks = document.querySelectorAll('.sidebar-link');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    // Highlight the current page's group in the shared sidebar.
+    (function () {
+      var here = (location.pathname.split('/').pop() || 'docs.html');
+      document.querySelectorAll('.sidebar-title').forEach(function (t) {
+        var f = (t.getAttribute('href') || '').split('#')[0];
+        if (f === here) t.classList.add('active-group');
+      });
+    })();
+
+    // Scroll-spy for the sections on THIS page (anchors are page-unique).
+    var sections = document.querySelectorAll('.docs-content h2[id]');
+    var sidebarLinks = document.querySelectorAll('.sidebar-link');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          sidebarLinks.forEach(link => link.classList.remove('active'));
-          const a = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+          sidebarLinks.forEach(function (link) { link.classList.remove('active'); });
+          var a = document.querySelector('.sidebar-link[href$="#' + entry.target.id + '"]');
           if (a) a.classList.add('active');
         }
       });
     }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
-    sections.forEach(s => observer.observe(s));
+    sections.forEach(function (s) { observer.observe(s); });
 
-    // Smooth scroll + close mobile sidebar
-    sidebarLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const t = document.querySelector(link.getAttribute('href'));
-        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Close the mobile sidebar on any link click (navigation/anchor handled natively).
+    sidebarLinks.forEach(function (link) {
+      link.addEventListener('click', function () {
         document.getElementById('sidebar').classList.remove('open');
       });
     });
 
-    const sidebarToggle = document.getElementById('sidebar-toggle');
+    var sidebarToggle = document.getElementById('sidebar-toggle');
     if (sidebarToggle) {
-      sidebarToggle.addEventListener('click', () =>
-        document.getElementById('sidebar').classList.toggle('open'));
+      sidebarToggle.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('open');
+      });
     }
 
-    // Code-language tabs. Picking a language applies to every block that has it
-    // (remembered in localStorage), so one switch flips the whole page.
+    // Code-language tabs (synced across blocks, remembered in localStorage).
     function applyLang(lang) {
-      document.querySelectorAll('.code-tabs').forEach(box => {
-        const has = box.querySelector('.tab-btn[data-lang="' + lang + '"]');
-        if (!has) return;
-        box.querySelectorAll('.tab-btn').forEach(b =>
-          b.classList.toggle('active', b.dataset.lang === lang));
-        box.querySelectorAll('.tab-panel').forEach(p =>
-          p.hidden = (p.dataset.lang !== lang));
+      document.querySelectorAll('.code-tabs').forEach(function (box) {
+        if (!box.querySelector('.tab-btn[data-lang="' + lang + '"]')) return;
+        box.querySelectorAll('.tab-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        box.querySelectorAll('.tab-panel').forEach(function (p) {
+          p.hidden = (p.dataset.lang !== lang);
+        });
       });
       try { localStorage.setItem('docslang', lang); } catch (e) {}
     }
-    document.querySelectorAll('.code-tabs .tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    document.querySelectorAll('.code-tabs .tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
     });
-    const saved = (function(){ try { return localStorage.getItem('docslang'); } catch(e){ return null; } })();
+    var saved = (function () { try { return localStorage.getItem('docslang'); } catch (e) { return null; } })();
     if (saved) applyLang(saved);
   </script>
 
