@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSM-Vec — Pilot</title>
+  <meta name="description" content="Join the LSM-Vec pilot — free during the pilot. A dedicated, managed vector-database instance over HTTPS, with help getting set up.">
+  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 72px 32px 8px;
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .free-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin: 0 auto 32px;
+    }
+    .section-heading { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+
+    .get-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .get-grid .feature-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .get-grid h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .get-grid p { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+
+    /* Steps */
+    .steps { display: grid; gap: 16px; max-width: 720px; }
+    .step { display: flex; gap: 16px; align-items: flex-start; }
+    .step-num {
+      flex: 0 0 auto;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .step h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .step p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .step code { font-size: 12px; }
+
+    .pricing-note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+    }
+    .pricing-note p { color: var(--text-muted); line-height: 1.8; font-size: 15px; }
+    .pricing-note strong { color: var(--text); }
+
+    .cta-band {
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+    .cta-band h2 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+
+    .fade-in { animation: fadeIn 0.6s ease both; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo"><span>LSM-Vec</span></a>
+    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="docs.html">Docs</a>
+      <a href="pilot.html" class="active">Pilot</a>
+      <a href="benchmark.html">Benchmark</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero fade-in">
+    <span class="free-tag">Free during the pilot</span>
+    <h1>Join the LSM-Vec pilot</h1>
+    <p>
+      We're onboarding design-pilot partners at no cost while we tune the service.
+      You bring a workload; we give you a dedicated instance and help you get it
+      running.
+    </p>
+    <a href="index.html#pilot" class="btn btn-primary">Request a pilot</a>
+  </section>
+
+  <!-- ===== What you get ===== -->
+  <section class="container fade-in">
+    <h2 class="section-heading">What you get</h2>
+    <div class="get-grid">
+      <div class="feature-item">
+        <h4>A dedicated instance</h4>
+        <p>Your own isolated LSM-Vec database, reachable over HTTPS with an API key — no infrastructure to manage.</p>
+      </div>
+      <div class="feature-item">
+        <h4>Client + HTTP API</h4>
+        <p>The dependency-free Python client (<code>lsmvec-client</code>) plus a plain REST API you can call from any language.</p>
+      </div>
+      <div class="feature-item">
+        <h4>Hands-on help</h4>
+        <p>We help you load your data and get your first queries running, and stay reachable while you evaluate.</p>
+      </div>
+      <div class="feature-item">
+        <h4>Free for the pilot</h4>
+        <p>No cost and no card during the pilot. We onboard partners by hand, so it's a conversation, not a signup funnel.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== How to apply ===== -->
+  <section class="container fade-in">
+    <h2 class="section-heading">How to apply</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>Tell us about your workload</h4>
+          <p>Fill in the <a href="index.html#pilot" style="color:var(--accent)">pilot request form</a> — who you are, what you want to build, and rough scale (how many vectors, what dimension).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>We provision your instance</h4>
+          <p>We set up a dedicated instance for your vector dimension and metric, and send you the endpoint and API key.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Connect and load your vectors</h4>
+          <p>Install <code>lsmvec-client</code>, point it at your endpoint, and start inserting and searching. See the <a href="docs.html" style="color:var(--accent)">docs</a> to get going.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pricing philosophy ===== -->
+  <section class="container fade-in">
+    <h2 class="section-heading">What about pricing?</h2>
+    <div class="pricing-note">
+      <p>
+        The pilot is <strong>free</strong>. When it ends, pricing will be
+        <strong>flat monthly</strong> — <strong>no per-query, per-read, or
+        per-vector meter</strong>, with generous fair-use limits rather than a
+        usage counter. A disk-oriented design keeps our hosting costs low, so we
+        don't need to charge by the operation. <strong>Talk to us</strong> for
+        the plan that fits your workload.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== Closing CTA ===== -->
+  <section class="container fade-in">
+    <div class="cta-band">
+      <h2>Ready to try it on your workload?</h2>
+      <a href="index.html#pilot" class="btn btn-primary">Request a pilot</a>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer container">
+    LSM-Vec &mdash; NTU Siqiang Group &nbsp;·&nbsp;
+    <a href="docs.html" style="color:var(--text-muted)">Docs</a> &nbsp;·&nbsp;
+    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a> &nbsp;·&nbsp;
+    <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener" style="color:var(--text-muted)">GitHub</a>
+  </footer>
+
+<script>
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
+</script>
+</body>
+</html>
