@@ -332,8 +332,19 @@ for h in hits:
       </div>
 
       <h2 id="cloud-bulk">Bulk import (initial load)</h2>
-      <p>For a new, empty instance, bulk import builds the index in one pass.
-      Use it for initial loads; use insert or upsert for later updates.</p>
+      <p>Two ways to load data, with different memory profiles:</p>
+      <ul>
+        <li><strong>Incremental (on-disk).</strong> <code>insert</code> /
+        <code>upsert</code> one vector at a time — small, flat memory. Use it for
+        streaming writes and updates to an existing instance.</li>
+        <li><strong>Bulk import (in-memory).</strong> For a <strong>new,
+        empty</strong> instance, build the whole index in one pass
+        (RNN-Descent) — faster for a large initial load.</li>
+      </ul>
+      <div class="callout"><p><strong>Memory note.</strong> Bulk import builds the
+      index in memory, so it uses more RAM <em>during the build</em>. Afterward —
+      and for every insert and query — Asteroid's footprint stays small and flat
+      as usual.</p></div>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -350,10 +361,6 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Content-Type: application/octet-stream" \
   --data-binary @vectors.f32</code></pre></div>
       </div>
-      <p>Bulk build gives a faster initial load than per-vector inserts. For
-      incremental updates on an already-populated instance, use
-      <code>insert</code> / <code>upsert</code> instead.</p>
-
       <h2 id="cloud-rag">Build a RAG app</h2>
       <p>For RAG, you chunk files and create embeddings with your own model.
       Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>

@@ -280,20 +280,36 @@ results = db.search(query, k=10,
       </div>
 
       <h2 id="db-bulk">Bulk build</h2>
-      <p>Build the whole index in memory from <code>n</code> contiguous vectors,
-      then write to disk in one pass. Initial-load only — the database must be
-      empty (ids are assigned <code>0..n-1</code> in order).</p>
+      <p>There are two ways to populate an index, with different memory profiles:</p>
+      <ul>
+        <li><strong>On-disk (incremental).</strong> Insert vectors one at a time
+        with <code>insert()</code> (see <a href="#db-insert">Insert / update /
+        delete</a>). Memory stays small and flat the whole time — use it for
+        streaming writes, updates, and adding to an existing index.</li>
+        <li><strong>In-memory (bulk build).</strong> Build the whole graph at once
+        with the <strong>RNN-Descent</strong> algorithm, then write it to disk in
+        one pass. Faster for a large initial load. Initial-load only: the database
+        must be empty (ids are assigned <code>0..n-1</code> in order).</li>
+      </ul>
+      <div class="callout"><p><strong>Memory note.</strong> The in-memory build
+      holds all vectors and the full graph in RAM <em>during the build</em>, so
+      peak memory is high. Once it finishes, memory drops back to the normal
+      small, disk-oriented footprint — later <code>insert</code> and search use
+      the same low memory as the incremental path.</p></div>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="cpp">C++</button>
           <button class="tab-btn" data-lang="python">Python</button>
         </div>
         <div class="tab-panel" data-lang="cpp"><pre><code>// flat: n * dim contiguous float32 values
-BulkBuildOptions bopts;        // threads and build params
+BulkBuildOptions bopts;        // num_threads + RNN-Descent params
 db-&gt;BulkBuild(Span&lt;const float&gt;(flat.data(), flat.size()), n, bopts);</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code># The engine's Python bindings (import lsm_vec) do not expose bulk build.
-# Use per-vector db.insert(...), or use Asteroid Cloud / the HTTP server's
-# POST /v1/build/bulk endpoint for one-pass initial loads.</code></pre></div>
+        <div class="tab-panel" data-lang="python" hidden><pre><code>import numpy as np
+vectors = np.random.rand(100_000, 128).astype(np.float32)
+
+# in-memory RNN-Descent build (empty DB only); threads=0 -> auto
+report = db.bulk_build(vectors, threads=4)
+print(report)   # {'n': ..., 'elapsed_ms': ..., 'vectors_per_sec': ..., 'threads': 4}</code></pre></div>
       </div>
 
       <h2 id="db-config">Configuration &amp; defaults</h2>
