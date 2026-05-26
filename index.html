@@ -142,6 +142,60 @@
       .quickstart-band { grid-template-columns: 1fr; gap: 24px; }
     }
 
+    /* ---- Editor-style code card (homepage snippet only) ---- */
+    .code-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    .code-card-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-card-bar .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #ff5f56; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #27c93f; }
+    .code-card-lang {
+      margin-left: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .code-copy {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .code-copy:hover,
+    .code-copy.copied { color: var(--accent); border-color: var(--accent); }
+    .code-card pre {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      padding: 18px 20px;
+      line-height: 1.6;
+    }
+    .code-card .tok-c { color: var(--text-muted); font-style: italic; }
+    .code-card .tok-s { color: #fbbf24; }   /* strings — amber */
+    .code-card .tok-k { color: #818cf8; }   /* keywords — indigo */
+
     /* ---- Closing CTA band ---- */
     .cta-band {
       text-align: center;
@@ -353,18 +407,25 @@
         <p>Bring your embeddings. Insert vectors. Search with metadata filters. Asteroid handles storage and k-NN.</p>
         <a href="docs.html#cloud-quickstart" class="btn btn-secondary">Full quickstart →</a>
       </div>
-      <pre><code># pip install lsmvec-client
-from lsmvec_client import Client
+      <div class="code-card">
+        <div class="code-card-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="code-card-lang">python</span>
+          <button class="code-copy" type="button" aria-label="Copy code">Copy</button>
+        </div>
+        <pre><code><span class="tok-c"># pip install lsmvec-client</span>
+<span class="tok-k">from</span> lsmvec_client <span class="tok-k">import</span> Client
 
-client = Client(api_key="sk-live-...",
-                base_url="https://api.lsmvec.com")
+client = Client(api_key=<span class="tok-s">"sk-live-..."</span>,
+                base_url=<span class="tok-s">"https://api.lsmvec.com"</span>)
 
 client.insert(1, [0.10, 0.20, ...],
-              metadata={"category": "docs"})
+              metadata={<span class="tok-s">"category"</span>: <span class="tok-s">"docs"</span>})
 
 hits = client.search([0.10, 0.20, ...], k=10)
-for h in hits:
+<span class="tok-k">for</span> h <span class="tok-k">in</span> hits:
     print(h.id, h.distance)</code></pre>
+      </div>
     </div>
   </section>
 
@@ -490,6 +551,17 @@ for h in hits:
 
 <script>
 function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
+
+document.querySelectorAll('.code-copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var code = btn.closest('.code-card').querySelector('code');
+    navigator.clipboard.writeText(code.innerText).then(function () {
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  });
+});
 </script>
 
 <script>
