@@ -219,7 +219,8 @@
 
       <h2 id="ref-build">Build from source</h2>
       <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost
-      (headers), and zstd / snappy / lz4 / bz2 / zlib. On macOS also jemalloc.</p>
+      (headers), and zstd. On macOS also jemalloc. (Aster is built zstd-only, so
+      snappy/lz4/bz2/zlib are not needed.)</p>
       <pre><code># initialize the Aster submodule, then build
 git submodule update --init --recursive
 make aster        # builds lib/aster/librocksdb.a (required first)
