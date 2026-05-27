@@ -571,7 +571,7 @@ document.querySelectorAll('.code-copy').forEach(function (btn) {
  * docs/plans/2026-05-27-pilot-form-apps-script.gs for the script + setup).
  * Until a real URL is set, the form falls back to a "email us directly" message.
  */
-const PILOT_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const PILOT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8dmoV6zyfLHrSF8PFhCDfwlfKEP4yU6GNXgVHBrU8if8jePZJxQVF3HRN-84MK6QAjw/exec";
 const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
 
 (function () {
@@ -621,24 +621,19 @@ const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
     setStatus('', '');
 
     try {
-      // text/plain avoids a CORS preflight; the Apps Script returns JSON.
-      const resp = await fetch(PILOT_SCRIPT_URL, {
+      // Google Apps Script web apps 302-redirect their response through
+      // googleusercontent.com and don't send CORS headers, so a browser can't
+      // *read* the reply. Use no-cors: the POST is still delivered (doPost runs,
+      // row + email happen); the response is opaque, so we confirm optimistically.
+      // text/plain keeps it a "simple request" (no preflight).
+      await fetch(PILOT_SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(data),
       });
-      let ok = resp.ok;
-      try {
-        const j = await resp.json();
-        ok = ok && j && j.result === 'success';
-      } catch (_) { /* response not readable — treat resp.ok as best signal */ }
-
-      if (ok) {
-        setStatus("Thanks — we'll be in touch by email.", 'ok');
-        form.reset();
-      } else {
-        setStatus('Something went wrong — please email ' + PILOT_EMAIL + ' directly.', 'err');
-      }
+      setStatus("Thanks — we've received your request and will be in touch by email.", 'ok');
+      form.reset();
     } catch (err) {
       setStatus("Couldn't submit — please email " + PILOT_EMAIL + ' directly.', 'err');
     } finally {
