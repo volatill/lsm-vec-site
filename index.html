@@ -91,36 +91,70 @@
       color: var(--text-muted);
     }
 
-    /* ---- Features grid ---- */
-    .features-grid {
+    /* ---- Pilot / Cost band ---- */
+    .pilot-cost-band {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .feature-item {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px 24px;
-      transition: border-color 0.25s ease;
+      border-radius: var(--radius);
+      padding: 42px;
     }
-
-    .feature-item:hover {
-      border-color: var(--accent);
-    }
-
-    .feature-item h4 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .feature-item p {
-      font-size: 13px;
-      line-height: 1.6;
+    .pilot-cost-copy p {
       color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 15px;
+      max-width: 620px;
+      margin-bottom: 24px;
+    }
+    .pilot-cost-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .cost-snapshot {
+      display: grid;
+      gap: 12px;
+    }
+    .snapshot-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .snapshot-row span {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+    .snapshot-row strong {
+      color: var(--text);
+      font-size: 18px;
+    }
+    .snapshot-row.highlight {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .snapshot-row.highlight strong {
+      color: var(--accent);
+    }
+    .snapshot-arrow {
+      text-align: center;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @media (max-width: 820px) {
+      .pilot-cost-band {
+        grid-template-columns: 1fr;
+        padding: 28px;
+      }
     }
 
     /* ---- Quickstart band ---- */
@@ -216,6 +250,13 @@
     }
     .cta-band h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
     .cta-band p { color: var(--text-muted); margin-bottom: 28px; font-size: 15px; }
+
+    /* ---- Divider above the pilot form ---- */
+    .pilot-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--text-muted) 12%, var(--text-muted) 88%, transparent);
+      opacity: 0.55;
+    }
 
     /* ---- Pilot form ---- */
     .pilot-section { max-width: 760px; margin: 0 auto; }
@@ -385,7 +426,10 @@
           <line x1="26.5" y1="15.5" x2="21.5" y2="24.5"/>
         </svg>
         <h3>Lower infrastructure cost</h3>
-        <p>Less RAM means smaller machines, simpler capacity planning, and lower cost for AI workloads that rely on vector search.</p>
+        <p>
+          Lower RAM needs mean smaller, cheaper cloud machines — leading to lower monthly spend and more predictable vector search costs.
+          See <a href="cost.html" style="color:var(--accent)">how the cost works</a>.
+        </p>
       </div>
 
       <!-- Card 3 -->
@@ -431,38 +475,44 @@ hits = client.search([0.10, 0.20, ...], k=10)
     </div>
   </section>
 
-  <!-- ===== Features ===== -->
+  <!-- ===== Pilot / Cost band ===== -->
   <section class="container fade-in fade-in-d3">
-    <h2 class="section-heading">Core vector database features</h2>
-    <p class="section-subheading">The basics you need for AI search workloads.</p>
+    <div class="pilot-cost-band">
+      <div class="pilot-cost-copy">
+        <h2 class="section-heading">Test the cost on your workload</h2>
+        <p>
+          Bring a real vector workload: vector count, dimension, filters, and expected traffic.
+          We help you measure memory footprint, query behavior, and whether Asteroid can lower your vector DB bill.
+        </p>
+        <div class="pilot-cost-actions">
+          <a href="pilot.html" class="btn btn-primary">Request a pilot</a>
+          <a href="cost.html" class="btn btn-secondary">Understand the cost</a>
+        </div>
+      </div>
 
-    <div class="features-grid">
-      <div class="feature-item">
-        <h4>Filtered similarity search</h4>
-        <p>Search vectors and filter by metadata in the same query.</p>
-      </div>
-      <div class="feature-item">
-        <h4>Per-vector JSON payloads</h4>
-        <p>Store text, source, tags, prices, or any JSON metadata with each vector.</p>
-      </div>
-      <div class="feature-item">
-        <h4>Fast bulk build</h4>
-        <p>Load a new index in one pass instead of inserting vectors one by one.</p>
-      </div>
-      <div class="feature-item">
-        <h4>Delete &amp; upsert</h4>
-        <p>Insert, replace, and delete vectors without rebuilding the index.</p>
-      </div>
-      <div class="feature-item">
-        <h4>L2 &amp; cosine, SIMD-accelerated</h4>
-        <p>Euclidean and cosine similarity, accelerated with SIMD.</p>
-      </div>
-      <div class="feature-item">
-        <h4>Python client + HTTP API</h4>
-        <p>Use the Python client or call the REST API from any language.</p>
+      <div class="cost-snapshot" aria-label="Pilot and pricing snapshot">
+        <div class="snapshot-row">
+          <span>Pilot</span>
+          <strong>Free</strong>
+        </div>
+        <div class="snapshot-arrow">↓</div>
+        <div class="snapshot-row highlight">
+          <span>After pilot</span>
+          <strong>from $39/mo</strong>
+        </div>
+        <div class="snapshot-arrow">↓</div>
+        <div class="snapshot-row">
+          <span>Billing</span>
+          <strong>No per-query meter</strong>
+        </div>
       </div>
     </div>
   </section>
+
+  <!-- ===== Divider before the pilot form ===== -->
+  <div class="container" style="padding-top:0;padding-bottom:0;">
+    <div class="pilot-divider"></div>
+  </div>
 
   <!-- ===== Pilot intake form ===== -->
   <section class="container fade-in" id="pilot">
