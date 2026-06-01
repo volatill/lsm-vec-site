@@ -140,6 +140,7 @@
       <div class="sidebar-section">
         <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
         <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
+        <a href="docs.html#cloud-before" class="sidebar-link">Before you start</a>
         <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
         <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
         <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
@@ -147,6 +148,8 @@
         <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
         <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
         <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+        <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
+        <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
         <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
       </div>
 
@@ -163,6 +166,8 @@
       <div class="sidebar-section">
         <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
         <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
+        <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
+        <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
         <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
         <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
         <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
@@ -176,25 +181,36 @@
       <h2 id="cloud-overview">Asteroid Cloud</h2>
       <div class="group-intro">
         <p><strong>Asteroid Cloud</strong> is a memory-friendly vector database for
-        AI workloads like RAG and semantic search. You bring embeddings; Asteroid
-        stores vectors and metadata, then serves k-NN search with filters.</p>
+        applications that need fast similarity search at lower infrastructure cost.
+        You bring embeddings; Asteroid stores vectors and JSON metadata, then serves
+        k-NN search with optional metadata filters.</p>
       </div>
-      <p>In the pilot, you access it over HTTPS with an API key.</p>
-      <p>Use the Python client or call the HTTP API directly:</p>
+      <p>In the pilot, you access your Asteroid instance over HTTPS with an API key.
+      Use the Python client or call the HTTP API directly from any language.</p>
+      <p>Your endpoint, API key, and vector dimension are provided when your pilot is
+      set up. Don't have them yet? <a href="index.html#pilot">Request a pilot</a>.</p>
+
+      <h2 id="cloud-before">Before you start</h2>
+      <p>For your pilot instance, we provide:</p>
       <ul>
-        <li><strong>Python client</strong> — <code>pip install lsmvec-client</code></li>
-        <li><strong>HTTP API</strong> — a plain REST API you can call with
-        <code>curl</code> or any language.</li>
+        <li>an HTTPS endpoint</li>
+        <li>an API key</li>
+        <li>the vector dimension for your index</li>
       </ul>
-      <p>Your endpoint, API key, and vector dimension are provided when your
-      pilot is set up. Don't have them yet?
-      <a href="index.html#pilot">Request a pilot</a>.</p>
+      <p>You bring:</p>
+      <ul>
+        <li>embeddings from your model or embedding provider</li>
+        <li>numeric vector IDs</li>
+        <li>optional JSON metadata for filtering and retrieval</li>
+      </ul>
+      <div class="callout"><p><strong>One pilot instance is one vector index.</strong>
+      Insert vectors, attach metadata, and search against that index over the API.</p></div>
 
       <h2 id="cloud-quickstart">Quickstart</h2>
-      <p>Install the client, connect, insert vectors, and search. Your vector
-      dimension <code>D</code> is fixed when your pilot instance is provisioned.</p>
-      <p>Install the Python client (or skip it and use <code>curl</code> / any
-      HTTP client):</p>
+      <p>Install the client, connect, insert vectors, and search. The example below
+      uses 3-dimensional toy vectors so you can copy and run it directly. Your real
+      pilot instance uses the dimension configured for your embeddings.</p>
+      <p>Install the Python client:</p>
       <pre><code>pip install lsmvec-client</code></pre>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
@@ -207,44 +223,44 @@ client = Client(api_key="sk-live-...",
                 base_url="https://api.lsmvec.com")
 assert client.health()
 
-# insert a few D-dimensional vectors (bring your own embeddings)
-client.insert(1, [0.10, 0.20, ...], metadata={"category": "docs"})
-client.insert(2, [0.11, 0.19, ...], metadata={"category": "blog"})
+# Use your real embedding dimension in production.
+client.insert(1, [0.10, 0.20, 0.30], metadata={"category": "docs"})
+client.insert(2, [0.12, 0.18, 0.33], metadata={"category": "blog"})
 
-# search
-hits = client.search([0.10, 0.20, ...], k=10)
+hits = client.search([0.11, 0.19, 0.31], k=2)
 for h in hits:
     print(h.id, h.distance)</code></pre></div>
         <div class="tab-panel" data-lang="curl" hidden><pre><code># insert
 curl -sX POST https://api.lsmvec.com/v1/vectors \
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
-  -d '{"id": 1, "vector": [0.10, 0.20, ...], "metadata": {"category": "docs"}}'
+  -d '{"id": 1, "vector": [0.10, 0.20, 0.30], "metadata": {"category": "docs"}}'
 
 # search
 curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
-  -d '{"vector": [0.10, 0.20, ...], "k": 10}'</code></pre></div>
+  -d '{"vector": [0.11, 0.19, 0.31], "k": 2}'</code></pre></div>
       </div>
-      <div class="callout"><p><strong>No collection setup.</strong>
-      One pilot instance is one index. Insert vectors and search.</p></div>
+      <div class="callout"><p><strong>Use your configured dimension.</strong>
+      The toy vectors above are 3-dimensional for readability. In your pilot, every
+      inserted and searched vector must match the dimension configured for your index.</p></div>
 
       <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
-      <p><code>insert</code> adds a vector by id with optional JSON metadata.
-      <code>upsert</code> replaces the vector for an id (insert-or-replace). IDs
-      are 64-bit unsigned integers.</p>
+      <p><code>insert</code> adds a vector by ID with optional JSON metadata.
+      <code>upsert</code> inserts or replaces the vector for an existing ID. IDs
+      are numeric unsigned 64-bit values.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
           <button class="tab-btn" data-lang="curl">cURL</button>
         </div>
         <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})
-client.upsert(1, new_vector)   # replace the vector for id 1</code></pre></div>
+client.upsert(1, new_vector)   # insert or replace the vector for ID 1</code></pre></div>
         <div class="tab-panel" data-lang="curl" hidden><pre><code># insert (POST)
 curl -sX POST https://api.lsmvec.com/v1/vectors \
   -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
-  -d '{"id": 1, "vector": [...], "metadata": {"title": "intro", "year": 2026}}'
+  -d '{"id": 1, "vector": [0.10, 0.20, 0.30], "metadata": {"title": "intro", "year": 2026}}'
 
 # upsert (PUT) — replace the vector for id 1
 curl -sX PUT https://api.lsmvec.com/v1/vectors/1 \
@@ -267,9 +283,9 @@ curl -sX DELETE https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk
       dequantized vector, so values may differ slightly from the original input.</p></div>
 
       <h2 id="cloud-payloads">Metadata &amp; payloads</h2>
-      <p>Attach JSON metadata to each vector: text, source, tags, prices,
-      timestamps, or any fields your app needs. Read, replace, or merge it
-      without changing the vector.</p>
+      <p>Attach JSON metadata to each vector: document text, source, tags,
+      timestamps, tenant IDs, or any fields your app needs for retrieval.
+      Read, replace, or merge metadata without changing the vector.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -286,8 +302,8 @@ curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Be
       </div>
 
       <h2 id="cloud-search">Search</h2>
-      <p>Search returns the nearest vector ids by distance. Increase
-      <code>ef_search</code> for higher recall at higher latency.</p>
+      <p>Search returns the nearest vector IDs by distance. Increase
+      <code>ef_search</code> when you want higher recall and can spend more time per query.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -312,6 +328,27 @@ for h in hits:
         <li>Existence: <code>$exists</code> (boolean)</li>
         <li>Logical: <code>$and</code> <code>$or</code></li>
       </ul>
+      <table>
+        <thead><tr><th>Use case</th><th>Filter</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Match one field</td>
+            <td><code>{"source": {"$eq": "handbook"}}</code></td>
+          </tr>
+          <tr>
+            <td>Filter by time or version</td>
+            <td><code>{"year": {"$gte": 2026}}</code></td>
+          </tr>
+          <tr>
+            <td>Match one of several tags</td>
+            <td><code>{"tag": {"$in": ["docs", "support"]}}</code></td>
+          </tr>
+          <tr>
+            <td>Combine conditions</td>
+            <td><code>{"$and": [{"category": {"$eq": "docs"}}, {"year": {"$gte": 2026}}]}</code></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -332,19 +369,19 @@ for h in hits:
       </div>
 
       <h2 id="cloud-bulk">Bulk import (initial load)</h2>
-      <p>Two ways to load data, with different memory profiles:</p>
+      <p>Use incremental writes for normal application traffic. Use bulk import for
+      the first load of a new index.</p>
       <ul>
-        <li><strong>Incremental (on-disk).</strong> <code>insert</code> /
-        <code>upsert</code> one vector at a time — small, flat memory. Use it for
-        streaming writes and updates to an existing instance.</li>
-        <li><strong>Bulk import (in-memory).</strong> For a <strong>new,
-        empty</strong> instance, build the whole index in one pass
-        (RNN-Descent) — faster for a large initial load.</li>
+        <li><strong>Incremental writes.</strong> Use <code>insert</code> or
+        <code>upsert</code> when you need to preserve your own IDs, attach metadata
+        as you ingest, or update an existing index.</li>
+        <li><strong>Bulk import.</strong> For a new, empty index, load all vectors in
+        one pass. This is faster for a large initial load.</li>
       </ul>
-      <div class="callout"><p><strong>Memory note.</strong> Bulk import builds the
-      index in memory, so it uses more RAM <em>during the build</em>. Afterward —
-      and for every insert and query — Asteroid's footprint stays small and flat
-      as usual.</p></div>
+      <div class="callout"><p><strong>Bulk import ID behavior.</strong>
+      Bulk import assigns vector IDs in input order, starting from <code>0</code>.
+      If you need to keep existing IDs or attach metadata during ingest, use
+      <code>insert</code> or <code>upsert</code> instead.</p></div>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>
@@ -361,9 +398,58 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Content-Type: application/octet-stream" \
   --data-binary @vectors.f32</code></pre></div>
       </div>
+      <p>If you already have metadata for each vector, use incremental writes for the
+      simplest import path. For very large first loads, talk to us during the pilot
+      and we can help choose the right ingest path.</p>
+
+      <h2 id="cloud-import">Import existing vectors</h2>
+      <p>If you already have embeddings in another system, you can import them into
+      Asteroid without changing your embedding model.</p>
+      <ol>
+        <li>Export your vectors from the current system.</li>
+        <li>Use the same embedding dimension for your Asteroid pilot index.</li>
+        <li>Insert records with your existing numeric IDs, or use bulk import for a
+        fresh sequential load.</li>
+        <li>Store document text, source, tags, or other retrieval fields as JSON metadata.</li>
+        <li>Search with the same query embeddings your application already uses.</li>
+      </ol>
+      <p>For pilot workloads, we can help review your current data format and choose
+      between incremental writes and bulk import.</p>
+
+      <h2 id="cloud-troubleshooting">Troubleshooting</h2>
+      <table>
+        <thead><tr><th>Symptom</th><th>What to check</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>401 Unauthorized</code></td>
+            <td>Check that the request includes <code>Authorization: Bearer &lt;api-key&gt;</code>.</td>
+          </tr>
+          <tr>
+            <td><code>400</code> on insert or search</td>
+            <td>Check that the vector has the dimension configured for your pilot index.</td>
+          </tr>
+          <tr>
+            <td><code>404 Not Found</code></td>
+            <td>The vector ID or payload does not exist yet.</td>
+          </tr>
+          <tr>
+            <td><code>413 Payload Too Large</code></td>
+            <td>Reduce the request size or split the load into smaller requests.</td>
+          </tr>
+          <tr>
+            <td><code>429 Rate Limited</code></td>
+            <td>Retry with backoff, or contact us if the pilot needs a higher request rate.</td>
+          </tr>
+          <tr>
+            <td>Bulk import fails</td>
+            <td>Bulk import is for a new, empty index. Use incremental writes for existing indexes.</td>
+          </tr>
+        </tbody>
+      </table>
+
       <h2 id="cloud-rag">Build a RAG app</h2>
-      <p>For RAG, you chunk files and create embeddings with your own model.
-      Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
+      <p>For a retrieval app, chunk your files and create embeddings with your own
+      model. Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="python">Python</button>

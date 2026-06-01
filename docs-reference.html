@@ -140,6 +140,7 @@
       <div class="sidebar-section">
         <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
         <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
+        <a href="docs.html#cloud-before" class="sidebar-link">Before you start</a>
         <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
         <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
         <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
@@ -147,6 +148,8 @@
         <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
         <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
         <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+        <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
+        <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
         <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
       </div>
 
@@ -163,6 +166,8 @@
       <div class="sidebar-section">
         <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
         <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
+        <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
+        <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
         <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
         <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
         <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
@@ -174,8 +179,9 @@
     <main class="docs-content">
 
       <h2 id="ref-http">HTTP API reference</h2>
-      <p>All routes require <code>Authorization: Bearer &lt;api-key&gt;</code>
-      except <code>/health</code>. Bodies are JSON unless noted.</p>
+      <p>Asteroid Cloud routes require
+      <code>Authorization: Bearer &lt;api-key&gt;</code> except <code>/health</code>.
+      Bodies are JSON unless noted.</p>
       <table>
         <thead><tr><th>Method &amp; path</th><th>Description</th></tr></thead>
         <tbody>
@@ -193,9 +199,95 @@
           <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
         </tbody>
       </table>
-      <p>Error codes: <code>400</code> invalid argument, <code>401</code>
-      unauthorized, <code>404</code> not found, <code>413</code> payload too
-      large, <code>429</code> rate limited, <code>5xx</code> server error.</p>
+      <p>Vector IDs are numeric unsigned 64-bit values. If your application uses IDs
+      larger than JavaScript's safe integer range, send them as strings in JSON request
+      bodies.</p>
+      <p>Errors use a JSON body with <code>error</code> and <code>code</code> fields.
+      Common status codes are <code>400</code> invalid argument,
+      <code>401</code> unauthorized, <code>404</code> not found,
+      <code>413</code> payload too large, <code>429</code> rate limited, and
+      <code>5xx</code> server error.</p>
+
+      <h2 id="ref-examples">Request examples</h2>
+
+      <h3>Insert a vector</h3>
+      <pre><code>curl -sX POST https://api.lsmvec.com/v1/vectors \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"id": 1, "vector": [0.10, 0.20, 0.30], "metadata": {"source": "docs"}}'</code></pre>
+
+      <h3>Upsert a vector</h3>
+      <pre><code>curl -sX PUT https://api.lsmvec.com/v1/vectors/1 \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"vector": [0.12, 0.18, 0.33]}'</code></pre>
+
+      <h3>Search</h3>
+      <pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"vector": [0.11, 0.19, 0.31], "k": 10, "ef_search": 128}'</code></pre>
+
+      <h3>Search with a metadata filter</h3>
+      <pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"vector": [0.11, 0.19, 0.31],
+       "k": 10,
+       "filter": {"source": {"$eq": "docs"}}}'</code></pre>
+
+      <h3>Replace metadata</h3>
+      <pre><code>curl -sX PUT https://api.lsmvec.com/v1/vectors/1/payload \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"source": "docs", "title": "intro"}'</code></pre>
+
+      <h3>Merge metadata</h3>
+      <pre><code>curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"views": 42}'</code></pre>
+
+      <h2 id="ref-errors">Errors</h2>
+      <table>
+        <thead><tr><th>Status</th><th>Meaning</th><th>Typical fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>400</code></td>
+            <td>Invalid request, invalid JSON, wrong vector dimension, or invalid filter.</td>
+            <td>Check the request body and use the configured vector dimension.</td>
+          </tr>
+          <tr>
+            <td><code>401</code></td>
+            <td>Missing or invalid API key.</td>
+            <td>Send <code>Authorization: Bearer &lt;api-key&gt;</code>.</td>
+          </tr>
+          <tr>
+            <td><code>404</code></td>
+            <td>Vector or payload not found.</td>
+            <td>Insert the vector first, then retry the read/update.</td>
+          </tr>
+          <tr>
+            <td><code>413</code></td>
+            <td>Request body is too large.</td>
+            <td>Split the request into smaller parts.</td>
+          </tr>
+          <tr>
+            <td><code>429</code></td>
+            <td>Request rate is too high for the current pilot limit.</td>
+            <td>Retry with backoff or contact us if you need more throughput.</td>
+          </tr>
+          <tr>
+            <td><code>5xx</code></td>
+            <td>Server-side error.</td>
+            <td>Retry, then contact us with the request and timestamp if it persists.</td>
+          </tr>
+        </tbody>
+      </table>
+      <pre><code>{
+  "error": "vector dimension mismatch",
+  "code": "invalid_argument"
+}</code></pre>
 
       <h2 id="ref-client">Python client reference</h2>
       <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
@@ -204,12 +296,12 @@
         <thead><tr><th>Method</th><th>Notes</th></tr></thead>
         <tbody>
           <tr><td><code>insert(id, vector, metadata=None)</code></td><td>Insert with optional metadata.</td></tr>
-          <tr><td><code>upsert(id, vector)</code></td><td>Insert-or-replace the vector.</td></tr>
+          <tr><td><code>upsert(id, vector)</code></td><td>Insert or replace the vector for an ID.</td></tr>
           <tr><td><code>get(id) -&gt; dict</code></td><td><code>{"id", "vector"}</code>.</td></tr>
           <tr><td><code>delete(id)</code></td><td></td></tr>
           <tr><td><code>get_payload(id)</code> / <code>set_payload(id, p)</code> / <code>merge_payload(id, p)</code></td><td>Payload read / replace / merge-patch.</td></tr>
           <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
-          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load (empty DB only).</td></tr>
+          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load for a new, empty index. IDs are assigned in input order.</td></tr>
           <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
         </tbody>
       </table>
