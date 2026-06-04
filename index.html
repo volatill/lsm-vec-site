@@ -658,6 +658,16 @@ const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
       return;
     }
 
+    // Email check that MATCHES the server (Apps Script) rule: requires a domain dot,
+    // e.g. you@company.com. The browser's native type="email" accepts "test@test"
+    // (no TLD), but the server rejects it — which, under no-cors, would otherwise look
+    // like a false "success". Catch it here with a clear message instead.
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.elements['email'].value.trim())) {
+      setStatus('Please enter a valid email address with a domain, e.g. you@company.com.', 'err');
+      form.elements['email'].focus();
+      return;
+    }
+
     // Auto-fill metadata.
     form.elements['timestamp'].value = new Date().toISOString();
     form.elements['source_page'].value = location.href;
