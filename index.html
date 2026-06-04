@@ -571,10 +571,12 @@ hits = client.search([0.10, 0.20, ...], k=10)
           </div>
         </div>
 
-        <!-- Honeypot: humans never see or fill this; bots often do. -->
+        <!-- Honeypot: humans never see or fill this; bots often do. Named neutrally
+             (NOT "website"/"url"/etc.) so browser/password-manager autofill won't
+             populate it and falsely flag a real person as a bot. -->
         <div class="hp-field" aria-hidden="true">
-          <label for="pf-website">Website (leave this empty)</label>
-          <input type="text" id="pf-website" name="website" tabindex="-1" autocomplete="off">
+          <label for="pf-hpf">Do not fill this in</label>
+          <input type="text" id="pf-hpf" name="hp_field" tabindex="-1" autocomplete="off">
         </div>
 
         <!-- Auto-filled metadata (see script). -->
@@ -641,7 +643,9 @@ const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
     e.preventDefault();
 
     // Honeypot: if filled, silently pretend success (likely a bot).
-    if (form.elements['website'].value.trim() !== '') {
+    // Uses the neutrally-named hidden field so browser autofill can't trip it.
+    var hp = form.elements['hp_field'];
+    if (hp && hp.value.trim() !== '') {
       setStatus("Thanks — we'll be in touch.", 'ok');
       form.reset();
       return;
@@ -684,7 +688,7 @@ const PILOT_EMAIL = "dingheng001@e.ntu.edu.sg";
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(data),
       });
-      setStatus("Thanks — we've received your request and will be in touch by email.", 'ok');
+      setStatus("Thanks — we've received your request and will be in touch by email. If you don't hear back within a couple of days, email " + PILOT_EMAIL + " directly.", 'ok');
       form.reset();
     } catch (err) {
       setStatus("Couldn't submit — please email " + PILOT_EMAIL + ' directly.', 'err');
