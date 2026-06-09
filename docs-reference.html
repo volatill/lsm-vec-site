@@ -291,7 +291,8 @@
 
       <h2 id="ref-client">Python client reference</h2>
       <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
-      <code>urllib</code>; <code>numpy</code> optional for <code>bulk_build</code>).</p>
+      <code>urllib</code>; <code>numpy</code> optional for <code>bulk_build</code>).
+      Requires Python 3.9+.</p>
       <table>
         <thead><tr><th>Method</th><th>Notes</th></tr></thead>
         <tbody>
@@ -318,7 +319,7 @@
 git submodule update --init --recursive
 make aster        # builds lib/aster/librocksdb.a (required first)
 make              # builds the static + shared libs and the test binary</code></pre>
-      <p>For the Python engine module (requires Aster built + ninja):</p>
+      <p>For the Python engine module (requires Python 3.9+, Aster built, and ninja):</p>
       <pre><code>python -m pip install .        # builds and installs the lsm_vec module
 python -c "import lsm_vec; print('OK')"</code></pre>
 
