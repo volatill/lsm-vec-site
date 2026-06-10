@@ -7,6 +7,8 @@
 /* --------------------------------------------------------------------------
    1. CSS Custom Properties (Design Tokens)
    -------------------------------------------------------------------------- */
+/* Palette: Asteroid brand — amber-gold accent + silver-slate, on the
+   original slate base (the "light touch" direction). */
 :root {
   --bg: #0a0e17;
   --surface: #111827;
@@ -14,11 +16,13 @@
   --border: #1e293b;
   --text: #e2e8f0;
   --text-muted: #64748b;
-  --accent: #06d6a0;
-  --accent-glow: rgba(6, 214, 160, 0.15);
+  --accent: #d4a574;                          /* amber/gold */
+  --accent-glow: rgba(212, 165, 116, 0.15);
+  --gradient-hi: #f0cfa0;                      /* gradient highlight (paired with --accent) */
+  --accent-2: #7e90a8;                         /* secondary (silver-slate) */
   --grid-line: rgba(30, 41, 59, 0.3);
   --shadow: rgba(0, 0, 0, 0.3);
-  --ambient: rgba(6, 214, 160, 0.06);
+  --ambient: rgba(212, 165, 116, 0.06);
   --radius: 16px;
 }
 
@@ -29,11 +33,13 @@
   --border: #e2e8f0;
   --text: #0f172a;
   --text-muted: #64748b;
-  --accent: #059669;
-  --accent-glow: rgba(5, 150, 105, 0.12);
+  --accent: #a9763a;                           /* deeper amber for contrast on light */
+  --accent-glow: rgba(169, 118, 58, 0.12);
+  --gradient-hi: #d4a574;
+  --accent-2: #5a6b82;
   --grid-line: rgba(148, 163, 184, 0.18);
   --shadow: rgba(15, 23, 42, 0.08);
-  --ambient: rgba(5, 150, 105, 0.05);
+  --ambient: rgba(169, 118, 58, 0.05);
 }
 
 html { color-scheme: dark; }
@@ -113,10 +119,23 @@ body::after {
   font-weight: 700;
   color: var(--text);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
 }
 
+.nav-mark {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+/* Per-theme logo mark: dark mark on dark nav, light mark on light nav. */
+.nav-mark-light { display: none; }
+[data-theme="light"] .nav-mark-dark { display: none; }
+[data-theme="light"] .nav-mark-light { display: block; }
+
 .nav-logo span {
-  background: linear-gradient(135deg, var(--accent), #34d399);
+  background: linear-gradient(135deg, var(--accent), var(--gradient-hi));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

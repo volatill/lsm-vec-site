@@ -10,7 +10,8 @@
   <meta property="og:description" content="Build time, query throughput, and memory footprint vs Milvus, Qdrant, Weaviate, Elasticsearch, and pgvector on SIFT-100K/1M.">
   <meta property="og:url" content="https://lsmvec.com/benchmark.html">
   <meta name="twitter:card" content="summary">
-  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="icon" type="image/png" href="img/favicon.png">
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -22,7 +23,7 @@
       --weaviate: #fb923c;
       --elastic: #fbbf24;
       --pgvector: #38bdf8;
-      --lsmvec: #06d6a0;
+      --lsmvec: var(--accent);
     }
 
     /* Header */
@@ -41,7 +42,7 @@
     }
 
     .header h1 span {
-      background: linear-gradient(135deg, var(--accent), #34d399);
+      background: linear-gradient(135deg, var(--accent), var(--gradient-hi));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -318,7 +319,7 @@
 
   <!-- ===== Navigation ===== -->
   <nav class="nav">
-    <a href="index.html" class="nav-logo"><span>Asteroid</span></a>
+    <a href="index.html" class="nav-logo"><img class="nav-mark nav-mark-dark" src="img/asteroid-mark-dark.png" alt="Asteroid" width="28" height="28"><img class="nav-mark nav-mark-light" src="img/asteroid-mark-light.png" alt="Asteroid" width="28" height="28"><span>Asteroid</span></a>
     <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
     </button>
@@ -415,7 +416,7 @@ const COLORS = {
   weaviate: { bg: 'rgba(251, 146, 60, 0.75)', border: '#fb923c' },
   elasticsearch: { bg: 'rgba(251, 191, 36, 0.75)', border: '#fbbf24' },
   pgvector: { bg: 'rgba(56, 189, 248, 0.75)', border: '#38bdf8' },
-  lsmvec: { bg: 'rgba(6, 214, 160, 0.85)', border: '#06d6a0' },
+  lsmvec: (function(){var a=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#d4a574';return{bg:a,border:a};})(),
 };
 
 const LABELS = {
