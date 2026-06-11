@@ -1,224 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asteroid Cloud — Documentation</title>
-  <meta name="description" content="Asteroid Cloud docs — use the managed memory-friendly vector database via the Python client or HTTP API: insert, search, filter, payloads, bulk import, and RAG.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Asteroid Cloud — Documentation">
-  <meta property="og:description" content="Use Asteroid Cloud via the Python client or HTTP API: insert, search, filter, payloads, bulk import, and RAG.">
-  <meta property="og:url" content="https://lsmvec.com/docs.html">
-  <meta name="twitter:card" content="summary">
-  <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-  <link rel="icon" type="image/png" href="img/favicon.png">
-  <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    html { scroll-behavior: smooth; }
-    .docs-layout { display: flex; min-height: calc(100vh - 64px); }
-
-    .sidebar {
-      position: fixed; top: 64px; left: 0; width: 260px;
-      height: calc(100vh - 64px); overflow-y: auto;
-      background: var(--surface); border-right: 1px solid var(--border);
-      padding: 24px 0; z-index: 50;
-    }
-
-    .sidebar-section { padding: 0 20px; margin-bottom: 20px; }
-
-    .sidebar-title {
-      display: block; text-decoration: none;
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
-      font-family: 'JetBrains Mono', monospace; padding: 0 20px;
-      transition: color 0.2s;
-    }
-    .sidebar-title:hover { color: var(--text); }
-    .sidebar-title.active-group { color: var(--accent); }
-
-    .sidebar-link {
-      display: block; padding: 6px 20px; font-size: 14px;
-      color: var(--text-muted); text-decoration: none;
-      transition: all 0.2s; border-left: 2px solid transparent;
-    }
-    .sidebar-link:hover { color: var(--text); }
-    .sidebar-link.active {
-      color: var(--accent); border-left-color: var(--accent);
-      background: var(--accent-glow);
-    }
-
-    .docs-content {
-      margin-left: 260px; padding: 48px 48px 80px;
-      max-width: 900px; width: 100%;
-    }
-
-    .docs-content h2 {
-      font-size: 28px; font-weight: 700; margin: 48px 0 16px;
-      padding-top: 16px; border-top: 1px solid var(--border);
-      scroll-margin-top: 80px;
-    }
-    .docs-content h2:first-child { border-top: none; margin-top: 0; }
-
-    .docs-content h3 {
-      font-size: 20px; font-weight: 600; margin: 32px 0 12px; color: var(--text);
-    }
-
-    .docs-content h4 {
-      font-size: 16px; font-weight: 600; margin: 24px 0 8px;
-      color: var(--text); font-family: 'JetBrains Mono', monospace;
-    }
-
-    .docs-content p { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
-    .docs-content ul, .docs-content ol { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; padding-left: 24px; }
-    .docs-content li { margin-bottom: 4px; }
-    .docs-content a { color: var(--accent); }
-
-    .group-intro {
-      background: var(--accent-glow); border: 1px solid var(--accent);
-      border-radius: 12px; padding: 16px 20px; margin: 0 0 8px;
-    }
-    .group-intro p { margin: 0; color: var(--text); font-size: 14px; }
-
-    .callout {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 8px; padding: 14px 18px; margin: 16px 0;
-    }
-    .callout p { margin: 0; font-size: 14px; }
-
-    .sidebar-toggle { display: none; }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        position: relative; top: 0; width: 100%; height: auto;
-        max-height: 0; overflow: hidden; transition: max-height 0.3s;
-        border-right: none; border-bottom: 1px solid var(--border);
-      }
-      .sidebar.open { max-height: 80vh; overflow-y: auto; }
-      .docs-content { margin-left: 0; padding: 24px 16px; }
-      .sidebar-toggle {
-        display: block; width: 100%; padding: 12px 20px;
-        background: var(--surface); border: none; border-bottom: 1px solid var(--border);
-        color: var(--text); font-family: 'DM Sans', sans-serif;
-        font-size: 14px; cursor: pointer; text-align: left;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asteroid Cloud — Documentation</title>
+<meta name="description" content="Asteroid Cloud docs — use the managed memory-friendly vector database via the Python client or HTTP API: insert, search, filter, payloads, bulk import, and RAG.">
+<script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add('js');})();</script>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cosmic.css">
+<style>
+body{padding-top:68px}
+.docs-layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{position:fixed;top:68px;left:0;width:264px;height:calc(100vh - 68px);overflow-y:auto;background:color-mix(in srgb,var(--surface-solid) 82%,transparent);backdrop-filter:blur(12px);border-right:1px solid var(--border);padding:26px 0;z-index:50}
+.sidebar-section{padding:0 18px;margin-bottom:24px}
+.sidebar-title{display:block;text-decoration:none;font-family:'JetBrains Mono';font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;padding:0 18px;transition:color .2s}
+.sidebar-title:hover{color:var(--text)}
+.sidebar-title.active-group{color:var(--accent)}
+.sidebar-link{display:block;padding:6px 18px;font-size:13.5px;color:var(--text-muted);text-decoration:none;transition:color .2s,border-color .2s,background .2s;border-left:2px solid transparent}
+.sidebar-link:hover{color:var(--text)}
+.sidebar-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft)}
+.docs-content{margin-left:264px;padding:44px 52px 90px;max-width:940px;width:100%;position:relative;z-index:1}
+.docs-content h2{font-family:'Sora';font-size:26px;font-weight:600;letter-spacing:-.5px;margin:48px 0 16px;padding-top:20px;border-top:1px solid var(--border);scroll-margin-top:90px}
+.docs-content h2:first-of-type{border-top:none;margin-top:0;padding-top:0}
+.docs-content h3{font-family:'Sora';font-size:19px;font-weight:600;margin:30px 0 12px;color:var(--text)}
+.docs-content h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--text);font-family:'JetBrains Mono'}
+.docs-content p{color:var(--text-muted);line-height:1.7;margin-bottom:16px}
+.docs-content ul,.docs-content ol{color:var(--text-muted);line-height:1.7;margin-bottom:16px;padding-left:24px}
+.docs-content li{margin-bottom:5px}
+.docs-content a{color:var(--accent)}
+.docs-content pre{margin:14px 0}
+.docs-end{margin-top:42px;border-top:1px solid var(--border);padding-top:24px;font-size:14.5px;color:var(--text-muted)}
+.sidebar-toggle{display:none}
+@media(max-width:900px){
+  .sidebar{position:relative;top:0;width:100%;height:auto;max-height:0;overflow:hidden;transition:max-height .3s;border-right:none;border-bottom:1px solid var(--border)}
+  .sidebar.open{max-height:80vh;overflow-y:auto}
+  .docs-content{margin-left:0;padding:26px 22px 70px}
+  .docs-layout{flex-direction:column}
+  .sidebar-toggle{display:block;width:100%;padding:13px 22px;background:var(--surface-solid);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;text-align:left}
+}
+</style>
 </head>
 <body>
+<div class="sky" id="sky"></div>
+<div class="aurora"></div>
 
-  <!-- ===== Navigation ===== -->
-  <nav class="nav">
-    <a href="index.html" class="nav-logo"><img class="nav-mark nav-mark-dark" src="img/asteroid-mark-dark.png" alt="Asteroid" width="28" height="28"><img class="nav-mark nav-mark-light" src="img/asteroid-mark-light.png" alt="Asteroid" width="28" height="28"><span>Asteroid</span></a>
-    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-    </button>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="docs.html" class="active">Docs</a>
-      <a href="pilot.html">Pilot</a>
-      <a href="benchmark.html">Benchmark</a>
-      <a href="cost.html">Cost</a>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><img src="img/asteroid-gem.png" alt="Asteroid"><span class="wm">Asteroid</span></a>
+  <button class="hamburger" aria-label="Menu" onclick="toggleNav()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="docs.html" class="active">Docs</a>
+    <a href="pilot.html">Pilot</a>
+    <a href="benchmark.html">Benchmark</a>
+    <a href="cost.html">Cost</a>
+    <div class="nav-tools">
+      <button class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
-      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      </a>
+      <a class="icon-btn" href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener" aria-label="GitHub"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
       <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <button class="sidebar-toggle" id="sidebar-toggle">Menu</button>
+<button class="sidebar-toggle" id="sidebar-toggle">☰ Docs menu</button>
 
-  <div class="docs-layout">
+<div class="docs-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
+      <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
+      <a href="docs.html#cloud-before" class="sidebar-link">Before you start</a>
+      <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
+      <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
+      <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
+      <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
+      <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
+      <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
+      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+      <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
+      <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
+      <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
+      <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
+      <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
+      <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
+      <a href="docs-database.html#db-search" class="sidebar-link">Search</a>
+      <a href="docs-database.html#db-bulk" class="sidebar-link">Bulk build</a>
+      <a href="docs-database.html#db-config" class="sidebar-link">Configuration &amp; defaults</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
+      <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
+      <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
+      <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
+      <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+      <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
+      <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
+    </div>
+  </aside>
 
-    <!-- ===== Sidebar (shared across docs pages) ===== -->
-    <aside class="sidebar" id="sidebar">
+  <main class="docs-content">
+    <h2 id="cloud-overview">Asteroid Cloud</h2>
+    <div class="group-intro"><p><strong>Asteroid Cloud</strong> is a memory-friendly vector database for applications that need fast similarity search at lower infrastructure cost. You bring embeddings; Asteroid stores vectors and JSON metadata, then serves k-NN search with optional metadata filters.</p></div>
+    <p>In the pilot, you access your Asteroid instance over HTTPS with an API key. Use the Python client or call the HTTP API directly from any language.</p>
+    <p>Your endpoint, API key, and vector dimension are provided when your pilot is set up. Don't have them yet? <a href="index.html#pilot">Request a pilot</a>.</p>
 
-      <div class="sidebar-section">
-        <a href="docs.html" class="sidebar-title">Asteroid Cloud</a>
-        <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
-        <a href="docs.html#cloud-before" class="sidebar-link">Before you start</a>
-        <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
-        <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
-        <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
-        <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
-        <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
-        <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
-        <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
-        <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
-        <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
-        <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
-      </div>
+    <h2 id="cloud-before">Before you start</h2>
+    <p>For your pilot instance, we provide:</p>
+    <ul><li>an HTTPS endpoint</li><li>an API key</li><li>the vector dimension for your index</li></ul>
+    <p>You bring:</p>
+    <ul><li>embeddings from your model or embedding provider</li><li>numeric vector IDs</li><li>optional JSON metadata for filtering and retrieval</li></ul>
+    <div class="callout"><p><strong>One pilot instance is one vector index.</strong> Insert vectors, attach metadata, and search against that index over the API.</p></div>
 
-      <div class="sidebar-section">
-        <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
-        <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
-        <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
-        <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
-        <a href="docs-database.html#db-search" class="sidebar-link">Search</a>
-        <a href="docs-database.html#db-bulk" class="sidebar-link">Bulk build</a>
-        <a href="docs-database.html#db-config" class="sidebar-link">Configuration &amp; defaults</a>
-      </div>
-
-      <div class="sidebar-section">
-        <a href="docs-reference.html" class="sidebar-title">Reference &amp; Deployment</a>
-        <a href="docs-reference.html#ref-http" class="sidebar-link">HTTP API reference</a>
-        <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
-        <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
-        <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
-        <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
-        <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
-      </div>
-
-    </aside>
-
-    <!-- ===== Main Content — Asteroid Cloud ===== -->
-    <main class="docs-content">
-
-      <h2 id="cloud-overview">Asteroid Cloud</h2>
-      <div class="group-intro">
-        <p><strong>Asteroid Cloud</strong> is a memory-friendly vector database for
-        applications that need fast similarity search at lower infrastructure cost.
-        You bring embeddings; Asteroid stores vectors and JSON metadata, then serves
-        k-NN search with optional metadata filters.</p>
-      </div>
-      <p>In the pilot, you access your Asteroid instance over HTTPS with an API key.
-      Use the Python client or call the HTTP API directly from any language.</p>
-      <p>Your endpoint, API key, and vector dimension are provided when your pilot is
-      set up. Don't have them yet? <a href="index.html#pilot">Request a pilot</a>.</p>
-
-      <h2 id="cloud-before">Before you start</h2>
-      <p>For your pilot instance, we provide:</p>
-      <ul>
-        <li>an HTTPS endpoint</li>
-        <li>an API key</li>
-        <li>the vector dimension for your index</li>
-      </ul>
-      <p>You bring:</p>
-      <ul>
-        <li>embeddings from your model or embedding provider</li>
-        <li>numeric vector IDs</li>
-        <li>optional JSON metadata for filtering and retrieval</li>
-      </ul>
-      <div class="callout"><p><strong>One pilot instance is one vector index.</strong>
-      Insert vectors, attach metadata, and search against that index over the API.</p></div>
-
-      <h2 id="cloud-quickstart">Quickstart</h2>
-      <p>Install the client, connect, insert vectors, and search. The example below
-      uses 3-dimensional toy vectors so you can copy and run it directly. Your real
-      pilot instance uses the dimension configured for your embeddings.</p>
-      <p>Install the Python client (requires Python 3.9+):</p>
-      <pre><code>pip install lsmvec-client</code></pre>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
+    <h2 id="cloud-quickstart">Quickstart</h2>
+    <p>Install the client, connect, insert vectors, and search. The example below uses 3-dimensional toy vectors so you can copy and run it directly. Your real pilot instance uses the dimension configured for your embeddings.</p>
+    <p>Install the Python client (requires Python 3.9+):</p>
+    <pre><code>pip install lsmvec-client</code></pre>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
 
 client = Client(api_key="sk-live-...",
                 base_url="https://api.lsmvec.com")
@@ -231,7 +137,7 @@ client.insert(2, [0.12, 0.18, 0.33], metadata={"category": "blog"})
 hits = client.search([0.11, 0.19, 0.31], k=2)
 for h in hits:
     print(h.id, h.distance)</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code># insert
+      <div class="tab-panel" data-lang="curl" hidden><pre><code># insert
 curl -sX POST https://api.lsmvec.com/v1/vectors \
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
@@ -242,23 +148,16 @@ curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
   -d '{"vector": [0.11, 0.19, 0.31], "k": 2}'</code></pre></div>
-      </div>
-      <div class="callout"><p><strong>Use your configured dimension.</strong>
-      The toy vectors above are 3-dimensional for readability. In your pilot, every
-      inserted and searched vector must match the dimension configured for your index.</p></div>
+    </div>
+    <div class="callout"><p><strong>Use your configured dimension.</strong> The toy vectors above are 3-dimensional for readability. In your pilot, every inserted and searched vector must match the dimension configured for your index.</p></div>
 
-      <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
-      <p><code>insert</code> adds a vector by ID with optional JSON metadata.
-      <code>upsert</code> inserts or replaces the vector for an existing ID. IDs
-      are numeric unsigned 64-bit values.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})
+    <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
+    <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID. IDs are numeric unsigned 64-bit values.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})
 client.upsert(1, new_vector)   # insert or replace the vector for ID 1</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code># insert (POST)
+      <div class="tab-panel" data-lang="curl" hidden><pre><code># insert (POST)
 curl -sX POST https://api.lsmvec.com/v1/vectors \
   -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
   -d '{"id": 1, "vector": [0.10, 0.20, 0.30], "metadata": {"title": "intro", "year": 2026}}'
@@ -267,195 +166,128 @@ curl -sX POST https://api.lsmvec.com/v1/vectors \
 curl -sX PUT https://api.lsmvec.com/v1/vectors/1 \
   -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
   -d '{"vector": [...]}'</code></pre></div>
-      </div>
+    </div>
 
-      <h2 id="cloud-fetch">Fetch &amp; delete</h2>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>rec = client.get(1)       # {"id": 1, "vector": [...]}
+    <h2 id="cloud-fetch">Fetch &amp; delete</h2>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>rec = client.get(1)       # {"id": 1, "vector": [...]}
 client.delete(1)</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."
 curl -sX DELETE https://api.lsmvec.com/v1/vectors/1 -H "Authorization: Bearer sk-live-..."</code></pre></div>
-      </div>
-      <div class="callout"><p>Vectors are stored with SQ8 compression. <code>get</code> returns a
-      dequantized vector, so values may differ slightly from the original input.</p></div>
+    </div>
+    <div class="callout"><p>Vectors are stored with SQ8 compression. <code>get</code> returns a dequantized vector, so values may differ slightly from the original input.</p></div>
 
-      <h2 id="cloud-payloads">Metadata &amp; payloads</h2>
-      <p>Attach JSON metadata to each vector: document text, source, tags,
-      timestamps, tenant IDs, or any fields your app needs for retrieval.
-      Read, replace, or merge metadata without changing the vector.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>client.get_payload(1)                       # -> {...}
+    <h2 id="cloud-payloads">Metadata &amp; payloads</h2>
+    <p>Attach JSON metadata to each vector: document text, source, tags, timestamps, tenant IDs, or any fields your app needs for retrieval. Read, replace, or merge metadata without changing the vector.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>client.get_payload(1)                       # -> {...}
 client.set_payload(1, {"category": "docs"}) # replace
 client.merge_payload(1, {"views": 42})      # merge-patch</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..."
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..."
 curl -sX PUT   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" -d '{"category": "docs"}'
 curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" -d '{"views": 42}'</code></pre></div>
-      </div>
+    </div>
 
-      <h2 id="cloud-search">Search</h2>
-      <p>Search returns the nearest vector IDs by distance. Increase
-      <code>ef_search</code> when you want higher recall and can spend more time per query.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(query_vector, k=10, ef_search=128)
+    <h2 id="cloud-search">Search</h2>
+    <p>Search returns the nearest vector IDs by distance. Increase <code>ef_search</code> when you want higher recall and can spend more time per query.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(query_vector, k=10, ef_search=128)
 for h in hits:
     print(h.id, h.distance)</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
   -d '{"vector": [...], "k": 10, "ef_search": 128}'</code></pre></div>
-      </div>
+    </div>
 
-      <h2 id="cloud-filter">Filter by metadata</h2>
-      <p>Combine vector search with metadata filters in one query. Supported
-      operators:</p>
-      <ul>
-        <li>Comparison: <code>$eq</code> <code>$ne</code> <code>$gt</code>
-        <code>$gte</code> <code>$lt</code> <code>$lte</code></li>
-        <li>Membership: <code>$in</code> <code>$nin</code>
-        <code>$contains_any</code> <code>$contains_all</code></li>
-        <li>Existence: <code>$exists</code> (boolean)</li>
-        <li>Logical: <code>$and</code> <code>$or</code></li>
-      </ul>
-      <table>
-        <thead><tr><th>Use case</th><th>Filter</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>Match one field</td>
-            <td><code>{"source": {"$eq": "handbook"}}</code></td>
-          </tr>
-          <tr>
-            <td>Filter by time or version</td>
-            <td><code>{"year": {"$gte": 2026}}</code></td>
-          </tr>
-          <tr>
-            <td>Match one of several tags</td>
-            <td><code>{"tag": {"$in": ["docs", "support"]}}</code></td>
-          </tr>
-          <tr>
-            <td>Combine conditions</td>
-            <td><code>{"$and": [{"category": {"$eq": "docs"}}, {"year": {"$gte": 2026}}]}</code></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(
+    <h2 id="cloud-filter">Filter by metadata</h2>
+    <p>Combine vector search with metadata filters in one query. Supported operators:</p>
+    <ul>
+      <li>Comparison: <code>$eq</code> <code>$ne</code> <code>$gt</code> <code>$gte</code> <code>$lt</code> <code>$lte</code></li>
+      <li>Membership: <code>$in</code> <code>$nin</code> <code>$contains_any</code> <code>$contains_all</code></li>
+      <li>Existence: <code>$exists</code> (boolean)</li>
+      <li>Logical: <code>$and</code> <code>$or</code></li>
+    </ul>
+    <table>
+      <thead><tr><th>Use case</th><th>Filter</th></tr></thead>
+      <tbody>
+        <tr><td>Match one field</td><td><code>{"source": {"$eq": "handbook"}}</code></td></tr>
+        <tr><td>Filter by time or version</td><td><code>{"year": {"$gte": 2026}}</code></td></tr>
+        <tr><td>Match one of several tags</td><td><code>{"tag": {"$in": ["docs", "support"]}}</code></td></tr>
+        <tr><td>Combine conditions</td><td><code>{"$and": [{"category": {"$eq": "docs"}}, {"year": {"$gte": 2026}}]}</code></td></tr>
+      </tbody>
+    </table>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>hits = client.search(
     query_vector, k=10,
     filter={"$and": [
         {"category": {"$eq": "docs"}},
         {"year": {"$gte": 2026}},
     ]},
 )</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
   -d '{"vector": [...], "k": 10,
        "filter": {"$and": [{"category": {"$eq": "docs"}},
                            {"year": {"$gte": 2026}}]}}'</code></pre></div>
-      </div>
+    </div>
 
-      <h2 id="cloud-bulk">Bulk import (initial load)</h2>
-      <p>Use incremental writes for normal application traffic. Use bulk import for
-      the first load of a new index.</p>
-      <ul>
-        <li><strong>Incremental writes.</strong> Use <code>insert</code> or
-        <code>upsert</code> when you need to preserve your own IDs, attach metadata
-        as you ingest, or update an existing index.</li>
-        <li><strong>Bulk import.</strong> For a new, empty index, load all vectors in
-        one pass. This is faster for a large initial load.</li>
-      </ul>
-      <div class="callout"><p><strong>Bulk import ID behavior.</strong>
-      Bulk import assigns vector IDs in input order, starting from <code>0</code>.
-      If you need to keep existing IDs or attach metadata during ingest, use
-      <code>insert</code> or <code>upsert</code> instead.</p></div>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-          <button class="tab-btn" data-lang="curl">cURL</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>import numpy as np
+    <h2 id="cloud-bulk">Bulk import (initial load)</h2>
+    <p>Use incremental writes for normal application traffic. Use bulk import for the first load of a new index.</p>
+    <ul>
+      <li><strong>Incremental writes.</strong> Use <code>insert</code> or <code>upsert</code> when you need to preserve your own IDs, attach metadata as you ingest, or update an existing index.</li>
+      <li><strong>Bulk import.</strong> For a new, empty index, load all vectors in one pass. This is faster for a large initial load.</li>
+    </ul>
+    <div class="callout"><p><strong>Bulk import ID behavior.</strong> Bulk import assigns vector IDs in input order, starting from <code>0</code>. If you need to keep existing IDs or attach metadata during ingest, use <code>insert</code> or <code>upsert</code> instead.</p></div>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>import numpy as np
 vectors = np.random.rand(100_000, 128).astype(np.float32)
 report = client.bulk_build(vectors, threads=4)
 print(report)   # {'n': ..., 'elapsed_ms': ..., 'vectors_per_sec': ...}</code></pre></div>
-        <div class="tab-panel" data-lang="curl" hidden><pre><code># raw float32 body; N and dim in headers
+      <div class="tab-panel" data-lang="curl" hidden><pre><code># raw float32 body; N and dim in headers
 curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Authorization: Bearer sk-live-..." \
   -H "X-LSMVec-N: 100000" -H "X-LSMVec-Dim: 128" \
   -H "Content-Type: application/octet-stream" \
   --data-binary @vectors.f32</code></pre></div>
-      </div>
-      <p>If you already have metadata for each vector, use incremental writes for the
-      simplest import path. For very large first loads, talk to us during the pilot
-      and we can help choose the right ingest path.</p>
+    </div>
+    <p>If you already have metadata for each vector, use incremental writes for the simplest import path. For very large first loads, talk to us during the pilot and we can help choose the right ingest path.</p>
 
-      <h2 id="cloud-import">Import existing vectors</h2>
-      <p>If you already have embeddings in another system, you can import them into
-      Asteroid without changing your embedding model.</p>
-      <ol>
-        <li>Export your vectors from the current system.</li>
-        <li>Use the same embedding dimension for your Asteroid pilot index.</li>
-        <li>Insert records with your existing numeric IDs, or use bulk import for a
-        fresh sequential load.</li>
-        <li>Store document text, source, tags, or other retrieval fields as JSON metadata.</li>
-        <li>Search with the same query embeddings your application already uses.</li>
-      </ol>
-      <p>For pilot workloads, we can help review your current data format and choose
-      between incremental writes and bulk import.</p>
+    <h2 id="cloud-import">Import existing vectors</h2>
+    <p>If you already have embeddings in another system, you can import them into Asteroid without changing your embedding model.</p>
+    <ol>
+      <li>Export your vectors from the current system.</li>
+      <li>Use the same embedding dimension for your Asteroid pilot index.</li>
+      <li>Insert records with your existing numeric IDs, or use bulk import for a fresh sequential load.</li>
+      <li>Store document text, source, tags, or other retrieval fields as JSON metadata.</li>
+      <li>Search with the same query embeddings your application already uses.</li>
+    </ol>
+    <p>For pilot workloads, we can help review your current data format and choose between incremental writes and bulk import.</p>
 
-      <h2 id="cloud-troubleshooting">Troubleshooting</h2>
-      <table>
-        <thead><tr><th>Symptom</th><th>What to check</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>401 Unauthorized</code></td>
-            <td>Check that the request includes <code>Authorization: Bearer &lt;api-key&gt;</code>.</td>
-          </tr>
-          <tr>
-            <td><code>400</code> on insert or search</td>
-            <td>Check that the vector has the dimension configured for your pilot index.</td>
-          </tr>
-          <tr>
-            <td><code>404 Not Found</code></td>
-            <td>The vector ID or payload does not exist yet.</td>
-          </tr>
-          <tr>
-            <td><code>413 Payload Too Large</code></td>
-            <td>Reduce the request size or split the load into smaller requests.</td>
-          </tr>
-          <tr>
-            <td><code>429 Rate Limited</code></td>
-            <td>Retry with backoff, or contact us if the pilot needs a higher request rate.</td>
-          </tr>
-          <tr>
-            <td>Bulk import fails</td>
-            <td>Bulk import is for a new, empty index. Use incremental writes for existing indexes.</td>
-          </tr>
-        </tbody>
-      </table>
+    <h2 id="cloud-troubleshooting">Troubleshooting</h2>
+    <table>
+      <thead><tr><th>Symptom</th><th>What to check</th></tr></thead>
+      <tbody>
+        <tr><td><code>401 Unauthorized</code></td><td>Check that the request includes <code>Authorization: Bearer &lt;api-key&gt;</code>.</td></tr>
+        <tr><td><code>400</code> on insert or search</td><td>Check that the vector has the dimension configured for your pilot index.</td></tr>
+        <tr><td><code>404 Not Found</code></td><td>The vector ID or payload does not exist yet.</td></tr>
+        <tr><td><code>413 Payload Too Large</code></td><td>Reduce the request size or split the load into smaller requests.</td></tr>
+        <tr><td><code>429 Rate Limited</code></td><td>Retry with backoff, or contact us if the pilot needs a higher request rate.</td></tr>
+        <tr><td>Bulk import fails</td><td>Bulk import is for a new, empty index. Use incremental writes for existing indexes.</td></tr>
+      </tbody>
+    </table>
 
-      <h2 id="cloud-rag">Build a RAG app</h2>
-      <p>For a retrieval app, chunk your files and create embeddings with your own
-      model. Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
-      <div class="code-tabs" data-tabs>
-        <div class="tab-btns">
-          <button class="tab-btn active" data-lang="python">Python</button>
-        </div>
-        <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
+    <h2 id="cloud-rag">Build a RAG app</h2>
+    <p>For a retrieval app, chunk your files and create embeddings with your own model. Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
 # bring your own embedding model, e.g. fastembed (bge-small-en-v1.5, 384-dim)
 from fastembed import TextEmbedding
 
@@ -474,85 +306,28 @@ hits = client.search(qvec, k=5, filter={"source": {"$eq": "handbook"}})
 # 3. fetch the chunk text from payloads and feed it to your LLM
 context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
 # answer = your_llm(question, context)</code></pre></div>
-      </div>
-      <div class="callout"><p><strong>Bring your own embeddings.</strong> Asteroid stores and searches
-      vectors; it does not embed text server-side.</p></div>
+    </div>
+    <div class="callout"><p><strong>Bring your own embeddings.</strong> Asteroid stores and searches vectors; it does not embed text server-side.</p></div>
 
-      <p style="margin-top:40px;border-top:1px solid var(--border);padding-top:24px;">
-        Next: <a href="docs-database.html">Asteroid Database (LSM-Vec)</a> —
-        embed or self-host the engine · <a href="docs-reference.html">Reference &amp; Deployment</a>.
-      </p>
+    <p class="docs-end">Next: <a href="docs-database.html">Asteroid Database (LSM-Vec)</a> — embed or self-host the engine · <a href="docs-reference.html">Reference &amp; Deployment</a>.</p>
+  </main>
+</div>
 
-    </main>
-  </div>
-
-  <footer class="footer container">
-    Asteroid &mdash; NTU Siqiang Group &nbsp;·&nbsp;
-    <a href="index.html" style="color:var(--text-muted)">Home</a> &nbsp;·&nbsp;
-    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a>
-  </footer>
-
-  <!-- ===== Sidebar + scroll-spy + code-tabs ===== -->
-  <script>
-    // Highlight the current page's group in the shared sidebar.
-    (function () {
-      var here = (location.pathname.split('/').pop() || 'docs.html');
-      document.querySelectorAll('.sidebar-title').forEach(function (t) {
-        var f = (t.getAttribute('href') || '').split('#')[0];
-        if (f === here) t.classList.add('active-group');
-      });
-    })();
-
-    // Scroll-spy for the sections on THIS page (anchors are page-unique).
-    var sections = document.querySelectorAll('.docs-content h2[id]');
-    var sidebarLinks = document.querySelectorAll('.sidebar-link');
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          sidebarLinks.forEach(function (link) { link.classList.remove('active'); });
-          var a = document.querySelector('.sidebar-link[href$="#' + entry.target.id + '"]');
-          if (a) a.classList.add('active');
-        }
-      });
-    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
-    sections.forEach(function (s) { observer.observe(s); });
-
-    // Close the mobile sidebar on any link click (navigation/anchor handled natively).
-    sidebarLinks.forEach(function (link) {
-      link.addEventListener('click', function () {
-        document.getElementById('sidebar').classList.remove('open');
-      });
-    });
-
-    var sidebarToggle = document.getElementById('sidebar-toggle');
-    if (sidebarToggle) {
-      sidebarToggle.addEventListener('click', function () {
-        document.getElementById('sidebar').classList.toggle('open');
-      });
-    }
-
-    // Code-language tabs (synced across blocks, remembered in localStorage).
-    function applyLang(lang) {
-      document.querySelectorAll('.code-tabs').forEach(function (box) {
-        if (!box.querySelector('.tab-btn[data-lang="' + lang + '"]')) return;
-        box.querySelectorAll('.tab-btn').forEach(function (b) {
-          b.classList.toggle('active', b.dataset.lang === lang);
-        });
-        box.querySelectorAll('.tab-panel').forEach(function (p) {
-          p.hidden = (p.dataset.lang !== lang);
-        });
-      });
-      try { localStorage.setItem('docslang', lang); } catch (e) {}
-    }
-    document.querySelectorAll('.code-tabs .tab-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
-    });
-    var saved = (function () { try { return localStorage.getItem('docslang'); } catch (e) { return null; } })();
-    if (saved) applyLang(saved);
-  </script>
-
-  <script>
-  function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
-  </script>
+<script src="js/cosmic.js"></script>
+<script>
+// active group in sidebar
+(function(){var here=(location.pathname.split('/').pop()||'docs.html');document.querySelectorAll('.sidebar-title').forEach(function(t){var f=(t.getAttribute('href')||'').split('#')[0];if(f===here)t.classList.add('active-group');});})();
+// scroll-spy
+var sections=document.querySelectorAll('.docs-content h2[id]');
+var sidebarLinks=document.querySelectorAll('.sidebar-link');
+var spy=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){sidebarLinks.forEach(function(l){l.classList.remove('active');});var a=document.querySelector('.sidebar-link[href$="#'+e.target.id+'"]');if(a)a.classList.add('active');}});},{rootMargin:'-90px 0px -60% 0px',threshold:0});
+sections.forEach(function(s){spy.observe(s);});
+sidebarLinks.forEach(function(l){l.addEventListener('click',function(){document.getElementById('sidebar').classList.remove('open');});});
+var st=document.getElementById('sidebar-toggle');if(st)st.addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open');});
+// code tabs (synced, remembered)
+function applyLang(lang){document.querySelectorAll('.code-tabs').forEach(function(box){if(!box.querySelector('.tab-btn[data-lang="'+lang+'"]'))return;box.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===lang);});box.querySelectorAll('.tab-panel').forEach(function(p){p.hidden=(p.dataset.lang!==lang);});});try{localStorage.setItem('docslang',lang);}catch(e){}}
+document.querySelectorAll('.code-tabs .tab-btn').forEach(function(btn){btn.addEventListener('click',function(){applyLang(btn.dataset.lang);});});
+var saved=(function(){try{return localStorage.getItem('docslang');}catch(e){return null;}})();if(saved)applyLang(saved);
+</script>
 </body>
 </html>

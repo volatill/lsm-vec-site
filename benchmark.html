@@ -1,357 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asteroid — Benchmark</title>
-  <meta name="description" content="Asteroid vector database benchmarks — build time, query throughput, and memory footprint vs Milvus, Qdrant, Weaviate, Elasticsearch, and pgvector on SIFT-100K/1M.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Asteroid — Benchmark">
-  <meta property="og:description" content="Build time, query throughput, and memory footprint vs Milvus, Qdrant, Weaviate, Elasticsearch, and pgvector on SIFT-100K/1M.">
-  <meta property="og:url" content="https://lsmvec.com/benchmark.html">
-  <meta name="twitter:card" content="summary">
-  <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-  <link rel="icon" type="image/png" href="img/favicon.png">
-  <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <style>
-    /* Benchmark color variables */
-    :root {
-      --milvus: #f472b6;
-      --qdrant: #818cf8;
-      --weaviate: #fb923c;
-      --elastic: #fbbf24;
-      --pgvector: #38bdf8;
-      --lsmvec: var(--accent);
-    }
-
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 56px;
-    }
-
-    .header h1 {
-      font-size: 44px;
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      margin-bottom: 12px;
-      animation: fadeIn 0.6s ease 0.1s both;
-    }
-
-    .header h1 span {
-      background: linear-gradient(135deg, var(--accent), var(--gradient-hi));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .header p {
-      color: var(--text-muted);
-      font-size: 16px;
-      max-width: 540px;
-      margin: 0 auto;
-      animation: fadeIn 0.6s ease 0.2s both;
-    }
-
-    /* Legend */
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 28px;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-      animation: fadeIn 0.6s ease 0.3s both;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: color 0.2s;
-    }
-
-    .legend-item.ours { color: var(--text); }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-    }
-
-    .legend-item.ours .legend-dot {
-      box-shadow: 0 0 8px var(--accent);
-    }
-
-    /* Server tabs */
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-      margin-bottom: 40px;
-      background: var(--surface);
-      padding: 4px;
-      border-radius: 12px;
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
-      animation: fadeIn 0.6s ease 0.35s both;
-      /* positioned stacking context so the hover popover paints above the
-         legend and charts (the fadeIn animation otherwise traps it at z-auto) */
-      position: relative;
-      z-index: 70;
-    }
-
-    .tab {
-      padding: 10px 28px;
-      border-radius: 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .tab.active {
-      background: var(--surface2);
-      color: var(--text);
-      box-shadow: 0 2px 8px var(--shadow);
-    }
-
-    .tab:hover:not(.active) { color: var(--text); }
-
-    /* Chart grid */
-    .chart-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 24px;
-      margin-bottom: 48px;
-    }
-
-    .chart-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .chart-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px var(--shadow);
-    }
-
-    .chart-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .chart-card:hover::before { opacity: 0.5; }
-
-    .chart-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 4px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .chart-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      opacity: 0.6;
-      margin-bottom: 20px;
-    }
-
-    .chart-wrapper {
-      position: relative;
-      height: 280px;
-    }
-
-    /* Insight cards */
-    .insights {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 48px;
-    }
-
-    .insight-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .insight-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40%;
-      height: 2px;
-      background: var(--accent);
-      border-radius: 2px;
-      opacity: 0.5;
-    }
-
-    .insight-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--accent);
-      font-family: 'JetBrains Mono', monospace;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .insight-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .insight-detail {
-      font-size: 11px;
-      color: var(--text-muted);
-      opacity: 0.6;
-      margin-top: 4px;
-    }
-
-    /* Server spec popovers — shown on hover/focus of the matching tab */
-    .tab-wrap { position: relative; display: inline-flex; }
-
-    .spec-popover {
-      position: absolute;
-      top: calc(100% + 12px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      width: 340px;
-      max-width: 90vw;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      box-shadow: 0 16px 48px var(--shadow);
-      text-align: left;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-      z-index: 60;
-    }
-
-    .tab-wrap:hover .spec-popover {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .spec-popover h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 14px;
-      color: var(--text);
-    }
-
-    .spec-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 13px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .spec-row:last-child { border-bottom: none; }
-
-    .spec-label {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .spec-value {
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-    }
-
-    /* Chart card stagger animations */
-    .chart-card { animation: fadeIn 0.5s ease both; }
-    .chart-card:nth-child(1) { animation-delay: 0.1s; }
-    .chart-card:nth-child(2) { animation-delay: 0.15s; }
-    .chart-card:nth-child(3) { animation-delay: 0.2s; }
-    .chart-card:nth-child(4) { animation-delay: 0.25s; }
-    .chart-card:nth-child(5) { animation-delay: 0.3s; }
-    .chart-card:nth-child(6) { animation-delay: 0.35s; }
-
-    /* Tighter vertical rhythm so the summary cards are visible on load */
-    .container { padding-top: 24px; }
-    .header { margin-bottom: 24px; }
-    .tabs { margin-bottom: 18px; }
-    .legend { margin-bottom: 18px; }
-    .chart-grid { margin-bottom: 20px; }
-    .chart-wrapper { height: 260px; }
-    .insights { margin-top: 20px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asteroid — Benchmark</title>
+<meta name="description" content="Asteroid vector database benchmarks — build time, query throughput, and memory footprint vs Milvus, Qdrant, Weaviate, Elasticsearch, and pgvector on SIFT-100K/1M.">
+<script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add('js');})();</script>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cosmic.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--milvus:#f472b6;--qdrant:#818cf8;--weaviate:#fb923c;--elastic:#fbbf24;--pgvector:#38bdf8;--lsmvec:var(--accent)}
+.header{text-align:center;margin-bottom:26px}
+.header h1{font-family:'Sora';font-size:clamp(2rem,4.4vw,2.9rem);font-weight:700;letter-spacing:-1.4px;line-height:1.12;margin:14px 0 12px}
+.header h1 span{background:linear-gradient(120deg,var(--accent),var(--accent-hi));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-muted);font-size:16px;max-width:600px;margin:0 auto;line-height:1.6}
+.tabs{display:flex;justify-content:center;gap:4px;margin:0 auto 20px;background:var(--surface);backdrop-filter:blur(8px);border:1px solid var(--border);padding:4px;border-radius:12px;width:fit-content;position:relative;z-index:70}
+.tab{padding:10px 26px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-family:'DM Sans';font-size:14px;font-weight:500;cursor:pointer;transition:all .25s}
+.tab.active{background:var(--surface2);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-wrap{position:relative;display:inline-flex}
+.spec-popover{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(4px);width:340px;max-width:90vw;background:var(--surface-solid);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:0 16px 48px rgba(0,0,0,.5);text-align:left;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s,transform .2s;z-index:60}
+.tab-wrap:hover .spec-popover{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.spec-popover h3{font-family:'Sora';font-size:15px;font-weight:600;margin-bottom:14px;color:var(--text)}
+.spec-row{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.spec-row:last-child{border-bottom:none}
+.spec-label{color:var(--text-muted);font-weight:500}
+.spec-value{color:var(--text);font-family:'JetBrains Mono';font-size:12px;text-align:right}
+.legend{display:flex;justify-content:center;gap:24px;margin-bottom:22px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--text-muted)}
+.legend-item.ours{color:var(--text)}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+.legend-item.ours .legend-dot{box-shadow:0 0 8px var(--accent)}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:22px;margin-bottom:22px}
+.chart-card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius);padding:26px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.chart-card:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(0,0,0,.4)}
+.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.chart-card:hover::before{opacity:.5}
+.chart-title{font-family:'JetBrains Mono';font-size:12.5px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.chart-subtitle{font-size:11px;color:var(--text-faint);margin-bottom:18px}
+.chart-wrapper{position:relative;height:260px}
+.insights{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.insight-card{background:var(--surface);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;position:relative;overflow:hidden}
+.insight-card::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40%;height:2px;background:var(--accent);border-radius:2px;opacity:.6}
+.insight-value{font-family:'Sora';font-size:32px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:8px}
+.insight-value span{font-size:16px;opacity:.6}
+.insight-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.insight-detail{font-size:11px;color:var(--text-faint);margin-top:4px}
+.bench-foot{text-align:center;font-size:14px;color:var(--text-muted);margin-top:30px;line-height:1.7}
+.bench-foot a{color:var(--accent)}
+@media(max-width:900px){.insights{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.insights{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+<div class="sky" id="sky"></div>
+<div class="aurora"></div>
 
-  <!-- ===== Navigation ===== -->
-  <nav class="nav">
-    <a href="index.html" class="nav-logo"><img class="nav-mark nav-mark-dark" src="img/asteroid-mark-dark.png" alt="Asteroid" width="28" height="28"><img class="nav-mark nav-mark-light" src="img/asteroid-mark-light.png" alt="Asteroid" width="28" height="28"><span>Asteroid</span></a>
-    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-    </button>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="docs.html">Docs</a>
-      <a href="pilot.html">Pilot</a>
-      <a href="benchmark.html" class="active">Benchmark</a>
-      <a href="cost.html">Cost</a>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><img src="img/asteroid-gem.png" alt="Asteroid"><span class="wm">Asteroid</span></a>
+  <button class="hamburger" aria-label="Menu" onclick="toggleNav()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Docs</a>
+    <a href="pilot.html">Pilot</a>
+    <a href="benchmark.html" class="active">Benchmark</a>
+    <a href="cost.html">Cost</a>
+    <div class="nav-tools">
+      <button class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
-      <a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      </a>
+      <a class="icon-btn" href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener" aria-label="GitHub"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
       <a href="index.html#pilot" class="nav-cta">Request a pilot</a>
     </div>
-  </nav>
+  </div>
+</nav>
 
 <div class="container">
   <div class="header">
-    <div class="badge">Performance Benchmark</div>
+    <span class="badge">Performance Benchmark</span>
     <h1>Vector Database Comparison — <span>Asteroid</span></h1>
-    <p style="max-width:none;">Memory footprint, build time, and query throughput on SIFT-100K and SIFT-1M.</p>
+    <p>Memory footprint, build time, and query throughput on SIFT-100K and SIFT-1M.</p>
   </div>
 
   <div class="tabs">
     <div class="tab-wrap">
       <button class="tab active" onclick="switchServer('s1')">S1 Server</button>
-      <div class="spec-popover">
-        <h3>S1 Server</h3>
+      <div class="spec-popover"><h3>S1 Server</h3>
         <div class="spec-row"><span class="spec-label">CPU</span><span class="spec-value">Intel Core i9-13900K (24C/32T)</span></div>
         <div class="spec-row"><span class="spec-label">Max Freq</span><span class="spec-value">5.8 GHz</span></div>
         <div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">125 GB</span></div>
@@ -360,8 +98,7 @@
     </div>
     <div class="tab-wrap">
       <button class="tab" onclick="switchServer('triangle')">Triangle Server</button>
-      <div class="spec-popover">
-        <h3>Triangle Server</h3>
+      <div class="spec-popover"><h3>Triangle Server</h3>
         <div class="spec-row"><span class="spec-label">CPU</span><span class="spec-value">2× Xeon Silver 4314 (32C/64T)</span></div>
         <div class="spec-row"><span class="spec-label">Max Freq</span><span class="spec-value">3.4 GHz</span></div>
         <div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">503 GB</span></div>
@@ -371,281 +108,74 @@
   </div>
 
   <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--milvus);"></div>Milvus HNSW
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--qdrant);"></div>Qdrant Local
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--weaviate);"></div>Weaviate
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--elastic);"></div>Elasticsearch
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background: var(--pgvector);"></div>PgVector
-    </div>
-    <div class="legend-item ours">
-      <div class="legend-dot" style="background: var(--lsmvec);"></div>Asteroid (ours)
-    </div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--milvus)"></div>Milvus HNSW</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--qdrant)"></div>Qdrant Local</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--weaviate)"></div>Weaviate</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--elastic)"></div>Elasticsearch</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pgvector)"></div>PgVector</div>
+    <div class="legend-item ours"><div class="legend-dot" style="background:var(--lsmvec)"></div>Asteroid (ours)</div>
   </div>
 
   <div class="chart-grid" id="chartGrid"></div>
-
   <div class="insights" id="insights"></div>
 
-  <p style="text-align:center;font-size:14px;color:var(--text-muted);max-width:none;margin-top:32px;">Memory is the cost lever: a smaller footprint means lower infrastructure cost for large vector workloads. <a href="cost.html" style="color:var(--accent)">Understand the cost model</a> or <a href="pilot.html" style="color:var(--accent)">try it in pilot</a>.</p>
-
-  <!-- ===== Footer ===== -->
-  <footer class="footer">Asteroid &mdash; NTU Siqiang Group &nbsp;·&nbsp;
-    <a href="docs.html" style="color:var(--text-muted)">Docs</a> &nbsp;·&nbsp;
-    <a href="pilot.html" style="color:var(--text-muted)">Pilot</a></footer>
+  <p class="bench-foot">Memory is the cost lever: a smaller footprint means lower infrastructure cost for large vector workloads. <a href="cost.html">Understand the cost model</a> or <a href="index.html#pilot">try it in pilot</a>.</p>
 </div>
 
+<footer class="footer">
+  <div class="footer-in">
+    <img src="img/asteroid-gem.png" alt="Asteroid"><span class="name">Asteroid</span><span class="by">NTU Siqiang Group</span>
+    <div class="footer-links"><a href="docs.html">Docs</a><a href="pilot.html">Pilot</a><a href="benchmark.html">Benchmark</a><a href="cost.html">Cost</a><a href="https://github.com/NTU-Siqiang-Group/LSM-Vec" target="_blank" rel="noopener">GitHub</a></div>
+  </div>
+</footer>
+
+<script src="js/cosmic.js"></script>
 <script>
-// ─────────────────────────────────────────────────────────────────────────
-// SOURCE OF TRUTH for the charts is the DATA{} object below. The repo's
-// benchmark_results.dat / server_info.dat are human-readable reference copies
-// only — they are NOT fetched or parsed at runtime. To change numbers, edit
-// DATA{} here (and optionally keep the .dat files in sync by hand).
-// ─────────────────────────────────────────────────────────────────────────
+// SOURCE OF TRUTH is DATA{} below; the .dat files in the repo are reference copies only.
 const COLORS = {
-  milvushnsw: { bg: 'rgba(244, 114, 182, 0.75)', border: '#f472b6' },
-  qdrantlocal: { bg: 'rgba(129, 140, 248, 0.75)', border: '#818cf8' },
-  weaviate: { bg: 'rgba(251, 146, 60, 0.75)', border: '#fb923c' },
-  elasticsearch: { bg: 'rgba(251, 191, 36, 0.75)', border: '#fbbf24' },
-  pgvector: { bg: 'rgba(56, 189, 248, 0.75)', border: '#38bdf8' },
-  lsmvec: (function(){var a=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#d4a574';return{bg:a,border:a};})(),
+  milvushnsw:{bg:'rgba(244,114,182,0.75)',border:'#f472b6'},
+  qdrantlocal:{bg:'rgba(129,140,248,0.75)',border:'#818cf8'},
+  weaviate:{bg:'rgba(251,146,60,0.75)',border:'#fb923c'},
+  elasticsearch:{bg:'rgba(251,191,36,0.75)',border:'#fbbf24'},
+  pgvector:{bg:'rgba(56,189,248,0.75)',border:'#38bdf8'},
+  lsmvec:(function(){var a=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#d4a574';return{bg:a,border:a};})(),
 };
-
-const LABELS = {
-  milvushnsw: 'Milvus HNSW',
-  qdrantlocal: 'Qdrant Local',
-  weaviate: 'Weaviate',
-  elasticsearch: 'Elasticsearch',
-  pgvector: 'PgVector',
-  lsmvec: 'Asteroid',
-};
-
-const DATA = {
-  s1: {
-    sift100k: {
-      milvushnsw: { build: 22.82, qps: 1501.10, mem: 1401.44 },
-      qdrantlocal: { build: 57.42, qps: 560.35, mem: 2685.53 },
-      weaviate: { build: 14.57, qps: 722.12, mem: 753.56 },
-      elasticsearch: { build: 93.13, qps: 911.71, mem: 718.65 },
-      pgvector: { build: 59.75, qps: 1453.24, mem: 2122.42 },
-      lsmvec: { build: 14.43, qps: 993.97, mem: 427.75 },
-    },
-    sift1m: {
-      milvushnsw: { build: 128.79, qps: 396.74, mem: 4145.48 },
-      qdrantlocal: { build: 279.28, qps: 470.38, mem: 1675.63 },
-      weaviate: { build: 193.65, qps: 683.06, mem: 2722.47 },
-      elasticsearch: { build: 833.02, qps: 782.70, mem: 1045.76 },
-      pgvector: { build: 3234.95, qps: 303.72, mem: 1857.76 },
-      lsmvec: { build: 424.14, qps: 583.96, mem: 593.29 },
-    }
+const LABELS={milvushnsw:'Milvus HNSW',qdrantlocal:'Qdrant Local',weaviate:'Weaviate',elasticsearch:'Elasticsearch',pgvector:'PgVector',lsmvec:'Asteroid'};
+const DATA={
+  s1:{
+    sift100k:{milvushnsw:{build:22.82,qps:1501.10,mem:1401.44},qdrantlocal:{build:57.42,qps:560.35,mem:2685.53},weaviate:{build:14.57,qps:722.12,mem:753.56},elasticsearch:{build:93.13,qps:911.71,mem:718.65},pgvector:{build:59.75,qps:1453.24,mem:2122.42},lsmvec:{build:14.43,qps:993.97,mem:427.75}},
+    sift1m:{milvushnsw:{build:128.79,qps:396.74,mem:4145.48},qdrantlocal:{build:279.28,qps:470.38,mem:1675.63},weaviate:{build:193.65,qps:683.06,mem:2722.47},elasticsearch:{build:833.02,qps:782.70,mem:1045.76},pgvector:{build:3234.95,qps:303.72,mem:1857.76},lsmvec:{build:424.14,qps:583.96,mem:593.29}}
   },
-  triangle: {
-    sift100k: {
-      milvushnsw: { build: 41.62, qps: 266.75, mem: 391.76 },
-      qdrantlocal: { build: 117.04, qps: 169.28, mem: 2379.20 },
-      weaviate: { build: 74.65, qps: 101.80, mem: 205.43 },
-      elasticsearch: { build: 122.29, qps: 595.56, mem: 722.59 },
-      pgvector: { build: 109.86, qps: 808.78, mem: 1850.78 },
-      lsmvec: { build: 30.37, qps: 1243.36, mem: 419.32 },
-    },
-    sift1m: {
-      milvushnsw: { build: 203.78, qps: 224.87, mem: 4211.93 },
-      qdrantlocal: { build: 1049.79, qps: 118.31, mem: 1309.54 },
-      weaviate: { build: 758.28, qps: 95.50, mem: 2551.85 },
-      elasticsearch: { build: 1362.00, qps: 504.82, mem: 797.11 },
-      pgvector: { build: 6116.56, qps: 155.07, mem: 1924.77 },
-      lsmvec: { build: 736.97, qps: 871.22, mem: 593.29 },
-    }
+  triangle:{
+    sift100k:{milvushnsw:{build:41.62,qps:266.75,mem:391.76},qdrantlocal:{build:117.04,qps:169.28,mem:2379.20},weaviate:{build:74.65,qps:101.80,mem:205.43},elasticsearch:{build:122.29,qps:595.56,mem:722.59},pgvector:{build:109.86,qps:808.78,mem:1850.78},lsmvec:{build:30.37,qps:1243.36,mem:419.32}},
+    sift1m:{milvushnsw:{build:203.78,qps:224.87,mem:4211.93},qdrantlocal:{build:1049.79,qps:118.31,mem:1309.54},weaviate:{build:758.28,qps:95.50,mem:2551.85},elasticsearch:{build:1362.00,qps:504.82,mem:797.11},pgvector:{build:6116.56,qps:155.07,mem:1924.77},lsmvec:{build:736.97,qps:871.22,mem:593.29}}
   }
 };
-
-const methods = ['milvushnsw', 'qdrantlocal', 'weaviate', 'elasticsearch', 'pgvector', 'lsmvec'];
-let charts = [];
-let currentServer = 's1';
-
-function themeColors() {
-  const cs = getComputedStyle(document.documentElement);
-  const get = (n) => cs.getPropertyValue(n).trim();
-  return {
-    grid: get('--grid-line') || 'rgba(30,41,59,0.5)',
-    tick: get('--text-muted') || '#64748b',
-    tipBg: get('--surface2') || '#1a2235',
-    tipTitle: get('--text') || '#e2e8f0',
-    tipBody: get('--text-muted') || '#94a3b8',
-    tipBorder: get('--border') || '#334155',
-  };
-}
-
-function getChartOptions(title, unit, useLog) {
-  const c = themeColors();
-  const yScale = {
-    grid: { color: c.grid, drawBorder: false },
-    ticks: {
-      color: c.tick,
-      font: { family: 'JetBrains Mono', size: 11 },
-      callback: (v) => v.toLocaleString()
-    },
-  };
-  if (useLog) {
-    yScale.type = 'logarithmic';
-    yScale.ticks.callback = (v) => Number.isInteger(Math.log10(v)) || [1,2,5].includes(v / Math.pow(10, Math.floor(Math.log10(v)))) ? v.toLocaleString() : '';
-  } else {
-    yScale.beginAtZero = true;
-  }
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: c.tipBg,
-        titleColor: c.tipTitle,
-        bodyColor: c.tipBody,
-        borderColor: c.tipBorder,
-        borderWidth: 1,
-        cornerRadius: 8,
-        padding: 12,
-        titleFont: { family: 'DM Sans', size: 13, weight: 600 },
-        bodyFont: { family: 'JetBrains Mono', size: 12 },
-        callbacks: {
-          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} ${unit}`
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: { color: c.grid, drawBorder: false },
-        ticks: {
-          color: c.tick,
-          font: { family: 'DM Sans', size: 12, weight: 500 }
-        }
-      },
-      y: yScale
-    }
-  };
-}
-
-function buildDatasets(server, metric) {
-  const datasets = ['sift100k', 'sift1m'];
-  return methods.map(m => ({
-    label: LABELS[m],
-    data: datasets.map(d => DATA[server][d][m][metric]),
-    backgroundColor: COLORS[m].bg,
-    borderColor: COLORS[m].border,
-    borderWidth: m === 'lsmvec' ? 2.5 : 1.5,
-    borderRadius: 6,
-    borderSkipped: false,
-  }));
-}
-
-function destroyCharts() {
-  charts.forEach(c => c.destroy());
-  charts = [];
-}
-
-function createChart(canvasId, server, metric, unit, useLog) {
-  const ctx = document.getElementById(canvasId).getContext('2d');
-  const chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['SIFT-100K', 'SIFT-1M'],
-      datasets: buildDatasets(server, metric)
-    },
-    options: getChartOptions('', unit, useLog)
-  });
-  charts.push(chart);
-  return chart;
-}
-
-function renderCharts(server) {
-  destroyCharts();
-  const grid = document.getElementById('chartGrid');
-  grid.innerHTML = '';
-
-  const metrics = [
-    { key: 'build', title: 'Build Time', unit: 's', subtitle: 'Lower is better · log scale', icon: '⏱', log: true },
-    { key: 'qps', title: 'Query Throughput', unit: 'QPS', subtitle: 'Higher is better', icon: '⚡' },
-    { key: 'mem', title: 'Peak Memory', unit: 'MB', subtitle: 'Lower is better', icon: '💾' },
-  ];
-
-  metrics.forEach(m => {
-    const card = document.createElement('div');
-    card.className = 'chart-card';
-    card.innerHTML = `
-      <div class="chart-title">${m.icon}&nbsp; ${m.title}</div>
-      <div class="chart-subtitle">${m.subtitle} · ${m.unit}</div>
-      <div class="chart-wrapper"><canvas id="chart-${m.key}"></canvas></div>
-    `;
-    grid.appendChild(card);
-    setTimeout(() => createChart(`chart-${m.key}`, server, m.key, m.unit, m.log), 10);
-  });
-
-  renderInsights(server);
-}
-
-function renderInsights(server) {
-  const container = document.getElementById('insights');
-  const d = DATA[server];
-
-  // Memory saving on sift1m vs worst
-  const memWorst1m = Math.max(...methods.filter(m => m !== 'lsmvec').map(m => d.sift1m[m].mem));
-  const memSaving = ((1 - d.sift1m.lsmvec.mem / memWorst1m) * 100).toFixed(0);
-
-  // QPS advantage on triangle sift100k
-  const qpsLsm100k = d.sift100k.lsmvec.qps;
-  const qpsBest100k = Math.max(...methods.filter(m => m !== 'lsmvec').map(m => d.sift100k[m].qps));
-  const qpsRatio = (qpsLsm100k / qpsBest100k).toFixed(1);
-  const qpsAdvStr = qpsLsm100k > qpsBest100k ? `${qpsRatio}×` : `${(qpsLsm100k / qpsBest100k * 100).toFixed(0)}%`;
-
-  // Memory on sift1m
-  const memVal = d.sift1m.lsmvec.mem.toFixed(0);
-
-  // QPS on sift1m
-  const qps1m = d.sift1m.lsmvec.qps.toFixed(0);
-
-  container.innerHTML = `
-    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.4s both;">
-      <div class="insight-value">↓${memSaving}%</div>
-      <div class="insight-label">Memory Reduction</div>
-      <div class="insight-detail">vs. worst baseline on SIFT-1M</div>
-    </div>
-    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.45s both;">
-      <div class="insight-value">${memVal}<span style="font-size:16px;opacity:0.6"> MB</span></div>
-      <div class="insight-label">Peak Memory · SIFT-1M</div>
-      <div class="insight-detail">Asteroid footprint</div>
-    </div>
-    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.5s both;">
-      <div class="insight-value">${qps1m}<span style="font-size:16px;opacity:0.6"> QPS</span></div>
-      <div class="insight-label">Throughput · SIFT-1M</div>
-      <div class="insight-detail">Asteroid queries/sec</div>
-    </div>
-    <div class="insight-card" style="animation: fadeIn 0.5s ease 0.55s both;">
-      <div class="insight-value">${qpsAdvStr}</div>
-      <div class="insight-label">QPS vs Best Baseline</div>
-      <div class="insight-detail">SIFT-100K comparison</div>
-    </div>
-  `;
-}
-
-function switchServer(server) {
-  currentServer = server;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  renderCharts(server);
-}
-
+const methods=['milvushnsw','qdrantlocal','weaviate','elasticsearch','pgvector','lsmvec'];
+let charts=[];let currentServer='s1';
+function themeColors(){const cs=getComputedStyle(document.documentElement);const get=(n)=>cs.getPropertyValue(n).trim();return{grid:get('--grid-line')||'rgba(126,144,168,0.1)',tick:get('--text-muted')||'#8a98ae',tipBg:get('--surface-solid')||'#0e1626',tipTitle:get('--text')||'#e7edf6',tipBody:get('--text-muted')||'#8a98ae',tipBorder:get('--border')||'#1c2638'};}
+function getChartOptions(title,unit,useLog){const c=themeColors();const yScale={grid:{color:c.grid,drawBorder:false},ticks:{color:c.tick,font:{family:'JetBrains Mono',size:11},callback:(v)=>v.toLocaleString()}};
+  if(useLog){yScale.type='logarithmic';yScale.ticks.callback=(v)=>Number.isInteger(Math.log10(v))||[1,2,5].includes(v/Math.pow(10,Math.floor(Math.log10(v))))?v.toLocaleString():'';}else{yScale.beginAtZero=true;}
+  return{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:c.tipBg,titleColor:c.tipTitle,bodyColor:c.tipBody,borderColor:c.tipBorder,borderWidth:1,cornerRadius:8,padding:12,titleFont:{family:'DM Sans',size:13,weight:600},bodyFont:{family:'JetBrains Mono',size:12},callbacks:{label:(ctx)=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} ${unit}`}}},scales:{x:{grid:{color:c.grid,drawBorder:false},ticks:{color:c.tick,font:{family:'DM Sans',size:12,weight:500}}},y:yScale}};}
+function buildDatasets(server,metric){const ds=['sift100k','sift1m'];return methods.map(m=>({label:LABELS[m],data:ds.map(d=>DATA[server][d][m][metric]),backgroundColor:COLORS[m].bg,borderColor:COLORS[m].border,borderWidth:m==='lsmvec'?2.5:1.5,borderRadius:6,borderSkipped:false}));}
+function destroyCharts(){charts.forEach(c=>c.destroy());charts=[];}
+function createChart(canvasId,server,metric,unit,useLog){const ctx=document.getElementById(canvasId).getContext('2d');const chart=new Chart(ctx,{type:'bar',data:{labels:['SIFT-100K','SIFT-1M'],datasets:buildDatasets(server,metric)},options:getChartOptions('',unit,useLog)});charts.push(chart);return chart;}
+function renderCharts(server){destroyCharts();const grid=document.getElementById('chartGrid');grid.innerHTML='';
+  const metrics=[{key:'build',title:'Build Time',unit:'s',subtitle:'Lower is better · log scale',icon:'⏱',log:true},{key:'qps',title:'Query Throughput',unit:'QPS',subtitle:'Higher is better',icon:'⚡'},{key:'mem',title:'Peak Memory',unit:'MB',subtitle:'Lower is better',icon:'💾'}];
+  metrics.forEach(m=>{const card=document.createElement('div');card.className='chart-card';card.innerHTML=`<div class="chart-title">${m.icon}&nbsp; ${m.title}</div><div class="chart-subtitle">${m.subtitle} · ${m.unit}</div><div class="chart-wrapper"><canvas id="chart-${m.key}"></canvas></div>`;grid.appendChild(card);setTimeout(()=>createChart(`chart-${m.key}`,server,m.key,m.unit,m.log),10);});
+  renderInsights(server);}
+function renderInsights(server){const container=document.getElementById('insights');const d=DATA[server];
+  const memWorst1m=Math.max(...methods.filter(m=>m!=='lsmvec').map(m=>d.sift1m[m].mem));const memSaving=((1-d.sift1m.lsmvec.mem/memWorst1m)*100).toFixed(0);
+  const qpsLsm100k=d.sift100k.lsmvec.qps;const qpsBest100k=Math.max(...methods.filter(m=>m!=='lsmvec').map(m=>d.sift100k[m].qps));const qpsRatio=(qpsLsm100k/qpsBest100k).toFixed(1);const qpsAdvStr=qpsLsm100k>qpsBest100k?`${qpsRatio}×`:`${(qpsLsm100k/qpsBest100k*100).toFixed(0)}%`;
+  const memVal=d.sift1m.lsmvec.mem.toFixed(0);const qps1m=d.sift1m.lsmvec.qps.toFixed(0);
+  container.innerHTML=`
+    <div class="insight-card"><div class="insight-value">↓${memSaving}%</div><div class="insight-label">Memory Reduction</div><div class="insight-detail">vs. worst baseline on SIFT-1M</div></div>
+    <div class="insight-card"><div class="insight-value">${memVal}<span> MB</span></div><div class="insight-label">Peak Memory · SIFT-1M</div><div class="insight-detail">Asteroid footprint</div></div>
+    <div class="insight-card"><div class="insight-value">${qps1m}<span> QPS</span></div><div class="insight-label">Throughput · SIFT-1M</div><div class="insight-detail">Asteroid queries/sec</div></div>
+    <div class="insight-card"><div class="insight-value">${qpsAdvStr}</div><div class="insight-label">QPS vs Best Baseline</div><div class="insight-detail">SIFT-100K comparison</div></div>`;}
+function switchServer(server){currentServer=server;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');renderCharts(server);}
 renderCharts('s1');
-
-function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);window.dispatchEvent(new CustomEvent('themechange',{detail:n}));}
-window.addEventListener('themechange', () => renderCharts(currentServer));
+window.addEventListener('themechange',()=>renderCharts(currentServer));
 </script>
 </body>
 </html>
