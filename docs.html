@@ -80,10 +80,10 @@ body{padding-top:68px}
       <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
       <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
       <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
-      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+      <a href="docs.html#cloud-embeddings" class="sidebar-link">Embeddings</a>
+      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk &amp; batch import</a>
       <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
       <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
-      <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
     </div>
     <div class="sidebar-section">
       <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
@@ -100,6 +100,7 @@ body{padding-top:68px}
       <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
       <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
       <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+      <a href="docs-reference.html#ref-embeddings" class="sidebar-link">Embeddings</a>
       <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
       <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
     </div>
@@ -151,8 +152,23 @@ curl -sX POST https://api.lsmvec.com/v1/search \
     </div>
     <div class="callout"><p><strong>Use your configured dimension.</strong> The toy vectors above are 3-dimensional for readability. In your pilot, every inserted and searched vector must match the dimension configured for your index.</p></div>
 
+    <h3>Storing text instead of vectors</h3>
+    <p>Storing text? Install the embedding extra. The Python client embeds text before sending vectors to Asteroid.</p>
+    <div class="callout"><p><strong>Dimension must match.</strong> This example needs an index provisioned with <code>dim=384</code> (bge-small's output dim). If your pilot index uses a different dimension, pick a local model or provider that produces that dimension.</p></div>
+    <pre><code>pip install "lsmvec-client[embed]"</code></pre>
+    <pre><code>from lsmvec_client import Client
+from lsmvec_client.ingest import LocalEmbedder, ingest_text, search_text
+
+client   = Client(api_key="sk-live-...", base_url="https://api.lsmvec.com")
+embedder = LocalEmbedder("BAAI/bge-small-en-v1.5")   # 384-d, runs locally
+
+ingest_text(client, "doc-1", "Refunds are processed within 30 days.", embedder, start_id=0)
+hits = search_text(client, "how long do refunds take?", embedder, k=3)
+print(hits[0].text)</code></pre>
+    <p>Full flow in <a href="#cloud-embeddings">Embeddings</a>.</p>
+
     <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
-    <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID. IDs are numeric unsigned 64-bit values.</p>
+    <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID. IDs are integers in <code>[0, 2^63-1]</code>. If an id is larger than JavaScript's safe integer range, send it as a string in JSON.</p>
     <div class="code-tabs" data-tabs>
       <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
       <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})
@@ -191,6 +207,7 @@ curl -sX PUT   https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Be
 curl -sX PATCH https://api.lsmvec.com/v1/vectors/1/payload -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" -d '{"views": 42}'</code></pre></div>
     </div>
+    <p>On an existing id, a <strong>non-empty</strong> payload <strong>replaces</strong> the stored payload, an explicit empty <code>{}</code> <strong>clears</strong> it, and <strong>omitting</strong> metadata on <code>insert</code>/<code>upsert</code> leaves the existing payload <strong>unchanged</strong>. <code>set_payload</code> always replaces; <code>merge_payload</code> applies an RFC-7396 merge-patch (a <code>null</code> value deletes a key).</p>
 
     <h2 id="cloud-search">Search</h2>
     <p>Search returns the nearest vector IDs by distance. Increase <code>ef_search</code> when you want higher recall and can spend more time per query.</p>
@@ -237,19 +254,107 @@ for h in hits:
                            {"year": {"$gte": 2026}}]}}'</code></pre></div>
     </div>
 
-    <h2 id="cloud-bulk">Bulk import (initial load)</h2>
+    <h2 id="cloud-embeddings">Embeddings</h2>
+    <p>The Python client embeds text before sending vectors to Asteroid. It chunks documents, embeds each chunk, and stores the vectors with payloads.</p>
+    <p>For raw documents, start here with <code>ingest_text</code>. Use <a href="#cloud-bulk">Bulk &amp; batch import</a> only when you already have vectors.</p>
+    <pre><code>pip install "lsmvec-client[embed]"</code></pre>
+
+    <h3>Connect</h3>
+    <pre><code>from lsmvec_client import Client
+client = Client(api_key="sk-live-...",
+                base_url="https://api.lsmvec.com")   # your pilot endpoint
+assert client.health()</code></pre>
+
+    <h3>Choose an embedder</h3>
+    <ul>
+      <li><strong>Local embedding model (default).</strong> Runs in the Python client with FastEmbed.
+      <pre><code>from lsmvec_client.ingest import LocalEmbedder
+embedder = LocalEmbedder("BAAI/bge-small-en-v1.5")   # 384-d</code></pre></li>
+      <li><strong>Embedding provider API (alternative).</strong> Calls an OpenAI-compatible embeddings endpoint.
+      <pre><code>from lsmvec_client.ingest import ProviderEmbedder
+embedder = ProviderEmbedder(
+    dim=1536, api_key="...",
+    model="text-embedding-3-small")</code></pre></li>
+      <li><strong>Dimension must match.</strong> Your index dimension must match the embedder output dimension (<code>bge-small-en-v1.5</code> outputs 384). Tell us your model when the pilot is provisioned.</li>
+    </ul>
+
+    <h3>Ingest a document</h3>
+    <pre><code>from pathlib import Path
+from lsmvec_client.ingest import ingest_text
+
+next_id, doc_chunks = 0, {}          # see the persistence note below
+ids = ingest_text(client, "handbook-2026", Path("handbook.md").read_text(),
+                  embedder, start_id=next_id,
+                  payload={"source": "handbook", "year": 2026})
+next_id += len(ids)
+doc_chunks["handbook-2026"] = ids</code></pre>
+    <p><code>ingest_text</code> chunks the text, embeds each chunk, and stores its vector plus a payload <code>{doc_id, chunk_index, text, model, …your fields}</code>; it returns the assigned ids.</p>
+    <div class="callout"><p><strong>Persist your id counter.</strong> Asteroid ids are a <strong>contiguous range</strong> you allocate via <code>start_id</code>. Save <code>next_id</code> and the <code>doc_id → ids</code> map in your own database — if you restart ingestion from <code>start_id=0</code> you will <strong>overwrite</strong> the vectors you stored before.</p></div>
+
+    <h3>Ingest multiple documents</h3>
+    <pre><code>from pathlib import Path
+
+for path in sorted(Path("corpus").glob("*.md")):
+    doc_id = path.stem
+    ids = ingest_text(
+        client,
+        doc_id,
+        path.read_text(),
+        embedder,
+        start_id=next_id,
+        payload={"source": str(path)},
+    )
+    next_id += len(ids)
+    doc_chunks[doc_id] = ids</code></pre>
+    <p>Store <code>next_id</code> and <code>doc_chunks</code> in your own database before the next run.</p>
+    <p>For larger imports, keep using the same id counter. If you already have embeddings, use <a href="#cloud-bulk"><code>insert_batch</code></a>.</p>
+
+    <h3>Retrieve</h3>
+    <pre><code>from lsmvec_client.ingest import search_text
+
+hits = search_text(client, "what is the refund policy?", embedder,
+                   k=5, filter={"source": {"$eq": "handbook"}})
+context = "\n".join(h.text for h in hits)
+# answer = your_llm(question, context)</code></pre>
+    <p><code>search_text</code> embeds the query, runs filtered k-NN, and returns hits enriched with the stored payload: <code>h.text</code>, <code>h.doc_id</code>, <code>h.chunk_index</code>, <code>h.payload</code>.</p>
+
+    <h3>Update or delete a document</h3>
+    <pre><code>from lsmvec_client.ingest import delete_doc
+delete_doc(client, doc_chunks["handbook-2026"])   # remove the doc's chunks
+# re-ingest with fresh ids to update</code></pre>
+    <p>Document updates are delete-then-ingest. Chunk counts can change, so do not assume old ids still match the new document.</p>
+
+    <h4>Chunking</h4>
+    <p>Control chunk size and overlap via <code>max_tokens</code> (default 512) and <code>overlap_tokens</code> (default 64) on <code>ingest_text</code>.</p>
+
+    <div class="callout"><p><strong>Asteroid does not embed text server-side.</strong> Embedding happens in the Python client, using either a local model or your embedding provider API.</p></div>
+
+    <h2 id="cloud-bulk">Bulk &amp; batch import</h2>
     <p>Use incremental writes for normal application traffic. Use bulk import for the first load of a new index.</p>
     <ul>
       <li><strong>Incremental writes.</strong> Use <code>insert</code> or <code>upsert</code> when you need to preserve your own IDs, attach metadata as you ingest, or update an existing index.</li>
       <li><strong>Bulk import.</strong> For a new, empty index, load all vectors in one pass. This is faster for a large initial load.</li>
     </ul>
-    <div class="callout"><p><strong>Bulk import ID behavior.</strong> Bulk import assigns vector IDs in input order, starting from <code>0</code>. If you need to keep existing IDs or attach metadata during ingest, use <code>insert</code> or <code>upsert</code> instead.</p></div>
+    <div class="callout"><p><strong>Bulk build ID behavior.</strong> <code>bulk_build</code> assigns vector ids in input order, starting at <code>0</code>. Use <code>insert_batch</code> when you need to keep your own ids or add vectors to a non-empty index. <code>bulk_build</code> can attach payloads, but it cannot keep existing ids.</p></div>
+    <h3>Batch insert</h3>
+    <p><code>insert_batch</code> writes many already-embedded vectors incrementally, keeping your own ids and payloads. Each chunk is sent as one request.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>items = [(i, vec, {"source": "handbook"}) for i, vec in enumerate(vectors)]
+n = client.insert_batch(items, chunk_size=1000)   # one request per chunk</code></pre></div>
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/vectors/batch \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"items":[{"id":0,"vector":[...],"metadata":{"source":"handbook"}}]}'</code></pre></div>
+    </div>
+
+    <h3>Bulk build</h3>
+    <p>Use bulk build for the first load of a new, empty index.</p>
     <div class="code-tabs" data-tabs>
       <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
       <div class="tab-panel" data-lang="python"><pre><code>import numpy as np
 vectors = np.random.rand(100_000, 128).astype(np.float32)
-report = client.bulk_build(vectors, threads=4)
-print(report)   # {'n': ..., 'elapsed_ms': ..., 'vectors_per_sec': ...}</code></pre></div>
+report = client.bulk_build(vectors, payloads=[{"source": "handbook"} for _ in vectors], threads=4)
+print(report)   # {'n':…, 'vectors_per_sec':…, 'payloads_written':…}</code></pre></div>
       <div class="tab-panel" data-lang="curl" hidden><pre><code># raw float32 body; N and dim in headers
 curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Authorization: Bearer sk-live-..." \
@@ -257,7 +362,12 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Content-Type: application/octet-stream" \
   --data-binary @vectors.f32</code></pre></div>
     </div>
-    <p>If you already have metadata for each vector, use incremental writes for the simplest import path. For very large first loads, talk to us during the pilot and we can help choose the right ingest path.</p>
+    <p>Choose by scale:</p>
+    <ul>
+      <li>A few / occasional writes → <code>insert</code> / <code>upsert</code>.</li>
+      <li>Many already-embedded vectors, incrementally (keep your ids + payloads) → <code>insert_batch</code>.</li>
+      <li>The first load of a new, empty index → <code>bulk_build</code>.</li>
+    </ul>
 
     <h2 id="cloud-import">Import existing vectors</h2>
     <p>If you already have embeddings in another system, you can import them into Asteroid without changing your embedding model.</p>
@@ -282,32 +392,6 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
         <tr><td>Bulk import fails</td><td>Bulk import is for a new, empty index. Use incremental writes for existing indexes.</td></tr>
       </tbody>
     </table>
-
-    <h2 id="cloud-rag">Build a RAG app</h2>
-    <p>For a retrieval app, chunk your files and create embeddings with your own model. Asteroid stores the vectors and metadata, then serves filtered k-NN search.</p>
-    <div class="code-tabs" data-tabs>
-      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button></div>
-      <div class="tab-panel" data-lang="python"><pre><code>from lsmvec_client import Client
-# bring your own embedding model, e.g. fastembed (bge-small-en-v1.5, 384-dim)
-from fastembed import TextEmbedding
-
-embed = TextEmbedding("BAAI/bge-small-en-v1.5")
-client = Client(api_key="sk-live-...", base_url="https://api.lsmvec.com")
-
-# 1. chunk your documents locally (your code), then embed + insert
-for i, chunk in enumerate(chunks):
-    vec = list(embed.embed([chunk.text]))[0]
-    client.insert(i, vec, metadata={"text": chunk.text, "source": chunk.source})
-
-# 2. at query time: embed the question, retrieve with an optional filter
-qvec = list(embed.embed([question]))[0]
-hits = client.search(qvec, k=5, filter={"source": {"$eq": "handbook"}})
-
-# 3. fetch the chunk text from payloads and feed it to your LLM
-context = "\n".join(client.get_payload(h.id)["text"] for h in hits)
-# answer = your_llm(question, context)</code></pre></div>
-    </div>
-    <div class="callout"><p><strong>Bring your own embeddings.</strong> Asteroid stores and searches vectors; it does not embed text server-side.</p></div>
 
     <p class="docs-end">Next: <a href="docs-database.html">Asteroid Database (LSM-Vec)</a> — embed or self-host the engine · <a href="docs-reference.html">Reference &amp; Deployment</a>.</p>
   </main>

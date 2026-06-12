@@ -80,10 +80,10 @@ body{padding-top:68px}
       <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
       <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
       <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
-      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+      <a href="docs.html#cloud-embeddings" class="sidebar-link">Embeddings</a>
+      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk &amp; batch import</a>
       <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
       <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
-      <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
     </div>
     <div class="sidebar-section">
       <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
@@ -100,6 +100,7 @@ body{padding-top:68px}
       <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
       <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
       <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+      <a href="docs-reference.html#ref-embeddings" class="sidebar-link">Embeddings</a>
       <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
       <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
     </div>
@@ -121,14 +122,15 @@ body{padding-top:68px}
           <tr><td><code>GET /v1/vectors/:id/payload</code></td><td>Get the JSON payload.</td></tr>
           <tr><td><code>PUT /v1/vectors/:id/payload</code></td><td>Replace the payload.</td></tr>
           <tr><td><code>PATCH /v1/vectors/:id/payload</code></td><td>Merge-patch the payload (RFC 7396).</td></tr>
+          <tr><td><code>POST /v1/vectors/batch</code></td><td>Batch insert <code>{id, vector, metadata?}</code> items (incremental, caller ids, payloads inline). Returns <code>{inserted}</code>.</td></tr>
           <tr><td><code>POST /v1/search</code></td><td>k-NN search (<code>vector</code>, <code>k</code>, optional <code>ef_search</code>, <code>filter</code>).</td></tr>
-          <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only.</td></tr>
+          <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only. Optional: a JSON array of <code>n</code> payloads appended after the float32 blob.</td></tr>
           <tr><td><code>GET /v1/stats</code></td><td>Tombstone / bloom / counters.</td></tr>
           <tr><td><code>GET /health</code></td><td>Unauthenticated liveness check.</td></tr>
           <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
         </tbody>
       </table>
-      <p>Vector IDs are numeric unsigned 64-bit values. If your application uses IDs
+      <p>Vector IDs are integers in <code>[0, 2^63-1]</code>. If your application uses IDs
       larger than JavaScript's safe integer range, send them as strings in JSON request
       bodies.</p>
       <p>Errors use a JSON body with <code>error</code> and <code>code</code> fields.
@@ -144,6 +146,13 @@ body{padding-top:68px}
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
   -d '{"id": 1, "vector": [0.10, 0.20, 0.30], "metadata": {"source": "docs"}}'</code></pre>
+
+      <h3>Batch insert</h3>
+      <pre><code>curl -sX POST https://api.lsmvec.com/v1/vectors/batch \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"items":[{"id":0,"vector":[...],"metadata":{"k":"v"}},
+                {"id":1,"vector":[...]}]}'
+# -> {"inserted": 2}</code></pre>
 
       <h3>Upsert a vector</h3>
       <pre><code>curl -sX PUT https://api.lsmvec.com/v1/vectors/1 \
@@ -217,6 +226,12 @@ body{padding-top:68px}
   "error": "vector dimension mismatch",
   "code": "invalid_argument"
 }</code></pre>
+      <p>Error responses carry a JSON body; the Python client preserves it on
+      <code>LSMVecError.details</code> — e.g. <code>inserted</code> / <code>failed_index</code>
+      on a mid-batch error, or <code>rebuild_required</code> on a failed
+      <code>bulk_build(payloads=…)</code>. IDs are <strong>integers in <code>[0, 2^63-1]</code></strong>
+      — send them as <strong>strings</strong> above JavaScript's safe-integer range;
+      floats/negatives return <code>400</code>.</p>
 
       <h2 id="ref-client">Python client reference</h2>
       <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
@@ -231,7 +246,8 @@ body{padding-top:68px}
           <tr><td><code>delete(id)</code></td><td></td></tr>
           <tr><td><code>get_payload(id)</code> / <code>set_payload(id, p)</code> / <code>merge_payload(id, p)</code></td><td>Payload read / replace / merge-patch.</td></tr>
           <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
-          <tr><td><code>bulk_build(vectors, threads=0) -&gt; dict</code></td><td>One-pass initial load for a new, empty index. IDs are assigned in input order.</td></tr>
+          <tr><td><code>insert_batch(items, chunk_size=1000) -&gt; int</code></td><td>Batched insert of <code>(id, vector[, metadata])</code> items.</td></tr>
+          <tr><td><code>bulk_build(vectors, threads=0, payloads=None) -&gt; dict</code></td><td>One-pass initial load for a new, empty index. IDs are assigned in input order. The returned report includes <code>payloads_written</code>.</td></tr>
           <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
         </tbody>
       </table>
@@ -239,6 +255,23 @@ body{padding-top:68px}
       <code>InvalidArgument</code> (400), <code>Unauthorized</code> (401),
       <code>NotFound</code> (404), <code>PayloadTooLarge</code> (413),
       <code>RateLimited</code> (429), <code>ServerError</code> (5xx).</p>
+
+      <h2 id="ref-embeddings">Embeddings</h2>
+      <p>The <code>lsmvec_client.ingest</code> module (the local model needs
+      <code>pip install "lsmvec-client[embed]"</code>):</p>
+      <ul>
+        <li><code>chunk(text, max_tokens=512, overlap_tokens=64) -&gt; [Chunk(text, index)]</code></li>
+        <li><code>LocalEmbedder(model="BAAI/bge-small-en-v1.5")</code> · <code>ProviderEmbedder(dim, api_key, model, base_url=...)</code> · <code>FakeEmbedder(dim)</code></li>
+        <li><code>ingest_text(client, doc_id, text, embedder, start_id, *, max_tokens=512, overlap_tokens=64, payload=None) -&gt; [int]</code></li>
+        <li><code>search_text(client, query, embedder, *, k=10, ef_search=None, filter=None) -&gt; [Hit(id, distance, text, doc_id, chunk_index, payload)]</code></li>
+        <li><code>delete_doc(client, ids) -&gt; int</code></li>
+      </ul>
+      <pre><code>from lsmvec_client import Client
+from lsmvec_client.ingest import LocalEmbedder, ingest_text, search_text
+c = Client(api_key="sk-live-...", base_url="https://api.lsmvec.com")
+e = LocalEmbedder("BAAI/bge-small-en-v1.5")
+ingest_text(c, "doc-1", "…", e, start_id=0)
+hits = search_text(c, "…", e, k=5)</code></pre>
 
       <h2 id="ref-build">Build from source</h2>
       <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost

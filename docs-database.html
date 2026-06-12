@@ -80,10 +80,10 @@ body{padding-top:68px}
       <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
       <a href="docs.html#cloud-search" class="sidebar-link">Search</a>
       <a href="docs.html#cloud-filter" class="sidebar-link">Filter by metadata</a>
-      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk import</a>
+      <a href="docs.html#cloud-embeddings" class="sidebar-link">Embeddings</a>
+      <a href="docs.html#cloud-bulk" class="sidebar-link">Bulk &amp; batch import</a>
       <a href="docs.html#cloud-import" class="sidebar-link">Import existing vectors</a>
       <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
-      <a href="docs.html#cloud-rag" class="sidebar-link">Build a RAG app</a>
     </div>
     <div class="sidebar-section">
       <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
@@ -100,6 +100,7 @@ body{padding-top:68px}
       <a href="docs-reference.html#ref-examples" class="sidebar-link">Request examples</a>
       <a href="docs-reference.html#ref-errors" class="sidebar-link">Errors</a>
       <a href="docs-reference.html#ref-client" class="sidebar-link">Python client reference</a>
+      <a href="docs-reference.html#ref-embeddings" class="sidebar-link">Embeddings</a>
       <a href="docs-reference.html#ref-build" class="sidebar-link">Build from source</a>
       <a href="docs-reference.html#ref-server" class="sidebar-link">Run the server</a>
     </div>
@@ -172,6 +173,9 @@ db.close()</code></pre></div>
       <p><code>Insert</code> takes an id and a vector, with an optional JSON
       metadata string. <code>Update</code> replaces a vector; <code>Delete</code>
       tombstones it. Payloads have their own getters/setters.</p>
+      <p>When running the HTTP server, <code>POST /v1/vectors/batch</code> inserts many
+      <code>{id, vector, metadata?}</code> items in one request; a non-empty payload
+      replaces, <code>{}</code> clears, omitted preserves.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="cpp">C++</button>
@@ -225,6 +229,8 @@ results = db.search(query, k=10,
         one pass. Faster for a large initial load. Initial-load only: the database
         must be empty (ids are assigned <code>0..n-1</code> in order).</li>
       </ul>
+      <p>The HTTP API also supports payloads on <code>POST /v1/build/bulk</code>; see the
+      <a href="docs-reference.html#ref-http">HTTP API reference</a>.</p>
       <div class="callout"><p><strong>Memory note.</strong> The in-memory build
       holds all vectors and the full graph in RAM <em>during the build</em>, so
       peak memory is high. Once it finishes, memory drops back to the normal
