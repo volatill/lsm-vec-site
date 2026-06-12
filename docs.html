@@ -330,25 +330,14 @@ delete_doc(client, doc_chunks["handbook-2026"])   # remove the doc's chunks
     <div class="callout"><p><strong>Asteroid does not embed text server-side.</strong> Embedding happens in the Python client, using either a local model or your embedding provider API.</p></div>
 
     <h2 id="cloud-bulk">Bulk &amp; batch import</h2>
-    <p>Use incremental writes for normal application traffic. Use bulk import for the first load of a new index.</p>
+    <p>There are two build modes. Choose based on whether the index is empty.</p>
     <ul>
-      <li><strong>Incremental writes.</strong> Use <code>insert</code> or <code>upsert</code> when you need to preserve your own IDs, attach metadata as you ingest, or update an existing index.</li>
-      <li><strong>Bulk import.</strong> For a new, empty index, load all vectors in one pass. This is faster for a large initial load.</li>
+      <li><strong>Bulk build (in-memory build).</strong> The first load of a new, <strong>empty</strong> index. It loads all vectors at once, so it is the fastest initial load and produces a higher-quality index. (For very large loads we'll help size the pilot.)</li>
+      <li><strong>Incremental build.</strong> An existing index, streaming data, or ongoing updates. It writes vectors through <code>insert</code> or <code>insert_batch</code>.</li>
     </ul>
-    <div class="callout"><p><strong>Bulk build ID behavior.</strong> <code>bulk_build</code> assigns vector ids in input order, starting at <code>0</code>. Use <code>insert_batch</code> when you need to keep your own ids or add vectors to a non-empty index. <code>bulk_build</code> can attach payloads, but it cannot keep existing ids.</p></div>
-    <h3>Batch insert</h3>
-    <p><code>insert_batch</code> writes many already-embedded vectors incrementally, keeping your own ids and payloads. Each chunk is sent as one request.</p>
-    <div class="code-tabs" data-tabs>
-      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
-      <div class="tab-panel" data-lang="python"><pre><code>items = [(i, vec, {"source": "handbook"}) for i, vec in enumerate(vectors)]
-n = client.insert_batch(items, chunk_size=1000)   # one request per chunk</code></pre></div>
-      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/vectors/batch \
-  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
-  -d '{"items":[{"id":0,"vector":[...],"metadata":{"source":"handbook"}}]}'</code></pre></div>
-    </div>
 
-    <h3>Bulk build</h3>
-    <p>Use bulk build for the first load of a new, empty index.</p>
+    <h3>Bulk build (in-memory build)</h3>
+    <p><code>bulk_build</code> builds a new, empty index from all vectors at once — use it for the fastest initial load.</p>
     <div class="code-tabs" data-tabs>
       <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
       <div class="tab-panel" data-lang="python"><pre><code>import numpy as np
@@ -362,11 +351,28 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
   -H "Content-Type: application/octet-stream" \
   --data-binary @vectors.f32</code></pre></div>
     </div>
-    <p>Choose by scale:</p>
+    <div class="callout"><p><strong>Initial-load only.</strong> <code>bulk_build</code> requires an empty index and assigns ids in input order, starting at <code>0</code>. It can attach payloads, but it cannot keep existing ids.</p></div>
+
+    <h3>Incremental build</h3>
+    <p>Incremental build adds vectors through normal writes. Use it when the index already has data, when memory is limited, or when vectors arrive over time.</p>
     <ul>
-      <li>A few / occasional writes → <code>insert</code> / <code>upsert</code>.</li>
-      <li>Many already-embedded vectors, incrementally (keep your ids + payloads) → <code>insert_batch</code>.</li>
-      <li>The first load of a new, empty index → <code>bulk_build</code>.</li>
+      <li><code>insert</code> writes one vector (see <a href="#cloud-insert">Insert &amp; upsert vectors</a>).</li>
+      <li><code>insert_batch</code> writes many vectors in fewer HTTP requests. Use it when you already have embeddings and want to keep your own ids and payloads.</li>
+    </ul>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>items = [(i, vec, {"source": "handbook"}) for i, vec in enumerate(vectors)]
+n = client.insert_batch(items, chunk_size=1000)   # one request per chunk</code></pre></div>
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX POST https://api.lsmvec.com/v1/vectors/batch \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"items":[{"id":0,"vector":[...],"metadata":{"source":"handbook"}}]}'</code></pre></div>
+    </div>
+
+    <h3>Choose a build mode</h3>
+    <ul>
+      <li>New, empty index → <code>bulk_build</code>.</li>
+      <li>Existing index, streaming data, or ongoing updates → incremental build.</li>
+      <li>Incremental build with many vectors → <code>insert_batch</code> instead of many single <code>insert</code> calls.</li>
     </ul>
 
     <h2 id="cloud-import">Import existing vectors</h2>
@@ -374,11 +380,11 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
     <ol>
       <li>Export your vectors from the current system.</li>
       <li>Use the same embedding dimension for your Asteroid pilot index.</li>
-      <li>Insert records with your existing numeric IDs, or use bulk import for a fresh sequential load.</li>
+      <li>Insert records with your existing numeric IDs, or use bulk build for a fresh, empty-index load.</li>
       <li>Store document text, source, tags, or other retrieval fields as JSON metadata.</li>
       <li>Search with the same query embeddings your application already uses.</li>
     </ol>
-    <p>For pilot workloads, we can help review your current data format and choose between incremental writes and bulk import.</p>
+    <p>For pilot workloads, we can help review your current data format and choose between incremental build and bulk build.</p>
 
     <h2 id="cloud-troubleshooting">Troubleshooting</h2>
     <table>
@@ -389,7 +395,7 @@ curl -sX POST https://api.lsmvec.com/v1/build/bulk \
         <tr><td><code>404 Not Found</code></td><td>The vector ID or payload does not exist yet.</td></tr>
         <tr><td><code>413 Payload Too Large</code></td><td>Reduce the request size or split the load into smaller requests.</td></tr>
         <tr><td><code>429 Rate Limited</code></td><td>Retry with backoff, or contact us if the pilot needs a higher request rate.</td></tr>
-        <tr><td>Bulk import fails</td><td>Bulk import is for a new, empty index. Use incremental writes for existing indexes.</td></tr>
+        <tr><td>Bulk build fails</td><td>Bulk build is for a new, empty index. Use incremental build for existing indexes.</td></tr>
       </tbody>
     </table>
 
