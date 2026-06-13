@@ -115,6 +115,9 @@ body{padding-top:68px}
       <table>
         <thead><tr><th>Method &amp; path</th><th>Description</th></tr></thead>
         <tbody>
+          <tr><td><code>PUT /v1/index</code></td><td>Create the index: set <code>{dim, metric}</code> once, before any write. <code>409</code> if already initialized.</td></tr>
+          <tr><td><code>GET /v1/index</code></td><td>Index state: <code>{initialized, dim, metric}</code>.</td></tr>
+          <tr><td><code>DELETE /v1/index</code></td><td>Delete the index and all data; returns to uninitialized. Destructive.</td></tr>
           <tr><td><code>POST /v1/vectors</code></td><td>Insert a vector (with optional <code>metadata</code>).</td></tr>
           <tr><td><code>PUT /v1/vectors/:id</code></td><td>Upsert (replace) the vector for an id.</td></tr>
           <tr><td><code>GET /v1/vectors/:id</code></td><td>Fetch a vector.</td></tr>
@@ -130,6 +133,9 @@ body{padding-top:68px}
           <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
         </tbody>
       </table>
+      <p>Set the index dimension first: data routes return <code>409
+      index_not_initialized</code> until <code>PUT /v1/index</code> is called. See
+      <a href="docs.html#cloud-create-index">Create your index</a>.</p>
       <p>Vector IDs are integers in <code>[0, 2^63-1]</code>. If your application uses IDs
       larger than JavaScript's safe integer range, send them as strings in JSON request
       bodies.</p>
@@ -240,6 +246,9 @@ body{padding-top:68px}
       <table>
         <thead><tr><th>Method</th><th>Notes</th></tr></thead>
         <tbody>
+          <tr><td><code>create_index(dim, metric="l2") -&gt; dict</code></td><td>Set the index dimension + metric, once, before any write. <code>409</code> if already initialized.</td></tr>
+          <tr><td><code>get_index() -&gt; dict</code></td><td><code>{initialized, dim, metric}</code>.</td></tr>
+          <tr><td><code>delete_index() -&gt; dict</code></td><td>Delete the index and all data (destructive); returns to uninitialized. Idempotent.</td></tr>
           <tr><td><code>insert(id, vector, metadata=None)</code></td><td>Insert with optional metadata.</td></tr>
           <tr><td><code>upsert(id, vector)</code></td><td>Insert or replace the vector for an ID.</td></tr>
           <tr><td><code>get(id) -&gt; dict</code></td><td><code>{"id", "vector"}</code>.</td></tr>
@@ -253,8 +262,11 @@ body{padding-top:68px}
       </table>
       <p>Errors map to typed exceptions (all subclass <code>LSMVecError</code>):
       <code>InvalidArgument</code> (400), <code>Unauthorized</code> (401),
-      <code>NotFound</code> (404), <code>PayloadTooLarge</code> (413),
-      <code>RateLimited</code> (429), <code>ServerError</code> (5xx).</p>
+      <code>NotFound</code> (404), <code>Conflict</code> (409),
+      <code>PayloadTooLarge</code> (413), <code>RateLimited</code> (429),
+      <code>ServerError</code> (5xx). <code>Conflict</code> carries
+      <code>index_not_initialized</code> or <code>index_already_initialized</code> in
+      its <code>code</code>.</p>
 
       <h2 id="ref-embeddings">Embeddings</h2>
       <p>The <code>lsmvec_client.ingest</code> module (the local model needs

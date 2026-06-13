@@ -75,6 +75,7 @@ body{padding-top:68px}
       <a href="docs.html#cloud-overview" class="sidebar-link">Overview</a>
       <a href="docs.html#cloud-before" class="sidebar-link">Before you start</a>
       <a href="docs.html#cloud-quickstart" class="sidebar-link">Quickstart</a>
+      <a href="docs.html#cloud-create-index" class="sidebar-link">Create your index</a>
       <a href="docs.html#cloud-insert" class="sidebar-link">Insert &amp; upsert</a>
       <a href="docs.html#cloud-fetch" class="sidebar-link">Fetch &amp; delete</a>
       <a href="docs.html#cloud-payloads" class="sidebar-link">Metadata &amp; payloads</a>
@@ -110,17 +111,17 @@ body{padding-top:68px}
     <h2 id="cloud-overview">Asteroid Cloud</h2>
     <div class="group-intro"><p><strong>Asteroid Cloud</strong> is a memory-friendly vector database for applications that need fast similarity search at lower infrastructure cost. You bring embeddings; Asteroid stores vectors and JSON metadata, then serves k-NN search with optional metadata filters.</p></div>
     <p>In the pilot, you access your Asteroid instance over HTTPS with an API key. Use the Python client or call the HTTP API directly from any language.</p>
-    <p>Your endpoint, API key, and vector dimension are provided when your pilot is set up. Don't have them yet? <a href="index.html#pilot">Request a pilot</a>.</p>
+    <p>Your endpoint and API key are provided when your pilot is set up. You choose the index dimension yourself — see <a href="#cloud-create-index">Create your index</a>. Don't have them yet? <a href="index.html#pilot">Request a pilot</a>.</p>
 
     <h2 id="cloud-before">Before you start</h2>
     <p>For your pilot instance, we provide:</p>
-    <ul><li>an HTTPS endpoint</li><li>an API key</li><li>the vector dimension for your index</li></ul>
+    <ul><li>an HTTPS endpoint</li><li>an API key</li></ul>
     <p>You bring:</p>
-    <ul><li>embeddings from your model or embedding provider</li><li>numeric vector IDs</li><li>optional JSON metadata for filtering and retrieval</li></ul>
+    <ul><li>the index dimension + metric (you set it once with <code>create_index</code>)</li><li>embeddings from your model or embedding provider</li><li>numeric vector IDs</li><li>optional JSON metadata for filtering and retrieval</li></ul>
     <div class="callout"><p><strong>One pilot instance is one vector index.</strong> Insert vectors, attach metadata, and search against that index over the API.</p></div>
 
     <h2 id="cloud-quickstart">Quickstart</h2>
-    <p>Install the client, connect, insert vectors, and search. The example below uses 3-dimensional toy vectors so you can copy and run it directly. Your real pilot instance uses the dimension configured for your embeddings.</p>
+    <p>Install the client, connect, create your index, insert vectors, and search. The example below uses 3-dimensional toy vectors so you can copy and run it directly. Pick one path: bring your own vectors (below) or bring text (next section) — each creates an index at its own dimension, and an instance holds one index at a time.</p>
     <p>Install the Python client (requires Python 3.9+):</p>
     <pre><code>pip install lsmvec-client</code></pre>
     <div class="code-tabs" data-tabs>
@@ -131,14 +132,22 @@ client = Client(api_key="sk-live-...",
                 base_url="https://api.lsmvec.com")
 assert client.health()
 
-# Use your real embedding dimension in production.
+# Create the index once, at your embedding dimension (3 here for the toy vectors).
+client.create_index(dim=3, metric="l2")
+
 client.insert(1, [0.10, 0.20, 0.30], metadata={"category": "docs"})
 client.insert(2, [0.12, 0.18, 0.33], metadata={"category": "blog"})
 
 hits = client.search([0.11, 0.19, 0.31], k=2)
 for h in hits:
     print(h.id, h.distance)</code></pre></div>
-      <div class="tab-panel" data-lang="curl" hidden><pre><code># insert
+      <div class="tab-panel" data-lang="curl" hidden><pre><code># create the index once
+curl -sX PUT https://api.lsmvec.com/v1/index \
+  -H "Authorization: Bearer sk-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"dim": 3, "metric": "l2"}'
+
+# insert
 curl -sX POST https://api.lsmvec.com/v1/vectors \
   -H "Authorization: Bearer sk-live-..." \
   -H "Content-Type: application/json" \
@@ -150,22 +159,51 @@ curl -sX POST https://api.lsmvec.com/v1/search \
   -H "Content-Type: application/json" \
   -d '{"vector": [0.11, 0.19, 0.31], "k": 2}'</code></pre></div>
     </div>
-    <div class="callout"><p><strong>Use your configured dimension.</strong> The toy vectors above are 3-dimensional for readability. In your pilot, every inserted and searched vector must match the dimension configured for your index.</p></div>
+    <div class="callout"><p><strong>One dimension per index.</strong> The toy vectors above are 3-dimensional for readability. Every inserted and searched vector must match the dimension you set with <code>create_index</code>. To switch dimensions (e.g. for the text path below), call <code>delete_index()</code> first, then <code>create_index()</code> again — see <a href="#cloud-create-index">Create your index</a>.</p></div>
 
     <h3>Storing text instead of vectors</h3>
     <p>Storing text? Install the embedding extra. The Python client embeds text before sending vectors to Asteroid.</p>
-    <div class="callout"><p><strong>Dimension must match.</strong> This example needs an index provisioned with <code>dim=384</code> (bge-small's output dim). If your pilot index uses a different dimension, pick a local model or provider that produces that dimension.</p></div>
+    <div class="callout"><p><strong>A separate, 384-d index.</strong> This path uses a <code>dim=384</code> index (bge-small's output). Run <code>create_index(dim=384, metric="l2")</code> first. This is a <em>different</em> index from the toy-vector Quickstart above — if you already created one at another dimension in this instance, call <code>delete_index()</code> first.</p></div>
     <pre><code>pip install "lsmvec-client[embed]"</code></pre>
     <pre><code>from lsmvec_client import Client
 from lsmvec_client.ingest import LocalEmbedder, ingest_text, search_text
 
 client   = Client(api_key="sk-live-...", base_url="https://api.lsmvec.com")
+client.create_index(dim=384, metric="l2")            # once, before any write
 embedder = LocalEmbedder("BAAI/bge-small-en-v1.5")   # 384-d, runs locally
 
 ingest_text(client, "doc-1", "Refunds are processed within 30 days.", embedder, start_id=0)
 hits = search_text(client, "how long do refunds take?", embedder, k=3)
 print(hits[0].text)</code></pre>
     <p>Full flow in <a href="#cloud-embeddings">Embeddings</a>.</p>
+
+    <h2 id="cloud-create-index">Create your index</h2>
+    <p>Set your index's dimension and distance metric once, before your first write. The dimension must match your embedding model's output (e.g. 384 for <code>bge-small-en-v1.5</code>, 1536 for OpenAI <code>text-embedding-3-small</code>). Pick the metric — <code>l2</code> or <code>cosine</code> — to match how your embeddings were trained.</p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>client.create_index(dim=384, metric="l2")   # "l2" or "cosine"</code></pre></div>
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX PUT https://api.lsmvec.com/v1/index \
+  -H "Authorization: Bearer sk-live-..." -H "Content-Type: application/json" \
+  -d '{"dim": 384, "metric": "cosine"}'</code></pre></div>
+    </div>
+    <div class="callout"><p><strong>The dimension is fixed once set.</strong> Inserting or searching before you create the index returns <code>409 index_not_initialized</code>; calling <code>create_index</code> again returns <code>409 index_already_initialized</code>.</p></div>
+
+    <h3>Check the current state</h3>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>client.get_index()   # {"initialized": True, "dim": 384, "metric": "l2"}</code></pre></div>
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -s https://api.lsmvec.com/v1/index -H "Authorization: Bearer sk-live-..."</code></pre></div>
+    </div>
+
+    <h3>Re-dimension (destructive)</h3>
+    <p>There is no in-place dimension change. To switch dimensions, delete the index and create a new one. <strong>This permanently removes all vectors and payloads — there is no undo.</strong></p>
+    <div class="code-tabs" data-tabs>
+      <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
+      <div class="tab-panel" data-lang="python"><pre><code>client.delete_index()                          # wipe -&gt; uninitialized
+client.create_index(dim=768, metric="cosine")  # re-create at a new dimension</code></pre></div>
+      <div class="tab-panel" data-lang="curl" hidden><pre><code>curl -sX DELETE https://api.lsmvec.com/v1/index \
+  -H "Authorization: Bearer sk-live-..."</code></pre></div>
+    </div>
 
     <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
     <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID. IDs are integers in <code>[0, 2^63-1]</code>. If an id is larger than JavaScript's safe integer range, send it as a string in JSON.</p>
@@ -263,7 +301,9 @@ for h in hits:
     <pre><code>from lsmvec_client import Client
 client = Client(api_key="sk-live-...",
                 base_url="https://api.lsmvec.com")   # your pilot endpoint
-assert client.health()</code></pre>
+assert client.health()
+client.create_index(dim=384, metric="l2")   # once per index; bge-small is 384-d</code></pre>
+    <p>If this instance already has an index at another dimension, call <code>delete_index()</code> first — see <a href="#cloud-create-index">Create your index</a>.</p>
 
     <h3>Choose an embedder</h3>
     <ul>
@@ -275,7 +315,7 @@ embedder = LocalEmbedder("BAAI/bge-small-en-v1.5")   # 384-d</code></pre></li>
 embedder = ProviderEmbedder(
     dim=1536, api_key="...",
     model="text-embedding-3-small")</code></pre></li>
-      <li><strong>Dimension must match.</strong> Your index dimension must match the embedder output dimension (<code>bge-small-en-v1.5</code> outputs 384). Tell us your model when the pilot is provisioned.</li>
+      <li><strong>Dimension must match.</strong> Your index dimension must match the embedder output dimension (<code>bge-small-en-v1.5</code> outputs 384). Set <code>create_index(dim=…)</code> to that dimension.</li>
     </ul>
 
     <h3>Ingest a document</h3>
@@ -379,7 +419,7 @@ n = client.insert_batch(items, chunk_size=1000)   # one request per chunk</code>
     <p>If you already have embeddings in another system, you can import them into Asteroid without changing your embedding model.</p>
     <ol>
       <li>Export your vectors from the current system.</li>
-      <li>Use the same embedding dimension for your Asteroid pilot index.</li>
+      <li>Use the same embedding dimension when you call <code>create_index</code>.</li>
       <li>Insert records with your existing numeric IDs, or use bulk build for a fresh, empty-index load.</li>
       <li>Store document text, source, tags, or other retrieval fields as JSON metadata.</li>
       <li>Search with the same query embeddings your application already uses.</li>
@@ -391,7 +431,8 @@ n = client.insert_batch(items, chunk_size=1000)   # one request per chunk</code>
       <thead><tr><th>Symptom</th><th>What to check</th></tr></thead>
       <tbody>
         <tr><td><code>401 Unauthorized</code></td><td>Check that the request includes <code>Authorization: Bearer &lt;api-key&gt;</code>.</td></tr>
-        <tr><td><code>400</code> on insert or search</td><td>Check that the vector has the dimension configured for your pilot index.</td></tr>
+        <tr><td><code>400</code> on insert or search</td><td>Check that the vector has the dimension you set with <code>create_index</code>.</td></tr>
+        <tr><td><code>409 Conflict</code> on insert or search</td><td>The index has no dimension yet — call <code>create_index</code> first. (<code>409</code> on <code>create_index</code> itself means it is already initialized; <code>delete_index</code> to re-dimension.)</td></tr>
         <tr><td><code>404 Not Found</code></td><td>The vector ID or payload does not exist yet.</td></tr>
         <tr><td><code>413 Payload Too Large</code></td><td>Reduce the request size or split the load into smaller requests.</td></tr>
         <tr><td><code>429 Rate Limited</code></td><td>Retry with backoff, or contact us if the pilot needs a higher request rate.</td></tr>
