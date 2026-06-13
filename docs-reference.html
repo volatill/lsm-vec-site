@@ -128,7 +128,7 @@ body{padding-top:68px}
           <tr><td><code>POST /v1/vectors/batch</code></td><td>Batch insert <code>{id, vector, metadata?}</code> items (incremental, caller ids, payloads inline). Returns <code>{inserted}</code>.</td></tr>
           <tr><td><code>POST /v1/search</code></td><td>k-NN search (<code>vector</code>, <code>k</code>, optional <code>ef_search</code>, <code>filter</code>).</td></tr>
           <tr><td><code>POST /v1/build/bulk</code></td><td>Bulk build (raw float32 body; <code>X-LSMVec-N</code> / <code>X-LSMVec-Dim</code> headers). Empty DB only. Optional: a JSON array of <code>n</code> payloads appended after the float32 blob.</td></tr>
-          <tr><td><code>GET /v1/stats</code></td><td>Tombstone / bloom / counters.</td></tr>
+          <tr><td><code>GET /v1/stats</code></td><td>Index stats: <code>{vectors, dim, metric, memory_bytes}</code> (live vector count; working-set memory excluding OS file cache).</td></tr>
           <tr><td><code>GET /health</code></td><td>Unauthenticated liveness check.</td></tr>
           <tr><td><code>GET /ready</code></td><td>DB open &amp; responsive.</td></tr>
         </tbody>
@@ -259,7 +259,8 @@ body{padding-top:68px}
           <tr><td><code>search(vector, k=10, ef_search=None, filter=None)</code></td><td>Returns <code>[SearchResult(id, distance)]</code>.</td></tr>
           <tr><td><code>insert_batch(items, chunk_size=1000) -&gt; int</code></td><td>Batched insert of <code>(id, vector[, metadata])</code> items.</td></tr>
           <tr><td><code>bulk_build(vectors, threads=0, payloads=None) -&gt; dict</code></td><td>One-pass initial load for a new, empty index. IDs are assigned in input order. The returned report includes <code>payloads_written</code>.</td></tr>
-          <tr><td><code>stats()</code> / <code>health()</code> / <code>ready()</code></td><td>Diagnostics.</td></tr>
+          <tr><td><code>stats() -&gt; dict</code></td><td><code>{vectors, dim, metric, memory_bytes}</code>.</td></tr>
+          <tr><td><code>health()</code> / <code>ready()</code></td><td>Liveness / readiness checks.</td></tr>
         </tbody>
       </table>
       <p>Errors map to typed exceptions (all subclass <code>LSMVecError</code>):
