@@ -178,7 +178,7 @@ print(hits[0].text)</code></pre>
     <p>Full flow in <a href="#cloud-embeddings">Embeddings</a>.</p>
 
     <h2 id="cloud-create-index">Create your index</h2>
-    <p>Set your index's dimension and distance metric once, before your first write. The dimension must match your embedding model's output (e.g. 384 for <code>bge-small-en-v1.5</code>, 1536 for OpenAI <code>text-embedding-3-small</code>). Pick the metric — <code>l2</code> or <code>cosine</code> — to match how your embeddings were trained.</p>
+    <p>Set your index's dimension and distance metric once, before your first write. The dimension must match your embedding model's output (e.g. 384 for <code>bge-small-en-v1.5</code>, 1536 for OpenAI <code>text-embedding-3-small</code>). Supported range is <strong>1–4000</strong>, which covers common embedding sizes (384, 768, 1024, 1536, 3072). Pick the metric — <code>l2</code> or <code>cosine</code> — to match how your embeddings were trained.</p>
     <div class="code-tabs" data-tabs>
       <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
       <div class="tab-panel" data-lang="python"><pre><code>client.create_index(dim=384, metric="l2")   # "l2" or "cosine"</code></pre></div>
@@ -206,7 +206,8 @@ client.create_index(dim=768, metric="cosine")  # re-create at a new dimension</c
     </div>
 
     <h2 id="cloud-insert">Insert &amp; upsert vectors</h2>
-    <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID. IDs are integers in <code>[0, 2^63-1]</code>. If an id is larger than JavaScript's safe integer range, send it as a string in JSON.</p>
+    <p><code>insert</code> adds a vector by ID with optional JSON metadata. <code>upsert</code> inserts or replaces the vector for an existing ID.</p>
+    <div class="callout"><p><strong>Use sequential IDs.</strong> Asteroid keys vectors by sequential, dense integer IDs — assign them in order starting at <code>0</code> (<code>0, 1, 2, …</code>). If your records are keyed by hashes, timestamps, or other large/sparse values, keep that mapping in your application and hand Asteroid a sequential counter; large or sparse IDs are not recommended on the pilot.</p></div>
     <div class="code-tabs" data-tabs>
       <div class="tab-btns"><button class="tab-btn active" data-lang="python">Python</button><button class="tab-btn" data-lang="curl">cURL</button></div>
       <div class="tab-panel" data-lang="python"><pre><code>client.insert(1, vector, metadata={"title": "intro", "year": 2026})

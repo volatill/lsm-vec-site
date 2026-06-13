@@ -135,10 +135,12 @@ body{padding-top:68px}
       </table>
       <p>Set the index dimension first: data routes return <code>409
       index_not_initialized</code> until <code>PUT /v1/index</code> is called. See
-      <a href="docs.html#cloud-create-index">Create your index</a>.</p>
-      <p>Vector IDs are integers in <code>[0, 2^63-1]</code>. If your application uses IDs
-      larger than JavaScript's safe integer range, send them as strings in JSON request
-      bodies.</p>
+      <a href="docs.html#cloud-create-index">Create your index</a>. Supported
+      <code>dim</code> range is <strong>1–4000</strong>.</p>
+      <p><strong>Use sequential IDs.</strong> Asteroid keys vectors by sequential,
+      dense integers — assign IDs in order starting at <code>0</code>. Large or
+      sparse IDs (hashes, timestamps, snowflake) are not recommended on the pilot;
+      keep that mapping in your application and use a sequential counter.</p>
       <p>Errors use a JSON body with <code>error</code> and <code>code</code> fields.
       Common status codes are <code>400</code> invalid argument,
       <code>401</code> unauthorized, <code>404</code> not found,
@@ -235,9 +237,9 @@ body{padding-top:68px}
       <p>Error responses carry a JSON body; the Python client preserves it on
       <code>LSMVecError.details</code> — e.g. <code>inserted</code> / <code>failed_index</code>
       on a mid-batch error, or <code>rebuild_required</code> on a failed
-      <code>bulk_build(payloads=…)</code>. IDs are <strong>integers in <code>[0, 2^63-1]</code></strong>
-      — send them as <strong>strings</strong> above JavaScript's safe-integer range;
-      floats/negatives return <code>400</code>.</p>
+      <code>bulk_build(payloads=…)</code>. IDs should be <strong>sequential, dense
+      integers starting at <code>0</code></strong> (Asteroid keys vectors by ID
+      position); floats/negatives return <code>400</code>.</p>
 
       <h2 id="ref-client">Python client reference</h2>
       <p><code>pip install lsmvec-client</code> — dependency-free (stdlib
