@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asteroid Database (LSM-Vec) — Documentation</title>
-<meta name="description" content="Asteroid Database docs — embed or self-host the open-source LSM-Vec engine. C++ and Python (pybind) interfaces: open, insert, search, bulk build, configuration.">
+<title>Asteroid Database (AsterVec) — Documentation</title>
+<meta name="description" content="Asteroid Database docs — embed or self-host the open-source AsterVec engine. C++ and Python (pybind) interfaces: open, insert, search, bulk build, configuration.">
 <script>(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add('js');})();</script>
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,7 +86,7 @@ body{padding-top:68px}
       <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
     </div>
     <div class="sidebar-section">
-      <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
+      <a href="docs-database.html" class="sidebar-title">Asteroid Database (AsterVec)</a>
       <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
       <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
       <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
@@ -108,15 +108,15 @@ body{padding-top:68px}
 
   <main class="docs-content">
 
-      <h2 id="db-overview">Asteroid Database (LSM-Vec)</h2>
+      <h2 id="db-overview">Asteroid Database (AsterVec)</h2>
       <div class="group-intro">
         <p><strong>Asteroid Database</strong> is the open-source engine —
-        <strong>LSM-Vec</strong> — that powers Asteroid Cloud. You can embed it
+        <strong>AsterVec</strong> — that powers Asteroid Cloud. You can embed it
         directly (C++ library or Python bindings) or self-host it. This section
         documents the engine's interfaces; code blocks switch between
         <strong>C++</strong> and <strong>Python (pybind)</strong>.</p>
       </div>
-      <p>LSM-Vec combines an HNSW graph index with <strong>Aster</strong> (a
+      <p>AsterVec combines an HNSW graph index with <strong>Aster</strong> (a
       RocksDB fork providing graph-oriented LSM-tree storage). Layer-0 graph
       edges are persisted on disk; upper layers stay in memory. To run it as an
       HTTP service with the same API as Asteroid Cloud, see
@@ -130,16 +130,16 @@ body{padding-top:68px}
           <button class="tab-btn active" data-lang="cpp">C++</button>
           <button class="tab-btn" data-lang="python">Python</button>
         </div>
-        <div class="tab-panel" data-lang="cpp"><pre><code>#include "lsm_vec_db.h"
-using namespace lsm_vec;
+        <div class="tab-panel" data-lang="cpp"><pre><code>#include "astervec_db.h"
+using namespace astervec;
 
-LSMVecDBOptions opts;
+AsterVecDBOptions opts;
 opts.dim = 128;
 opts.vector_file_path = "./db/vectors.bin";
 opts.reinit = true;                       // start fresh
 
-std::unique_ptr&lt;LSMVecDB&gt; db;
-Status s = LSMVecDB::Open("./db", opts, &amp;db);
+std::unique_ptr&lt;AsterVecDB&gt; db;
+Status s = AsterVecDB::Open("./db", opts, &amp;db);
 
 std::vector&lt;float&gt; v(128, 0.1f);
 db-&gt;Insert(1, v);
@@ -149,14 +149,14 @@ std::vector&lt;SearchResult&gt; results;
 db-&gt;SearchKnn(v, so, &amp;results);
 
 db-&gt;Close();</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code>import lsm_vec   # the engine module (pybind); distinct from lsmvec-client
+        <div class="tab-panel" data-lang="python" hidden><pre><code>import astervec   # the engine module (pybind); distinct from lsmvec-client
 
-opts = lsm_vec.LSMVecDBOptions()
+opts = astervec.AsterVecDBOptions()
 opts.dim = 128
 opts.vector_file_path = "./db/vectors.bin"
 opts.reinit = True
 
-db = lsm_vec.LSMVecDB.open("./db", opts)
+db = astervec.AsterVecDB.open("./db", opts)
 db.insert(1, [0.1] * 128)
 
 results = db.search_knn([0.1] * 128, k=10, ef_search=128)
@@ -166,7 +166,7 @@ for r in results:
 db.close()</code></pre></div>
       </div>
       <div class="callout"><p>The engine Python module is
-      <code>import lsm_vec</code> (pybind bindings) — <em>not</em> the same as the
+      <code>import astervec</code> (pybind bindings) — <em>not</em> the same as the
       Cloud client <code>lsmvec-client</code> (<code>import lsmvec_client</code>).</p></div>
 
       <h2 id="db-insert">Insert / update / delete</h2>
@@ -253,7 +253,7 @@ print(report)   # {'n': ..., 'elapsed_ms': ..., 'vectors_per_sec': ..., 'threads
       </div>
 
       <h2 id="db-config">Configuration &amp; defaults</h2>
-      <p>Pass <code>LSMVecDBOptions</code> to <code>Open</code>. The service
+      <p>Pass <code>AsterVecDBOptions</code> to <code>Open</code>. The service
       defaults are <code>m=8</code>, <code>m_max=24</code>,
       <code>ef_construction=32</code>.</p>
       <table>

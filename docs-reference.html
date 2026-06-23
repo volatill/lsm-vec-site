@@ -86,7 +86,7 @@ body{padding-top:68px}
       <a href="docs.html#cloud-troubleshooting" class="sidebar-link">Troubleshooting</a>
     </div>
     <div class="sidebar-section">
-      <a href="docs-database.html" class="sidebar-title">Asteroid Database (LSM-Vec)</a>
+      <a href="docs-database.html" class="sidebar-title">Asteroid Database (AsterVec)</a>
       <a href="docs-database.html#db-overview" class="sidebar-link">Overview</a>
       <a href="docs-database.html#db-quickstart" class="sidebar-link">Quickstart</a>
       <a href="docs-database.html#db-insert" class="sidebar-link">Insert / update / delete</a>
@@ -297,22 +297,22 @@ git submodule update --init --recursive
 make aster        # builds lib/aster/librocksdb.a (required first)
 make              # builds the static + shared libs and the test binary</code></pre>
       <p>For the Python engine module (requires Python 3.9+, Aster built, and ninja):</p>
-      <pre><code>python -m pip install .        # builds and installs the lsm_vec module
-python -c "import lsm_vec; print('OK')"</code></pre>
+      <pre><code>python -m pip install .        # builds and installs the astervec module
+python -c "import astervec; print('OK')"</code></pre>
 
       <h2 id="ref-server">Run the server (self-host)</h2>
       <p>Self-host the same HTTP API as Asteroid Cloud. Run the
-      <code>lsm_vec_http</code> server (or the <code>lsmvec</code> Docker image),
+      <code>astervec_http</code> server (or the <code>astervec</code> Docker image),
       then point <code>lsmvec-client</code> at your own host
       (<code>base_url="http://localhost:8000"</code>) — everything in the
       <a href="docs.html#cloud-overview">Asteroid Cloud</a> section applies unchanged.</p>
       <pre><code># environment knobs (graph params + threads)
-LSMVEC_M=8 LSMVEC_MMAX=24 LSMVEC_EFC=32 LSMVEC_HTTP_THREADS=1 \
-  ./build/bin/lsm_vec_http   # serves the REST API on :8000</code></pre>
+ASTERVEC_M=8 ASTERVEC_MMAX=24 ASTERVEC_EFC=32 ASTERVEC_HTTP_THREADS=1 \
+  ./build/bin/astervec_http   # serves the REST API on :8000</code></pre>
 
       <p style="margin-top:40px;border-top:1px solid var(--border);padding-top:24px;">
         Back to <a href="docs.html">Asteroid Cloud</a> ·
-        <a href="docs-database.html">Asteroid Database (LSM-Vec)</a>.
+        <a href="docs-database.html">Asteroid Database (AsterVec)</a>.
       </p>
 
     </main>
