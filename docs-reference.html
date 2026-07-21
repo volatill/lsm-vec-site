@@ -289,6 +289,10 @@ ingest_text(c, "doc-1", "…", e, start_id=0)
 hits = search_text(c, "…", e, k=5)</code></pre>
 
       <h2 id="ref-build">Build from source</h2>
+      <p>Python users can usually skip this section —
+      <code>pip install aster-vec</code> installs the engine directly. Building
+      from source is for C++ embedding, contributors, and platforms without a
+      prebuilt package.</p>
       <p>Prerequisites: a C++17 compiler (GCC 8+/Clang 10+), CMake ≥ 3.10, Boost
       (headers), and zstd. On macOS also jemalloc. (Aster is built zstd-only, so
       snappy/lz4/bz2/zlib are not needed.)</p>

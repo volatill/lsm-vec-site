@@ -123,8 +123,9 @@ body{padding-top:68px}
       <a href="docs-reference.html#ref-server">Run the server</a>.</p>
 
       <h2 id="db-quickstart">Quickstart</h2>
-      <p>Build the libraries (see <a href="docs-reference.html#ref-build">Build from source</a>),
-      then open a database, insert, and search.</p>
+      <p>Install the engine (<code>pip install aster-vec</code>; C++ users
+      <a href="docs-reference.html#ref-build">build from source</a>), then open a
+      database, insert, and search.</p>
       <div class="code-tabs" data-tabs>
         <div class="tab-btns">
           <button class="tab-btn active" data-lang="cpp">C++</button>
@@ -149,7 +150,8 @@ std::vector&lt;SearchResult&gt; results;
 db-&gt;SearchKnn(v, so, &amp;results);
 
 db-&gt;Close();</code></pre></div>
-        <div class="tab-panel" data-lang="python" hidden><pre><code>import astervec   # the engine module (pybind); distinct from lsmvec-client
+        <div class="tab-panel" data-lang="python" hidden><pre><code># pip install aster-vec
+import astervec   # the engine module (pybind); distinct from lsmvec-client
 
 opts = astervec.AsterVecDBOptions()
 opts.dim = 128
