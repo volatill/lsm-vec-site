@@ -1,0 +1,27 @@
+# Asteroid (AsterVec)
+
+> AsterVec is a memory-friendly embedded vector database for on-device AI. The HNSW index lives on disk, in an efficient storage layout that separates the graph from the vector data, so searching millions of vectors takes a few hundred MB of RAM and it supports fast in-place updates. Asteroid is the product built on it: the open-source engine, a self-hostable HTTP server, and a managed cloud.
+
+The engine is open source under Apache-2.0 at https://github.com/NTU-Siqiang-Group/AsterVec. The core is C++17; the Python API installs with `pip install aster-vec`. A self-hostable HTTP server ships in the same repository.
+
+## Documentation
+
+- [Database engine docs](https://lsmvec.com/docs-database.html): embed or self-host the open-source AsterVec engine; C++ and Python interfaces for open, insert, search, bulk build, and configuration
+- [Cloud docs](https://lsmvec.com/docs.html): the managed service via the Python client (`pip install lsmvec-client`) or HTTP API, covering insert, search, filters, payloads, bulk import, and RAG
+- [Reference and deployment](https://lsmvec.com/docs-reference.html): HTTP API routes, Python client reference, building the engine from source, self-hosting the HTTP server
+
+## Benchmarks
+
+- [Benchmark page](https://lsmvec.com/benchmark.html): build time, query throughput, and memory footprint against Milvus, Qdrant, Weaviate, Elasticsearch, and pgvector on SIFT-100K and SIFT-1M
+- [Detailed benchmark report](https://github.com/NTU-Siqiang-Group/AsterVec/blob/main/docs/BENCHMARKS.md): full setup, parameter sweeps, and engine memory numbers, including comparisons with embedded engines
+
+## Source and packages
+
+- [GitHub repository](https://github.com/NTU-Siqiang-Group/AsterVec): engine source, HTTP server, Python bindings, and issue tracker
+- [PyPI: aster-vec](https://pypi.org/project/aster-vec/): the engine's Python package
+- [PyPI: lsmvec-client](https://pypi.org/project/lsmvec-client/): the thin HTTP client for the hosted service
+
+## Optional
+
+- [Cost](https://lsmvec.com/cost.html): how lower memory pressure translates into hosting cost
+- [Pilot](https://lsmvec.com/pilot.html): the free hosted pilot
